@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html data-theme="pastel" lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.5/dist/full.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">TownForest</title>
+</head>
+<body>
+<div class="max-w-xl mx-auto bg-base-100">
+    <div class="flex justify-between mt-3">
+        <a class="btn-link normal-case text-xl" href="/">
+            <img src="/Logo.png" width="90px" alt="TownForest">
+        </a>
+        <div class="btn btn-neutral">마이페이지</div>
+    </div>
+</div>
+<!-- main -->
+<main layout:fragment="main"></main>
+
+</body>
+</html>
