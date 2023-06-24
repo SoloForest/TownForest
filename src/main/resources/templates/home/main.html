@@ -1,28 +1,83 @@
-<!DOCTYPE html>
-<html data-theme="pastel" lang="ko"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html layout:decorate="~{home/layout.html}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.5/dist/full.css" rel="stylesheet" type="text/css"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">TownForest</title>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE"></title>
+    <style>
+        button.btn.btn-outline.btn-info {
+            width: 174px;
+            height: 80px;
+            border-radius: 15px;
+        }
+    </style>
 </head>
 <body>
-<div class="max-w-xl mx-auto bg-base-100">
-    <div class="flex justify-between mt-3">
-        <a class="btn-link normal-case text-xl" href="/">
-            <img src="/Logo.png" width="90px" alt="TownForest">
-        </a>
-        <div class="btn btn-neutral">마이페이지</div>
-    </div>
-</div>
 <!-- main -->
-<main layout:fragment="main"></main>
-
+<main layout:fragment="main">
+    <!-- 공지사항 -->
+    <div class="m-3" style="border: 1px solid #707070; border-radius: 15px;">
+        <div class="overflow-x-auto">
+            <table class="table">
+                <!-- head -->
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- row 1 -->
+                <tr>
+                    <th>1</th>
+                    <td>Cy Ganderton</td>
+                </tr>
+                <!-- row 2 -->
+                <tr class="hover">
+                    <th>2</th>
+                    <td>Hart Hagerty</td>
+                </tr>
+                <!-- row 3 -->
+                <tr>
+                    <th>3</th>
+                    <td>Brice Swyre</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- 버튼메뉴 -->
+    <div class="flex justify-center flex-wrap gap-3">
+        <button id="gym"
+                class="btn btn-outline btn-info">
+            헬스장 신청
+        </button>
+        <button id="library"
+                class="btn btn-outline btn-info">
+            독서실 자리 예약
+        </button>
+        <button id="my-vehicle"
+                class="btn btn-outline btn-info">
+            차량 등록
+        </button>
+        <button id="repair"
+                class="btn btn-outline btn-info">
+            시설 보수 신청
+        </button>
+        <button id="guest-house"
+                class="btn btn-outline btn-info">
+            게스트하우스 신청
+        </button>
+        <button id="guest-vehicle"
+                class="btn btn-outline btn-info">
+            방문차량 등록
+        </button>
+        <button id="mypage"
+                class="btn btn-outline btn-info">
+            마이페이지
+        </button>
+        <button id="none"
+                class="btn btn-outline btn-info"
+                style="visibility:hidden">
+        </button>
+    </div>
+</main>
 </body>
 </html>
