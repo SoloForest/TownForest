@@ -33,4 +33,6 @@ public class Apt {
 	private Integer maxDong;
 	@Column(nullable = false)
 	private Integer maxHo;
+	@Column(nullable = false)
+	private Integer maxFloor;
 }

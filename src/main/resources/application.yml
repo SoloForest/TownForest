@@ -9,14 +9,17 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/townforest__dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
-jpa:
-  hibernate:
-    ddl-auto: create
-  properties:
+  jpa:
     hibernate:
-      show_sql: true
-      format_sql: true
-      use_sql_comments: true
+      ddl-auto: create
+      jdbc:
+        batch_size=50  # 한번에 DB업로드 할 수 있는 최대 개수 지정, 크면 메모리가 죽어버려.. 50으로 설정
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
 logging:
   level:
     root: INFO
