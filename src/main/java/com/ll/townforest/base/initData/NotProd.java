@@ -1,5 +1,8 @@
 package com.ll.townforest.base.initData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -110,19 +113,55 @@ public class NotProd {
 					.build();
 				aptRepository.save(apt1);
 
-				// 아파트 동호수 객체 생성
-				for (int i = 1; i <= apt1.getMaxDong(); i++) {
+				List<House> houseList1 = new ArrayList<>();
+				List<House> houseList2 = new ArrayList<>();
+				List<House> houseList3 = new ArrayList<>();
+
+				// 아파트 동호수 객체 생성 - 첫 번째 1/3
+				int oneThirdDong = apt1.getMaxDong() / 3;
+				for (int i = 1; i <= oneThirdDong; i++) {
 					for (int j = 1; j <= apt1.getMaxFloor(); j++) {
-						for (int k = 1; j <= apt1.getMaxHo(); k++) {
+						for (int k = 1; k <= apt1.getMaxHo(); k++) {
 							House houseTemp = House.builder()
 								.dong(100 + i)
-								.ho((j * 10) + k)
+								.ho((j * 100) + k)
 								.build();
-							houseRepository.save(houseTemp);
+							houseList1.add(houseTemp);
 						}
 					}
 				}
 
+				houseRepository.saveAll(houseList1);
+
+				// 아파트 동호수 객체 생성 - 두 번째 1/3
+				for (int i = oneThirdDong + 1; i <= oneThirdDong * 2; i++) {
+					for (int j = 1; j <= apt1.getMaxFloor(); j++) {
+						for (int k = 1; k <= apt1.getMaxHo(); k++) {
+							House houseTemp = House.builder()
+								.dong(100 + i)
+								.ho((j * 100) + k)
+								.build();
+							houseList2.add(houseTemp);
+						}
+					}
+				}
+
+				houseRepository.saveAll(houseList2);
+
+				// 아파트 동호수 객체 생성 - 세 번째 1/3
+				for (int i = oneThirdDong * 2 + 1; i <= apt1.getMaxDong(); i++) {
+					for (int j = 1; j <= apt1.getMaxFloor(); j++) {
+						for (int k = 1; k <= apt1.getMaxHo(); k++) {
+							House houseTemp = House.builder()
+								.dong(100 + i)
+								.ho((j * 100) + k)
+								.build();
+							houseList3.add(houseTemp);
+						}
+					}
+				}
+
+				houseRepository.saveAll(houseList3);
 				// 관리자
 				AptAccount aptAccount1 = AptAccount.builder()
 					.account(account1)
@@ -167,7 +206,7 @@ public class NotProd {
 
 				//주민3
 				AptAccount aptAccount6 = AptAccount.builder()
-					.account(account4)
+					.account(account6)
 					.apt(apt1)
 					.build();
 				aptAccountRepository.save(aptAccount6);
