@@ -23,7 +23,7 @@ public class Vehicle {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne
-	AptAccount user;
+	private AptAccount user;
 	@Column(length = 8)
 	private String vehicleNumber;
 	@Column(columnDefinition = "TEXT")
