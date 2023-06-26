@@ -39,7 +39,7 @@ public class GymHistory {
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
 	private LocalDateTime paymentDate;
-	private int amountOfPayment;
+	private int price;
 	/*
 	결제 방법
 	0 : 계좌이체
@@ -55,7 +55,7 @@ public class GymHistory {
 	private int passType;
 	/*
 	상태
-	0: 이용중
+	0: 결제
 	1: 만료
 	2: 연장	등
 	추가 예정	// TODO : 상태 고려
