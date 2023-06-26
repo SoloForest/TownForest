@@ -29,9 +29,9 @@ public class House {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private int dong;
+	private Integer dong;
 	@Column(nullable = false)
-	private int ho;
+	private Integer ho;
 	@CreatedDate
 	private LocalDateTime date;
 }

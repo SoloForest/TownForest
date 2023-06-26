@@ -29,7 +29,7 @@ public class AptAccountHouse {
 	@Column(nullable = false)
 	private String relationship;
 	@OneToOne
-	AptAccount user;
+	private AptAccount user;
 	@OneToOne
-	House house;
+	private House house;
 }

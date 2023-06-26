@@ -28,9 +28,9 @@ public class Apt {
 	@Column(nullable = false)
 	private String name;
 	@Column(nullable = false)
-	private int maxApartment;
+	private Integer maxApartment;
 	@Column(nullable = false)
-	private int maxDong;
+	private Integer maxDong;
 	@Column(nullable = false)
-	private int maxHo;
+	private Integer maxHo;
 }

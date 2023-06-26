@@ -30,18 +30,20 @@ public class AptAccount {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@OneToOne(cascade = {CascadeType.REMOVE})
-	Account account;
+	private Account account;
 	@ManyToOne(cascade = {CascadeType.REMOVE})
-	Apt apt;
+	private Apt apt;
 
 	/*
 	 * 회원 권한 코드를 나타내는 변수
-	 * 0: 아파트 관리자
-	 * 1: 일반 입주민
-	 * default : 1 (일반 입주민)
+	 * 0: 일반 입주민
+	 * 1: 아파트 관리자
+	 * 2: 독서실 관리자
+	 * 3: 헬스장 관리자
+	 * default : 0 (일반 입주민)
 	 */
 	@Builder.Default
-	private int authority = 1;
+	private int authority = 0;
 
 	/*
 	 * 회원 가입 상태를 나타내는 변수
