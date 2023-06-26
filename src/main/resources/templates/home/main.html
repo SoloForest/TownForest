@@ -1,0 +1,94 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE"></title>
+    <style>
+        button.btn.btn-outline.btn-primary {
+            width: 174px;
+            height: 80px;
+            border-radius: 15px;
+        }
+
+        h2 {
+            display: block;
+            font-size: 1.5em !important;
+            margin-top: 0.5em !important;
+            margin-bottom: 0.5em !important;
+            margin-left: 0.5em !important;
+            margin-right: 0 !important;
+            font-weight: bold !important;
+        }
+    </style>
+</head>
+<body>
+<!-- main -->
+<main layout:fragment="main">
+    <!-- 공지사항 -->
+    <div class="m-3" style="border: 1px solid #707070; border-radius: 15px;">
+        <h2>공지사항</h2>
+        <div class="overflow-x-auto">
+            <table class="table">
+                <!-- head -->
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- row 1 -->
+                <tr>
+                    <th>1</th>
+                    <td>Cy Ganderton</td>
+                </tr>
+                <!-- row 2 -->
+                <tr class="hover">
+                    <th>2</th>
+                    <td>Hart Hagerty</td>
+                </tr>
+                <!-- row 3 -->
+                <tr>
+                    <th>3</th>
+                    <td>Brice Swyre</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- 버튼메뉴 -->
+    <div class="flex justify-center flex-wrap gap-3">
+        <button id="gym"
+                class="btn btn-outline btn-primary">
+            헬스장 신청
+        </button>
+        <button id="library"
+                class="btn btn-outline btn-primary">
+            독서실 자리 예약
+        </button>
+        <button id="my-vehicle"
+                class="btn btn-outline btn-primary">
+            차량 등록
+        </button>
+        <button id="repair"
+                class="btn btn-outline btn-primary">
+            시설 보수 신청
+        </button>
+        <button id="guest-house"
+                class="btn btn-outline btn-primary">
+            게스트하우스 신청
+        </button>
+        <button id="guest-vehicle"
+                class="btn btn-outline btn-primary">
+            방문차량 등록
+        </button>
+        <button id="mypage"
+                class="btn btn-outline btn-primary">
+            마이페이지
+        </button>
+        <button id="none"
+                class="btn btn-outline btn-primary"
+                style="visibility:hidden">
+        </button>
+    </div>
+</main>
+</body>
+</html>
