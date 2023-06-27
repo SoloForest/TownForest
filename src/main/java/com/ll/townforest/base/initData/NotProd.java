@@ -19,6 +19,8 @@ import com.ll.townforest.boundedContext.apt.repository.AptAccountHouseRepository
 import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.apt.repository.HouseRepository;
+import com.ll.townforest.boundedContext.gym.entity.Gym;
+import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.library.entity.Library;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
@@ -35,7 +37,8 @@ public class NotProd {
 		HouseRepository houseRepository,
 		AptAccountHouseRepository aptAccountHouseRepository,
 		LibraryRepository libraryRepository,
-		SeatRepository seatRepository
+		SeatRepository seatRepository,
+		GymRepository gymRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -250,6 +253,12 @@ public class NotProd {
 						.build();
 					seatRepository.save(seatTemp);
 				}
+
+				Gym gym1 = Gym.builder()
+					.apt(apt1)
+					.name("forestGym")
+					.build();
+				gymRepository.save(gym1);
 			}
 		};
 	}
