@@ -11,7 +11,7 @@ public class GymController {
 
 	@GetMapping("/gym")
 	public String root() {
-		return "gym/Gym";
+		return "gym/gym";
 	}
 
 }
