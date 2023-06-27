@@ -19,6 +19,10 @@ import com.ll.townforest.boundedContext.apt.repository.AptAccountHouseRepository
 import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.apt.repository.HouseRepository;
+import com.ll.townforest.boundedContext.library.entity.Library;
+import com.ll.townforest.boundedContext.library.entity.Seat;
+import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
+import com.ll.townforest.boundedContext.library.repository.SeatRepository;
 
 @Configuration
 @Profile({"dev", "test"})
@@ -29,7 +33,9 @@ public class NotProd {
 		AptAccountRepository aptAccountRepository,
 		AptRepository aptRepository,
 		HouseRepository houseRepository,
-		AptAccountHouseRepository aptAccountHouseRepository
+		AptAccountHouseRepository aptAccountHouseRepository,
+		LibraryRepository libraryRepository,
+		SeatRepository seatRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -104,6 +110,7 @@ public class NotProd {
 					.build();
 				accountRepository.save(account7);
 
+				// 아파트 생성
 				Apt apt1 = Apt.builder()
 					.name("forest")
 					.maxApartment(500)
@@ -225,6 +232,24 @@ public class NotProd {
 					.house(houseRepository.findByDongAndHo(103, 2101))
 					.build();
 				aptAccountHouseRepository.save(aptAccountHouse1);
+
+				// 독서실 생성
+				Library library1 = Library.builder()
+					.apart(apt1) // aot1.name : forest
+					.name("forest library")
+					.maxPeople(100)
+					.seatingChart("librarySeat.png")
+					.build();
+				libraryRepository.save(library1);
+
+				// 독서실 좌석 생성
+				for (int i = 1; i <= library1.getMaxPeople(); i++) {
+					Seat seatTemp = Seat.builder()
+						.library(library1)
+						.seatNumber(i)
+						.build();
+					seatRepository.save(seatTemp);
+				}
 			}
 		};
 	}
