@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/account")
-public class AccountControlelr {
+public class AccountController {
 
 	@GetMapping("/login")
 	public String showLogin() {
