@@ -44,70 +44,64 @@ public class NotProd {
 			@Override
 			@Transactional
 			public void run(String... args) throws Exception {
-				Account act = Account.builder()
-					.password("12341234")
-					.username("aaaa")
-					.build();
-				accountRepository.save(act);
-
 				Account account1 = Account.builder()
-					.userId("admin")
-					.password("admin1!")
 					.username("admin")
+					.password("admin1!")
+					.fullName("admin")
 					.email("admin@test.com")
 					.phoneNumber("01012345678")
 					.build();
 				accountRepository.save(account1);
 
 				Account account2 = Account.builder()
-					.userId("library")
+					.username("library")
 					.password("library1!")
-					.username("library admin")
+					.fullName("library_admin")
 					.email("forestLibrary@test.com")
 					.phoneNumber("01056781234")
 					.build();
 				accountRepository.save(account2);
 
 				Account account3 = Account.builder()
-					.userId("gym")
+					.username("gym")
 					.password("gym1!")
-					.username("gym admin")
+					.fullName("gym_admin")
 					.email("gym@test.com")
 					.phoneNumber("01012341234")
 					.build();
 				accountRepository.save(account3);
 
 				Account account4 = Account.builder()
-					.userId("yujin11006")
+					.username("yujin11006")
 					.password("1234")
-					.username("방유진")
+					.fullName("방유진")
 					.email("yujin11006@test.com")
 					.phoneNumber("01000000000")
 					.build();
 				accountRepository.save(account4);
 
 				Account account5 = Account.builder()
-					.userId("bbosong")
+					.username("bbosong")
 					.password("bbosong1!")
-					.username("이송이")
+					.fullName("이송이")
 					.email("bbosong@test.com")
 					.phoneNumber("01098765432")
 					.build();
 				accountRepository.save(account5);
 
 				Account account6 = Account.builder()
-					.userId("chan")
+					.username("chan")
 					.password("0000")
-					.username("이은찬")
+					.fullName("이은찬")
 					.email("chan@test.com")
 					.phoneNumber("01033334444")
 					.build();
 				accountRepository.save(account6);
 
 				Account account7 = Account.builder()
-					.userId("puar12")
+					.username("puar12")
 					.password("1234")
-					.username("박철현")
+					.fullName("박철현")
 					.email("puar12@test.com")
 					.phoneNumber("01099999999")
 					.build();

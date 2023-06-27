@@ -26,11 +26,11 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(unique = true)
-	private String userId;
+	private String username;
 	@Column(nullable = false)
 	private String password;
 	@Column(nullable = false)
-	private String username;
+	private String fullName;
 	@Column(unique = true)
 	private String email;
 	@Column(unique = true)
