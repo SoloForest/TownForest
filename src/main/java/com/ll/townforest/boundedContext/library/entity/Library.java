@@ -39,7 +39,6 @@ public class Library {
 
 	@Column(nullable = false)
 	private Integer maxPeople;
-
-	// TODO: Picture 생성해서 이미지 받아올 수 있도록 만들기
-	// private MultipartFile seatingChart;
+	
+	private String seatingChart;
 }
