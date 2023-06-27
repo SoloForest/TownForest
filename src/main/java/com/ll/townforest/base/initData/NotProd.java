@@ -98,7 +98,7 @@ public class NotProd {
 				Account account7 = Account.builder()
 					.userId("puar12")
 					.password("1234")
-					.username("하울의 무빙 오지는 성")
+					.username("박철현")
 					.email("puar12@test.com")
 					.phoneNumber("01099999999")
 					.build();
@@ -106,10 +106,10 @@ public class NotProd {
 
 				Apt apt1 = Apt.builder()
 					.name("forest")
-					.maxApartment(1368)
-					.maxDong(9)
+					.maxApartment(500)
+					.maxDong(5)
 					.maxHo(4)
-					.maxFloor(38)
+					.maxFloor(25)
 					.build();
 				aptRepository.save(apt1);
 
