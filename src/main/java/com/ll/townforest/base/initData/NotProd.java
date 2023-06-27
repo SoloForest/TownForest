@@ -235,7 +235,7 @@ public class NotProd {
 
 				// 독서실 생성
 				Library library1 = Library.builder()
-					.apart(apt1) // aot1.name : forest
+					.apart(apt1) // apt1.name : forest
 					.name("forest library")
 					.maxPeople(100)
 					.seatingChart("librarySeat.png")
