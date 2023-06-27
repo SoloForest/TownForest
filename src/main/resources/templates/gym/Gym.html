@@ -2,11 +2,31 @@
 <head>
     <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE"></title>
 </head>
+<body>
+<main layout:fragment="main">
 
-<div>
-    <div class="card w-96 bg-base-100 shadow-xl">
-        <div class="card-body">
-            <p>We are using cookies for no reason.</p>
+    <div class="card-body bg-white shadow-xl m-1">
+        <div class="flex gap-2 items-center">
+            <i class="fa-solid fa-ticket" style="color: #91c0fd;"></i>
+            <h2 class="card-title">이용권 내역</h2>
+        </div>
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-user" style="color: #91c0fd;"></i>
+            <div class="flex items-center">
+                <p class="font-bold">홍길동</p>
+                <p>님</p>
+            </div>
+        </div>
+        <div class="flex wrap items-center gap-2">
+            <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+            <p>헬스장 이용 기간이</p>
+            <p class="font-bold">100</p>
+            <p>일 남았습니다.</p>
         </div>
     </div>
-</div>
+
+    <div class="btn btn-primary">
+        
+    </div>
+</main>
+</body>
