@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.boundedContext.account.entity.Account;
@@ -31,6 +32,7 @@ import com.ll.townforest.boundedContext.library.repository.SeatRepository;
 public class NotProd {
 	@Bean
 	CommandLineRunner initData(
+		PasswordEncoder passwordEncoder,
 		AccountRepository accountRepository,
 		AptAccountRepository aptAccountRepository,
 		AptRepository aptRepository,
@@ -46,7 +48,7 @@ public class NotProd {
 			public void run(String... args) throws Exception {
 				Account account1 = Account.builder()
 					.username("admin")
-					.password("admin1!")
+					.password(passwordEncoder.encode("admin1!"))
 					.fullName("admin")
 					.email("admin@test.com")
 					.phoneNumber("01012345678")
@@ -55,7 +57,7 @@ public class NotProd {
 
 				Account account2 = Account.builder()
 					.username("library")
-					.password("library1!")
+					.password(passwordEncoder.encode("library1!"))
 					.fullName("library_admin")
 					.email("forestLibrary@test.com")
 					.phoneNumber("01056781234")
@@ -64,7 +66,7 @@ public class NotProd {
 
 				Account account3 = Account.builder()
 					.username("gym")
-					.password("gym1!")
+					.password(passwordEncoder.encode("gym1!"))
 					.fullName("gym_admin")
 					.email("gym@test.com")
 					.phoneNumber("01012341234")
@@ -73,7 +75,7 @@ public class NotProd {
 
 				Account account4 = Account.builder()
 					.username("yujin11006")
-					.password("1234")
+					.password(passwordEncoder.encode("1234"))
 					.fullName("방유진")
 					.email("yujin11006@test.com")
 					.phoneNumber("01000000000")
@@ -82,7 +84,7 @@ public class NotProd {
 
 				Account account5 = Account.builder()
 					.username("bbosong")
-					.password("bbosong1!")
+					.password(passwordEncoder.encode("bbosong1!"))
 					.fullName("이송이")
 					.email("bbosong@test.com")
 					.phoneNumber("01098765432")
@@ -91,7 +93,7 @@ public class NotProd {
 
 				Account account6 = Account.builder()
 					.username("chan")
-					.password("0000")
+					.password(passwordEncoder.encode("0000"))
 					.fullName("이은찬")
 					.email("chan@test.com")
 					.phoneNumber("01033334444")
@@ -100,7 +102,7 @@ public class NotProd {
 
 				Account account7 = Account.builder()
 					.username("puar12")
-					.password("1234")
+					.password(passwordEncoder.encode("1234"))
 					.fullName("박철현")
 					.email("puar12@test.com")
 					.phoneNumber("01099999999")
