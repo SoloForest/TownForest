@@ -8,13 +8,15 @@
     <!-- 자리 배치 표 -->
     <img src="/librarySeat.png" alt="자리 배치 표" class="mx-[5%]">
     <!-- card ui, 독서실 자리 예약 (로그인 유저가 미이용중일 때) -->
-    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl" th:if="${isUsing == null}">
         <div class="card-body p-3">
             <h2 class="card-title">독서실 자리 예약</h2>
             <form>
                 <select class="select select-bordered w-full my-2">
                     <option disabled selected>예약 가능한 자리</option>
-                    <option>001번</option>
+                    <th:block th:each="seat : ${seats}">
+                        <option th:text="${#numbers.formatInteger(seat.seatNumber,3)} + '번'"></option>
+                    </th:block>
                 </select>
             </form>
             <div class="card-actions justify-end">
@@ -23,10 +25,12 @@
         </div>
     </div>
     <!-- card ui, 독서실 이용중 예약한 자리 번호 (로그인 유저가 이용중일 때) -->
-    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl" th:if="${isUsing != null}">
         <div class="card-body p-3">
             <h2 class="card-title">독서실 자리 예약</h2>
-            <p class="text-center my-2"><b>001</b>번 좌석을 이용중입니다.</p>
+            <p class="text-center my-2">
+                <b th:text="${#numbers.formatInteger(isUsing.seat.seatNumber,3)}"></b>번 좌석을 이용중입니다.
+            </p>
             <div class="card-actions justify-end">
                 <button class="btn btn-info btn-sm text-white">취소하기</button>
             </div>
