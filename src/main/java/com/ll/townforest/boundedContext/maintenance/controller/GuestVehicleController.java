@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GuestVehicleController {
 	@GetMapping("/register")
+	//@PreAuthorize("isAuthenticated()")
 	public String showPage() {
 		return "/guest/car_register";
 	}
