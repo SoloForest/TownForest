@@ -1,6 +1,11 @@
 package com.ll.townforest.boundedContext.account.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,4 +40,20 @@ public class Account {
 	private String email;
 	@Column(unique = true)
 	private String phoneNumber;
+
+	public List<? extends GrantedAuthority> getGrantedAuthorities() {
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+
+		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+		if (isAdmin()) {
+			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		}
+
+		return grantedAuthorities;
+	}
+
+	public boolean isAdmin() {
+		return "admin".equals(username);
+	}
 }
