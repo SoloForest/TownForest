@@ -17,13 +17,18 @@ public class GymController {
 	}
 
 	@GetMapping("/locker")
-	public String gymLocker() {
+	public String locker() {
 		return "gym/locker";
 	}
 
 	@GetMapping("/refund")
-	public String gymRefund() {
+	public String refund() {
 		return "gym/refund";
+	}
+
+	@GetMapping("/register")
+	public String register() {
+		return "gym/register";
 	}
 
 }

@@ -48,9 +48,10 @@ public class GymHistory {
 	private int paymentMethod;
 	/*
 	이용권 종류
-	0: 30일권
-	1: 60일권
-	2: 90일권
+	0 : 1일권
+	1 : 30일권
+	2 : 60일권
+	3: 90일권
 	*/
 	private int passType;
 	/*
