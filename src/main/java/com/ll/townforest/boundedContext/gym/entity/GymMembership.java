@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,4 +40,9 @@ public class GymMembership {
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
 	private LocalDateTime paymentDate;
+	// 기간 만료 전에 연장했을 경우 이용권 2개 이상일 테지만, 1:1 관계로 맺음
+	// user와의 관계가 N:1 이므로, 이용권 당 1개의 Membership 객체를 가지면 됨
+	@OneToOne
+	private GymTicket gymTicket;
+
 }

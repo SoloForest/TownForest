@@ -20,7 +20,9 @@ import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.apt.repository.HouseRepository;
 import com.ll.townforest.boundedContext.gym.entity.Gym;
+import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
+import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
 import com.ll.townforest.boundedContext.library.entity.Library;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
@@ -38,7 +40,8 @@ public class NotProd {
 		AptAccountHouseRepository aptAccountHouseRepository,
 		LibraryRepository libraryRepository,
 		SeatRepository seatRepository,
-		GymRepository gymRepository
+		GymRepository gymRepository,
+		GymTicketRepository gymTicketRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -259,6 +262,46 @@ public class NotProd {
 					.name("forestGym")
 					.build();
 				gymRepository.save(gym1);
+
+				GymTicket gymTicket1 = GymTicket.builder()
+					.price(1000)
+					.type(1)
+					.apt(apt1)
+					.gym(gym1)
+					.name("1일권")
+					.build();
+
+				gymTicketRepository.save(gymTicket1);
+
+				GymTicket gymTicket2 = GymTicket.builder()
+					.price(30000)
+					.type(2)
+					.apt(apt1)
+					.gym(gym1)
+					.name("30일권")
+					.build();
+
+				gymTicketRepository.save(gymTicket2);
+
+				GymTicket gymTicket3 = GymTicket.builder()
+					.price(54000)
+					.type(3)
+					.content("10% 할인가")
+					.apt(apt1)
+					.gym(gym1)
+					.name("60일권")
+					.build();
+
+				gymTicketRepository.save(gymTicket3);
+				GymTicket gymTicket4 = GymTicket.builder()
+					.price(72000)
+					.type(4)
+					.content("20% 할인가")
+					.apt(apt1)
+					.gym(gym1)
+					.name("90일권")
+					.build();
+				gymTicketRepository.save(gymTicket4);
 			}
 		};
 	}
