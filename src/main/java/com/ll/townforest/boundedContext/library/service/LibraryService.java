@@ -82,6 +82,10 @@ public class LibraryService {
 			.statusType(0)
 			.build());
 
+		seatRepository.save(seat.toBuilder()
+			.status(1)
+			.build());
+
 		return "%03d번 좌석을 예약했습니다.".formatted(selectedSeat);
 	}
 }
