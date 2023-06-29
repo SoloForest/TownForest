@@ -51,8 +51,9 @@ public class LibraryHistory {
 	private LocalDateTime date;
 
 	/*
-	 * 0: 취소(반납)
-	 * 1: 예약
+	 * 0: 예약
+	 * 1: 취소(반납)
+	 * 2: 자동취소
 	 * */
 	@Column(nullable = false)
 	private Integer statusType;

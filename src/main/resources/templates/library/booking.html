@@ -1,0 +1,116 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">독서실 이용</title>
+</head>
+<body>
+<!-- main -->
+<main layout:fragment="main" class="flex flex-col">
+    <!-- 자리 배치 표 -->
+    <img src="/librarySeat.png" alt="자리 배치 표" class="mx-[5%]">
+    <!-- card ui, 독서실 자리 예약 (로그인 유저가 미이용중일 때) -->
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+        <div class="card-body p-3">
+            <h2 class="card-title">독서실 자리 예약</h2>
+            <form>
+                <select class="select select-bordered w-full my-2">
+                    <option disabled selected>예약 가능한 자리</option>
+                    <option>001번</option>
+                </select>
+            </form>
+            <div class="card-actions justify-end">
+                <button class="btn btn-info btn-sm text-white">예약하기</button>
+            </div>
+        </div>
+    </div>
+    <!-- card ui, 독서실 이용중 예약한 자리 번호 (로그인 유저가 이용중일 때) -->
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+        <div class="card-body p-3">
+            <h2 class="card-title">독서실 자리 예약</h2>
+            <p class="text-center my-2"><b>001</b>번 좌석을 이용중입니다.</p>
+            <div class="card-actions justify-end">
+                <button class="btn btn-info btn-sm text-white">취소하기</button>
+            </div>
+        </div>
+    </div>
+    <!-- card ui, 이용내역 -->
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+        <div class="card-body p-3">
+            <h2 class="card-title">이용 내역</h2>
+
+            <div class="overflow-x-auto">
+                <table class="table text-center">
+                    <!-- head -->
+                    <thead>
+                    <tr>
+                        <th>Date.</th>
+                        <th>Seat No.</th>
+                        <th>Status.</th>
+                    </tr>
+                    </thead>
+
+                    <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
+                    <tbody>
+                    <!-- row 1 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>예약</td>
+                    </tr>
+                    <!-- row 2 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>취소</td>
+                    </tr>
+                    <!-- row 3 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>예약</td>
+                    </tr>
+                    <!-- row 4 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>취소</td>
+                    </tr>
+                    <!-- row 5 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>예약</td>
+                    </tr>
+                    <!-- row 6 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>취소</td>
+                    </tr>
+                    <!-- row 7 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>예약</td>
+                    </tr>
+                    <!-- row 8 -->
+                    <tr>
+                        <td>2023.06.27</td>
+                        <td>001</td>
+                        <td>자동취소</td>
+                    </tr>
+                    <!-- row 9 -->
+                    <tr>
+                        <td>2023.06.26</td>
+                        <td>001</td>
+                        <td>예약</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!-- 남은 리스트가 없다면 더보기 버튼 보이지 않도록 변경하기 -->
+                <button id="more" class="btn btn-info btn-outline btn-sm w-full">더보기</button>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
