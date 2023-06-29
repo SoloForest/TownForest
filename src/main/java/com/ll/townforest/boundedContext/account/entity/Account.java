@@ -46,14 +46,6 @@ public class Account {
 
 		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-		if (isAdmin()) {
-			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-		}
-
 		return grantedAuthorities;
-	}
-
-	public boolean isAdmin() {
-		return "admin".equals(username);
 	}
 }
