@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.boundedContext.account.entity.Account;
@@ -31,6 +32,7 @@ import com.ll.townforest.boundedContext.library.repository.SeatRepository;
 public class NotProd {
 	@Bean
 	CommandLineRunner initData(
+		PasswordEncoder passwordEncoder,
 		AccountRepository accountRepository,
 		AptAccountRepository aptAccountRepository,
 		AptRepository aptRepository,
@@ -44,70 +46,64 @@ public class NotProd {
 			@Override
 			@Transactional
 			public void run(String... args) throws Exception {
-				Account act = Account.builder()
-					.password("12341234")
-					.username("aaaa")
-					.build();
-				accountRepository.save(act);
-
 				Account account1 = Account.builder()
-					.userId("admin")
-					.password("admin1!")
 					.username("admin")
+					.password(passwordEncoder.encode("admin1!"))
+					.fullName("admin")
 					.email("admin@test.com")
 					.phoneNumber("01012345678")
 					.build();
 				accountRepository.save(account1);
 
 				Account account2 = Account.builder()
-					.userId("library")
-					.password("library1!")
-					.username("library admin")
+					.username("library")
+					.password(passwordEncoder.encode("library1!"))
+					.fullName("library_admin")
 					.email("forestLibrary@test.com")
 					.phoneNumber("01056781234")
 					.build();
 				accountRepository.save(account2);
 
 				Account account3 = Account.builder()
-					.userId("gym")
-					.password("gym1!")
-					.username("gym admin")
+					.username("gym")
+					.password(passwordEncoder.encode("gym1!"))
+					.fullName("gym_admin")
 					.email("gym@test.com")
 					.phoneNumber("01012341234")
 					.build();
 				accountRepository.save(account3);
 
 				Account account4 = Account.builder()
-					.userId("yujin11006")
-					.password("1234")
-					.username("방유진")
+					.username("yujin11006")
+					.password(passwordEncoder.encode("1234"))
+					.fullName("방유진")
 					.email("yujin11006@test.com")
 					.phoneNumber("01000000000")
 					.build();
 				accountRepository.save(account4);
 
 				Account account5 = Account.builder()
-					.userId("bbosong")
-					.password("bbosong1!")
-					.username("이송이")
+					.username("bbosong")
+					.password(passwordEncoder.encode("bbosong1!"))
+					.fullName("이송이")
 					.email("bbosong@test.com")
 					.phoneNumber("01098765432")
 					.build();
 				accountRepository.save(account5);
 
 				Account account6 = Account.builder()
-					.userId("chan")
-					.password("0000")
-					.username("이은찬")
+					.username("chan")
+					.password(passwordEncoder.encode("0000"))
+					.fullName("이은찬")
 					.email("chan@test.com")
 					.phoneNumber("01033334444")
 					.build();
 				accountRepository.save(account6);
 
 				Account account7 = Account.builder()
-					.userId("puar12")
-					.password("1234")
-					.username("박철현")
+					.username("puar12")
+					.password(passwordEncoder.encode("1234"))
+					.fullName("박철현")
 					.email("puar12@test.com")
 					.phoneNumber("01099999999")
 					.build();

@@ -4,19 +4,54 @@
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <script>
+        function LoginForm__submit(form) {
+
+            form.username.value = form.username.trim();
+
+            if (form.username.value.length === 0) {
+                form.username.focus();
+                return;
+            }
+
+            if (form.username.value.length < 4) {
+                form.username.focus();
+                return;
+            }
+
+            form.password.value = form.password.value.trim();
+
+            if (form.password.value.length === 0) {
+                form.password.focus();
+                return;
+            }
+
+            if (form.password.value.length < 4) {
+                form.password.focus();
+                return;
+            }
+
+            form.submit();
+        }
+    </script>
+
     <div class="max-w-2xl w-full px-5">
         <h1 class="text-center text-2xl font-bold mb-10">로그인</h1>
 
-        <form class="flex flex-col gap-6">
+        <form th:action method="POST" class="flex flex-col gap-6" onsubmit="LoginForm__submit(this); return false;">
             <div class="form-control">
-                <input type="text" name="userId" maxlength="20"
-                       class="input input-bordered input-primary"
-                       placeholder="아이디"/>
+                <label>
+                    <input type="text" name="username" maxlength="20"
+                           class="input input-bordered input-primary w-full"
+                           placeholder="아이디"/>
+                </label>
             </div>
             <div class="form-control">
-                <input type="password" name="password" maxlength="20"
-                       class="input input-bordered input-primary"
-                       placeholder="비밀번호"/>
+                <label>
+                    <input type="password" name="password" maxlength="20"
+                           class="input input-bordered input-primary w-full"
+                           placeholder="비밀번호"/>
+                </label>
             </div>
 
             <button id="btn-login" class="btn btn-block btn-primary">
