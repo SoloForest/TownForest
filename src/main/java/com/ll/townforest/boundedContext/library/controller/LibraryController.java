@@ -11,13 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
-import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
-import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
-import com.ll.townforest.boundedContext.library.repository.LibraryHistoryRepository;
-import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
-import com.ll.townforest.boundedContext.library.repository.SeatRepository;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,11 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/library")
 public class LibraryController {
 	private final LibraryService libraryService;
-	private final AptAccountRepository aptAccountRepository;
-	private final SeatRepository seatRepository;
-	private final LibraryHistoryRepository libraryHistoryRepository;
-	private final AptRepository aptRepository;
-	private final LibraryRepository libraryRepository;
 
 	@GetMapping("/booking")
 	//@PreAuthorize("isAuthenticated()")
