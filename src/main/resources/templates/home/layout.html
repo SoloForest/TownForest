@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html data-theme="corporate" lang="ko"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://jhs512.github.io/toastr/toastr.css">
+    <script src="/common/toastr.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.5/dist/full.css" rel="stylesheet" type="text/css"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,7 +16,7 @@
     <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">TownForest</title>
 </head>
 <body>
-<div class="navbar bg-base-100">
+<div class="navbar bg-base-100 sticky top-0">
     <div class="navbar-start">
         <div class="btn btn-ghost btn-circle"><i class="fa-solid fa-arrow-left"></i></div>
     </div>
@@ -23,6 +26,9 @@
         </a>
     </div>
     <div class="navbar-end">
+        <a class="btn btn-ghost" sec:authorize="isAuthenticated()" href="javascript:"
+           onclick="$(this).next().submit();">로그아웃</a>
+        <form class="!hidden" th:action="|/account/logout|" method="POST"></form>
         <button class="btn btn-ghost btn-circle">
             <div class="indicator">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -38,5 +44,28 @@
 <!-- main -->
 <main layout:fragment="main"></main>
 
+<script th:inline="javascript">
+    // 타임리프 문법(파라미터, ? 뒤에 입력된 매개변수들)
+    const params = /*[[ ${param} ]]*/ null;
+
+    if (params.msg) {
+        toastNotice(params.msg[0]);
+    }
+
+    if (params.errorMsg) {
+        toastWarning(params.errorMsg[0]);
+    }
+
+    // history.back 에 의해서 돌아온 경우에 실행됨
+    // 평소에도 실행됨
+    $(window).bind("pageshow", function (event) {
+        const localStorageKeyAboutHistoryBackErrorMsg = "historyBackErrorMsg___" + location.href;
+
+        if (localStorage.getItem(localStorageKeyAboutHistoryBackErrorMsg)) {
+            toastWarning(localStorage.getItem(localStorageKeyAboutHistoryBackErrorMsg));
+            localStorage.removeItem(localStorageKeyAboutHistoryBackErrorMsg);
+        }
+    });
+</script>
 </body>
 </html>
