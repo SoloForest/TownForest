@@ -62,6 +62,12 @@ public class LibraryService {
 		) {
 			return RsData.of("F-1", "해당 아파트 독서실 이용권한이 없습니다.", null);
 		}
+
+		Optional<LibraryHistory> optLibraryHistory = lastUsingOfDay(aptAccountId);
+		if (optLibraryHistory.isPresent() && optLibraryHistory.get().getStatusType().equals(0)) {
+			return RsData.of("F-2", "이미 이용중인 독서실 자리가 있습니다.", null);
+		}
+
 		return RsData.of("S-1", "해당 아파트 독서실 이용에 문제 없는 계정입니다.", optAptAccount.get());
 	}
 
