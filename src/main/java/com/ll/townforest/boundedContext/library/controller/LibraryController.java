@@ -52,16 +52,14 @@ public class LibraryController {
 	public String Booking(@RequestParam("selectedSeat") int selectedSeat) {
 		Long aptAccountId = 5L;
 		AptAccount user = libraryService.canBooking(aptAccountId);
-		// Optional<AptAccount> optAptAccount = aptAccountRepository.findById(aptAccountId);
-		// if (optAptAccount.isEmpty() || !optAptAccount.get().getApt().getId().equals(1L)) {
-		// 	return "해당 아파트 독서실 이용권한이 없습니다.";
-		// }
+		if (user == null) {
+			return "해당 아파트 독서실 이용권한이 없습니다.";
+		}
 
 		Seat seat = libraryService.canBooking(selectedSeat);
-		// Optional<Seat> optSeat = seatRepository.findBySeatNumber(selectedSeat);
-		// if (optSeat.isEmpty() || optSeat.get().getStatus() != 0) {
-		// 	return "사용 불가능한 자리입니다.";
-		// }
+		if (seat == null) {
+			return "사용 불가능한 자리입니다.";
+		}
 
 		return libraryService.booking(user, seat, selectedSeat);
 	}

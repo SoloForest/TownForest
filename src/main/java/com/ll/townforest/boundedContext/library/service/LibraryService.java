@@ -55,7 +55,10 @@ public class LibraryService {
 
 	public AptAccount canBooking(Long aptAccountId) {
 		Optional<AptAccount> optAptAccount = aptAccountRepository.findById(aptAccountId);
-		if (optAptAccount.isEmpty() || !optAptAccount.get().getApt().getId().equals(1L)) {
+		if (optAptAccount.isEmpty()
+			|| !optAptAccount.get().getApt().getId().equals(1L)
+			|| !optAptAccount.get().isStatus()
+		) {
 			return null; // 해당 아파트 독서실 이용권한이 없습니다.
 		}
 		return optAptAccount.get();
