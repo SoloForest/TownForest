@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
@@ -36,7 +37,7 @@ public class LibraryService {
 		return seatRepository.findByLibraryIdAndStatus(libraryId, 0);
 	}
 
-	public Optional<LibraryHistory> lastUsingOfDay(Long aptAccountId) {
+	private Optional<LibraryHistory> lastUsingOfDay(Long aptAccountId) {
 		LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
 		LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
 
@@ -53,26 +54,26 @@ public class LibraryService {
 		return optLibraryHistory.get();
 	}
 
-	public AptAccount canBooking(Long aptAccountId) {
+	public RsData<AptAccount> canBooking(Long aptAccountId) {
 		Optional<AptAccount> optAptAccount = aptAccountRepository.findById(aptAccountId);
 		if (optAptAccount.isEmpty()
 			|| !optAptAccount.get().getApt().getId().equals(1L)
 			|| !optAptAccount.get().isStatus()
 		) {
-			return null; // 해당 아파트 독서실 이용권한이 없습니다.
+			return RsData.of("F-1", "해당 아파트 독서실 이용권한이 없습니다.", null);
 		}
-		return optAptAccount.get();
+		return RsData.of("S-1", "해당 아파트 독서실 이용에 문제 없는 계정입니다.", optAptAccount.get());
 	}
 
-	public Seat canBooking(int seatNumber) {
+	public RsData<Seat> canBooking(int seatNumber) {
 		Optional<Seat> optSeat = seatRepository.findBySeatNumber(seatNumber);
 		if (optSeat.isEmpty() || optSeat.get().getStatus() != 0) {
-			return null; // 사용 불가능한 자리입니다.
+			return RsData.of("F-1", "사용 불가능한 자리입니다.", null);
 		}
-		return optSeat.get();
+		return RsData.of("S-1", "예약에 문제 없는 자리입니다.", optSeat.get());
 	}
 
-	public String booking(AptAccount user, Seat seat, int selectedSeat) {
+	public RsData<String> booking(AptAccount user, Seat seat, int selectedSeat) {
 		libraryHistoryRepository.save(LibraryHistory.builder()
 			.apart(aptRepository.findById(1L).orElse(null))
 			.library(libraryRepository.findById(1L).orElse(null))
@@ -86,6 +87,6 @@ public class LibraryService {
 			.status(1)
 			.build());
 
-		return "%03d번 좌석을 예약했습니다.".formatted(selectedSeat);
+		return RsData.of("S-1", "%03d번 자리를 예약했습니다.".formatted(selectedSeat));
 	}
 }

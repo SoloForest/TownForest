@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
@@ -41,16 +42,16 @@ public class LibraryController {
 	//@PreAuthorize("isAuthenticated()")
 	public String Booking(@RequestParam("selectedSeat") int selectedSeat) {
 		Long aptAccountId = 5L;
-		AptAccount user = libraryService.canBooking(aptAccountId);
-		if (user == null) {
-			return "해당 아파트 독서실 이용권한이 없습니다.";
+		RsData<AptAccount> canBookingUser = libraryService.canBooking(aptAccountId);
+		if (canBookingUser.isFail()) {
+			return canBookingUser.getMsg();
 		}
 
-		Seat seat = libraryService.canBooking(selectedSeat);
-		if (seat == null) {
-			return "사용 불가능한 자리입니다.";
+		RsData<Seat> canBookingSeat = libraryService.canBooking(selectedSeat);
+		if (canBookingSeat.isFail()) {
+			return canBookingSeat.getMsg();
 		}
 
-		return libraryService.booking(user, seat, selectedSeat);
+		return libraryService.booking(canBookingUser.getData(), canBookingSeat.getData(), selectedSeat).getMsg();
 	}
 }
