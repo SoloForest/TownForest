@@ -1,7 +1,6 @@
 package com.ll.townforest.boundedContext.library.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,11 +37,11 @@ public class LibraryController {
 	//@PreAuthorize("isAuthenticated()")
 	public String showBooking(Model model) {
 		Long aptAccountId = 5L;
-		Optional<LibraryHistory> isUsing = libraryService.lastUsingOfDay(aptAccountId);
+		LibraryHistory isUsing = libraryService.usingHistory(aptAccountId);
 
 		List<Seat> seats = libraryService.findUseableList(1L);
 
-		model.addAttribute("isUsing", isUsing.orElse(null));
+		model.addAttribute("isUsing", isUsing);
 		model.addAttribute("seats", seats);
 		return "library/booking";
 	}

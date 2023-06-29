@@ -44,6 +44,15 @@ public class LibraryService {
 			.findTopByUserIdAndDateBetweenOrderByDateDesc(aptAccountId, startOfDay, endOfDay);
 	}
 
+	public LibraryHistory usingHistory(Long aptAccountId) {
+		Optional<LibraryHistory> optLibraryHistory = lastUsingOfDay(aptAccountId);
+
+		if (optLibraryHistory.isEmpty() || !optLibraryHistory.get().getStatusType().equals(0)) {
+			return null;
+		}
+		return optLibraryHistory.get();
+	}
+
 	public AptAccount canBooking(Long aptAccountId) {
 		Optional<AptAccount> optAptAccount = aptAccountRepository.findById(aptAccountId);
 		if (optAptAccount.isEmpty() || !optAptAccount.get().getApt().getId().equals(1L)) {
