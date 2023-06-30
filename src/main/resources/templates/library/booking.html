@@ -1,6 +1,7 @@
 <html layout:decorate="~{home/layout.html}">
 <head>
     <title>독서실 이용</title>
+    <script src="/js/dateUtil.js"></script>
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta name="_csrf" th:content="${_csrf.token}">
 </head>
@@ -66,7 +67,7 @@
                     <tbody id="contentList">
                     <!-- row 1 -->
                     <tr th:each="history : ${histories}">
-                        <td th:text="${history.date}"></td>
+                        <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd HH:mm:ss')}"></td>
                         <td th:text="${history.seat.seatNumber}"></td>
                         <td th:text="${history.getStatusTypeToString()}"></td>
                     </tr>
@@ -105,7 +106,7 @@
                     // 결과가 성공적으로 수신되면 테이블에 로우 추가
                     $.each(data.content, function (index, history) {
                         let newRow = `<tr>
-                        <td>${history.date}</td>
+                        <td>${dateFormat(history.date)}</td>
                         <td>${history.seat.seatNumber}</td>
                         <td>${history.statusTypeToString}</td>
                       </tr>`;
