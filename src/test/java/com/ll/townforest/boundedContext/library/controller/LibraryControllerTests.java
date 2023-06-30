@@ -102,7 +102,7 @@ public class LibraryControllerTests {
 	@WithUserDetails("yujin11006")
 	void t005() throws Exception {
 		ResultActions resultActions = mvc
-			.perform(post("/library/cancel/1")
+			.perform(post("/library/cancel")
 				.with(csrf()))
 			.andDo(print());
 
@@ -122,7 +122,7 @@ public class LibraryControllerTests {
 		mvc.perform(post("/library/booking").with(csrf()).param("selectedSeat", "1")).andDo(print());
 
 		ResultActions resultActions = mvc
-			.perform(post("/library/cancel/1")
+			.perform(post("/library/cancel")
 				.with(csrf()))
 			.andDo(print());
 
