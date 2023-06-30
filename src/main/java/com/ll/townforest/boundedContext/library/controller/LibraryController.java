@@ -41,7 +41,7 @@ public class LibraryController {
 	@PostMapping("/booking")
 	@ResponseBody
 	@PreAuthorize("isAuthenticated()")
-	public String Booking(@RequestParam("selectedSeat") int selectedSeat) {
+	public String booking(@RequestParam("selectedSeat") int selectedSeat) {
 		RsData<AptAccount> canBookingUser = libraryService.canBooking(rq.getAptAccount().getId());
 		if (canBookingUser.isFail()) {
 			return canBookingUser.getMsg();
