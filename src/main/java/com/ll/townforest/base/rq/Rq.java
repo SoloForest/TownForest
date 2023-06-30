@@ -76,6 +76,7 @@ public class Rq {
 		if (isLogout())
 			return null;
 
+		getAccount();
 		// 데이터가 없는지 체크
 		if (aptAccount == null) {
 			aptAccount = aptAccountService.findByAccount(account).orElseThrow();
