@@ -72,6 +72,7 @@
                 </table>
                 <!-- 남은 리스트가 없다면 더보기 버튼 보이지 않도록 변경하기 -->
                 <button id="more" class="btn btn-info btn-outline btn-sm w-full"
+                        th:if="${histories.numberOfElements} >= 5"
                         onclick="event.preventDefault(); loadHistories()">
                     더보기
                 </button>
