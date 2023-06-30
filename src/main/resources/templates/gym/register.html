@@ -1,0 +1,120 @@
+<html layout:decorate="~{home/layout.html}">
+
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">이용권구입</title>
+    <link rel="stylesheet" href="/css/calender.css">
+    <script src="/js/calender.js"></script>
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+</head>
+
+<body>
+
+<main layout:fragment="main" class="flex items-center justify-center">
+    <div class="px-4 flex flex-col">
+        <div class="flex gap-2 items-center justify-center">
+            <i class="fa-solid fa-ticket" style="color: #91c0fd;"></i>
+            <h2 class="card-title">이용권 구입</h2>
+        </div>
+
+        <div class="card-body bg-base-100 shadow-xl m-2 mt-4">
+            <div class="flex wrap items-center gap-2">
+                <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+                <h2 class="font-bold">이용권 정보</h2>
+            </div>
+            <div class="form-control flex gap-2 mt-2">
+                <label th:each="ticket : ${gymTicketList}" class="flex items-center gap-2">
+                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"/>
+                    <span class="label-text" th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
+                          th:value="${ticket.price}"></span>
+                    <div class="font-bold" th:if="${ticket.content != null}"
+                         th:text="${'(' + ticket.content + ')'}"></div>
+                </label>
+            </div>
+
+            <div class="mt-4">
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+                    <h2 class="font-bold">이용 시작일 지정</h2>
+                </div>
+                <!-- 캘린더 날짜 선택 -->
+                <div class="flex justify-center mt-2">
+                    <table class="Calendar">
+                        <thead>
+                        <tr>
+                            <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                            <td colspan="5">
+                                <span id="calYear"></span>년
+                                <span id="calMonth"></span>월
+                            </td>
+                            <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+                        </tr>
+                        <tr>
+                            <td>일</td>
+                            <td>월</td>
+                            <td>화</td>
+                            <td>수</td>
+                            <td>목</td>
+                            <td>금</td>
+                            <td>토</td>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <input id="selectedDate" class="hidden"/>
+            </div>
+        </div>
+        <div class="flex justify-end wrap items-center gap-2">
+            <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+            <p>결제금액 : </p>
+            <div id="payment-amount"></div>
+        </div>
+        <div class="flex justify-end">
+            <button id="payment-button" class="btn shadow-xl m-2" style="background-color: #91c0fd;">결제하기</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- 체크박스 선택 시 이전 선택한거 삭제 후 선택, 선택된 폰트 굵게 -->
+    <script th:inline="javascript">
+        const checkboxes = document.querySelectorAll('.checkbox');
+        const paymentAmountElement = document.getElementById('payment-amount');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    checkboxes.forEach(c => {
+                        if (c !== checkbox) {
+                            c.checked = false;
+                            c.nextElementSibling.classList.remove('font-semibold');
+                        }
+                    });
+
+                    // 체크박스 선택된 것의 다음 요소에서 value 속성값을 가져옴
+                    const value = checkbox.nextElementSibling.getAttribute('value');
+                    // 선택된 체크박스의 글꼴을 굵게 설정
+                    checkbox.nextElementSibling.classList.add('font-semibold');
+                    // 천단위 구분기호 변환 + 원 붙여주고 글꼴 굵게
+                    const paymentAmount = parseInt(value);
+                    const formattedPaymentAmount = paymentAmount.toLocaleString();
+                    paymentAmountElement.textContent = formattedPaymentAmount + '원';
+                    paymentAmountElement.classList.add('font-semibold');
+                }
+                // 체크박스 선택이 풀렸을 떄
+                else {
+                    checkbox.nextElementSibling.classList.remove('font-semibold');
+                    paymentAmountElement.textContent = '';
+                    paymentAmountElement.classList.remove('font-semibold');
+                }
+            });
+        });
+
+    </script>
+
+
+</main>
+</body>
+</html>
+
