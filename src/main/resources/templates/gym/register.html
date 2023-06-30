@@ -24,7 +24,8 @@
             <div class="form-control flex gap-2 mt-2">
                 <label th:each="ticket : ${gymTicketList}" class="flex items-center gap-2">
                     <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"/>
-                    <span class="label-text" th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
+                    <span class="label-text"
+                          th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
                           th:value="${ticket.price}"></span>
                     <div class="font-bold" th:if="${ticket.content != null}"
                          th:text="${'(' + ticket.content + ')'}"></div>
@@ -65,14 +66,33 @@
                 </div>
                 <input id="selectedDate" class="hidden"/>
             </div>
+
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-comments-dollar" style="color: #91c0fd;"></i>
+                <div class="font-bold">결제방식</div>
+            </div>
+
+            <div class="flex justify-center items-center gap-4 mt-2">
+                <label class="flex items-center gap-1" >
+                    <input type="radio" class="radio radio-info radio-sm" name="method" value="카드" onchange="updateFontWeight(this)"/>
+                    <i class="fa-regular fa-credit-card" style="color: #91c0fd;"></i>
+                    <span id="creditCardLabel">신용카드</span>
+                </label>
+                <label class="flex items-center gap-1">
+                    <input type="radio" class="radio radio-info radio-sm" name="method" value="가상계좌" onchange="updateFontWeight(this)"/>
+                    <i class="fa-solid fa-piggy-bank" style="color: #91c0fd;"></i>
+                    <span id="virtualAccountLabel">가상계좌</span>
+                </label>
+            </div>
         </div>
+
         <div class="flex justify-end wrap items-center gap-2">
             <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
             <p>결제금액 : </p>
             <div id="payment-amount"></div>
         </div>
         <div class="flex justify-end">
-            <button id="payment-button" class="btn shadow-xl m-2" style="background-color: #91c0fd;">결제하기</button>
+            <button id="payment-button" class="btn shadow-xl m-2 button is-link" style="background-color: #91c0fd;">결제하기</button>
         </div>
     </div>
     </div>
@@ -111,6 +131,48 @@
             });
         });
 
+    </script>
+    <script>
+        // 라디오박스 선택 시 폰트 굵게
+        function updateFontWeight(checkbox) {
+            const creditCardLabel = document.getElementById("creditCardLabel");
+            const virtualAccountLabel = document.getElementById("virtualAccountLabel");
+
+            if (checkbox.value === "카드") {
+                creditCardLabel.classList.add("font-bold");
+                virtualAccountLabel.classList.remove("font-bold");
+            } else if (checkbox.value === "가상계좌") {
+                creditCardLabel.classList.remove("font-bold");
+                virtualAccountLabel.classList.add("font-bold");
+            }
+        }
+    </script>
+
+    <script src="https://js.tosspayments.com/v1"></script>
+    <script>
+        var tossPayments = TossPayments("test_ck_lpP2YxJ4K877wRwQ1Lp8RGZwXLOb");
+        var button = document.getElementById("payment-button");
+
+        var orderId = new Date().getTime();
+
+        button.addEventListener("click", function () {
+            var method = document.querySelector('input[name=method]:checked').value; // "카드" 혹은 "가상계좌"
+
+            var paymentData = {
+                amount: 19000,
+                orderId: orderId,
+                orderName: "토스 티셔츠",
+                customerName: "이토페",
+                successUrl: window.location.origin + "/success",
+                failUrl: window.location.origin + "/fail",
+            };
+
+            if (method === '가상계좌') {
+                paymentData.virtualAccountCallbackUrl = window.location.origin + '/virtual-account/callback'
+            }
+
+            tossPayments.requestPayment(method, paymentData);
+        });
     </script>
 
 
