@@ -112,7 +112,7 @@ public class LibraryControllerTests {
 			.andExpect(status().is2xxSuccessful());
 
 		assertThat(resultActions.andReturn().getResponse().getContentAsString())
-			.isEqualTo("이용중인 자리가 아닙니다.");
+			.isEqualTo("이용중인 독서실 자리가 없습니다.");
 	}
 
 	@Test
