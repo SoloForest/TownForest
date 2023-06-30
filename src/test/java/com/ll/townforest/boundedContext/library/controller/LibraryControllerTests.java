@@ -96,4 +96,42 @@ public class LibraryControllerTests {
 		assertThat(resultActions.andReturn().getResponse().getContentAsString())
 			.isEqualTo("001번 자리를 예약했습니다.");
 	}
+
+	@Test
+	@DisplayName("독서실 자리 예약 취소")
+	@WithUserDetails("yujin11006")
+	void t005() throws Exception {
+		ResultActions resultActions = mvc
+			.perform(post("/library/cancel")
+				.with(csrf()))
+			.andDo(print());
+
+		resultActions
+			.andExpect(handler().handlerType(LibraryController.class))
+			.andExpect(handler().methodName("cancel"))
+			.andExpect(status().is2xxSuccessful());
+
+		assertThat(resultActions.andReturn().getResponse().getContentAsString())
+			.isEqualTo("이용중인 독서실 자리가 없습니다.");
+	}
+
+	@Test
+	@DisplayName("독서실 자리 예약 취소")
+	@WithUserDetails("yujin11006")
+	void t006() throws Exception {
+		mvc.perform(post("/library/booking").with(csrf()).param("selectedSeat", "1")).andDo(print());
+
+		ResultActions resultActions = mvc
+			.perform(post("/library/cancel")
+				.with(csrf()))
+			.andDo(print());
+
+		resultActions
+			.andExpect(handler().handlerType(LibraryController.class))
+			.andExpect(handler().methodName("cancel"))
+			.andExpect(status().is2xxSuccessful());
+
+		assertThat(resultActions.andReturn().getResponse().getContentAsString())
+			.isEqualTo("001번 자리 이용을 취소합니다.");
+	}
 }

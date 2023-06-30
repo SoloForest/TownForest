@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
@@ -68,7 +69,7 @@ public class LibraryService {
 			return RsData.of("F-2", "이미 이용중인 독서실 자리가 있습니다.", null);
 		}
 
-		return RsData.of("S-1", "해당 아파트 독서실 이용에 문제 없는 계정입니다.", optAptAccount.get());
+		return RsData.of("S-1", "해당 아파트 독서실 자리 예약에 문제 없는 계정입니다.", optAptAccount.get());
 	}
 
 	public RsData<Seat> canBooking(int seatNumber) {
@@ -79,6 +80,7 @@ public class LibraryService {
 		return RsData.of("S-1", "예약에 문제 없는 자리입니다.", optSeat.get());
 	}
 
+	@Transactional
 	public RsData<String> booking(AptAccount user, Seat seat, int selectedSeat) {
 		libraryHistoryRepository.save(LibraryHistory.builder()
 			.apart(aptRepository.findById(1L).orElse(null))
@@ -94,5 +96,52 @@ public class LibraryService {
 			.build());
 
 		return RsData.of("S-1", "%03d번 자리를 예약했습니다.".formatted(selectedSeat));
+	}
+
+	public RsData<AptAccount> canCancel(Long aptAccountId) {
+		Optional<AptAccount> optAptAccount = aptAccountRepository.findById(aptAccountId);
+		if (optAptAccount.isEmpty()
+			|| !optAptAccount.get().getApt().getId().equals(1L)
+			|| !optAptAccount.get().isStatus()
+		) {
+			return RsData.of("F-1", "해당 아파트 독서실 이용권한이 없습니다.", null);
+		}
+
+		Optional<LibraryHistory> optLibraryHistory = lastUsingOfDay(aptAccountId);
+		if (optLibraryHistory.isEmpty() || !optLibraryHistory.get().getStatusType().equals(0)) {
+			return RsData.of("F-2", "이용중인 독서실 자리가 없습니다.", null);
+		}
+		if (!optLibraryHistory.get().getUser().equals(optAptAccount.get())) {
+			return RsData.of("F-3", "이용중인 자리가 아닙니다.", null);
+		}
+
+		return RsData.of("S-1", "해당 아파트 독서실 자리 예약 취소에 문제 없는 계정입니다.", optAptAccount.get());
+	}
+
+	public RsData<Seat> canCancel(int seatNumber) {
+		Optional<Seat> optSeat = seatRepository.findBySeatNumber(seatNumber);
+		if (optSeat.isEmpty() || optSeat.get().getStatus() != 1) {
+			return RsData.of("F-1", "비어있는 자리입니다.", null);
+		}
+
+		return RsData.of("S-1", "예약 취소 가능한 자리입니다.", optSeat.get());
+	}
+
+	@Transactional
+	public RsData<String> cancel(AptAccount user, Seat seat, int selectedSeat) {
+		libraryHistoryRepository.save(LibraryHistory.builder()
+			.apart(aptRepository.findById(1L).orElse(null))
+			.library(libraryRepository.findById(1L).orElse(null))
+			.user(user)
+			.seat(seat)
+			.date(LocalDateTime.now())
+			.statusType(1)
+			.build());
+
+		seatRepository.save(seat.toBuilder()
+			.status(0)
+			.build());
+
+		return RsData.of("S-1", "%03d번 자리 이용을 취소합니다.".formatted(selectedSeat));
 	}
 }

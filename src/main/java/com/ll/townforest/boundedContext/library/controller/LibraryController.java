@@ -54,4 +54,21 @@ public class LibraryController {
 
 		return libraryService.booking(canBookingUser.getData(), canBookingSeat.getData(), selectedSeat).getMsg();
 	}
+
+	@PostMapping("/cancel")
+	@ResponseBody
+	@PreAuthorize("isAuthenticated()")
+	public String cancel(@RequestParam int seatNumber) {
+		RsData<AptAccount> canCancelUser = libraryService.canCancel(rq.getAptAccount().getId());
+		if (canCancelUser.isFail()) {
+			return canCancelUser.getMsg();
+		}
+
+		RsData<Seat> canCancelSeat = libraryService.canCancel(seatNumber);
+		if (canCancelSeat.isFail()) {
+			return canCancelSeat.getMsg();
+		}
+
+		return libraryService.cancel(canCancelUser.getData(), canCancelSeat.getData(), seatNumber).getMsg();
+	}
 }
