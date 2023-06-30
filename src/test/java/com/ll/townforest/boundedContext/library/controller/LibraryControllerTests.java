@@ -1,6 +1,7 @@
 package com.ll.townforest.boundedContext.library.controller;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -103,7 +104,8 @@ public class LibraryControllerTests {
 	void t005() throws Exception {
 		ResultActions resultActions = mvc
 			.perform(post("/library/cancel")
-				.with(csrf()))
+				.with(csrf())
+				.param("seatNumber", "1"))
 			.andDo(print());
 
 		resultActions
@@ -123,7 +125,8 @@ public class LibraryControllerTests {
 
 		ResultActions resultActions = mvc
 			.perform(post("/library/cancel")
-				.with(csrf()))
+				.with(csrf())
+				.param("seatNumber", "1"))
 			.andDo(print());
 
 		resultActions
@@ -133,5 +136,41 @@ public class LibraryControllerTests {
 
 		assertThat(resultActions.andReturn().getResponse().getContentAsString())
 			.isEqualTo("001번 자리 이용을 취소합니다.");
+	}
+
+	@Test
+	@DisplayName("독서실 이용 현황 더보기 동작")
+	@WithUserDetails("yujin11006")
+	void t007() throws Exception {
+		final int pageSize = 5;
+		for (int i = 0; i < 6; i++) {
+			mvc.perform(post("/library/booking").with(csrf()).param("selectedSeat", "1")).andDo(print());
+			mvc.perform(post("/library/cancel").with(csrf()).param("seatNumber", "1")).andDo(print());
+		}
+
+		verifyPagingHistory(0, pageSize, false, 5);
+		verifyPagingHistory(1, pageSize, false, 5);
+		verifyPagingHistory(2, pageSize, true, 2);
+	}
+
+	private void verifyPagingHistory(
+		int pageNumber,
+		int pageSize,
+		boolean expectLast,
+		int expectNumberOfElements
+	) throws Exception {
+		ResultActions resultActions = mvc
+			.perform(post("/library/histories")
+				.with(csrf())
+				.param("page", String.valueOf(pageNumber))
+				.param("size", String.valueOf(pageSize)))
+			.andDo(print());
+
+		resultActions
+			.andExpect(handler().handlerType(LibraryController.class))
+			.andExpect(handler().methodName("pagingHistories"))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(jsonPath("$.last", is(expectLast)))
+			.andExpect(jsonPath("$.numberOfElements", is(expectNumberOfElements)));
 	}
 }
