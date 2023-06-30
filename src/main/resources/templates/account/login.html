@@ -4,66 +4,160 @@
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-2xl w-full px-8 mt-5">
+        <div class="flex justify-center items-center">
+            <div class='flex max-w-sm w-full justify-center bg-white shadow-md rounded-lg overflow-hidden mx-auto flex flex-col p-5'>
+                <h3 class="text-center text-2xl font-bold mb-6">로그인</h3>
+                <form id="loginForm" th:action method="POST"
+                      onsubmit="LoginForm__submit(); return false;">
+                    <!-- username -->
+                    <div class="relative h-14 input-component mb-7 empty">
+                        <input
+                                id="username"
+                                type="text"
+                                name="username"
+                                maxlength="20"
+                                class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                        />
+                        <label for="username" class="absolute left-2 transition-all bg-white px-1">
+                            아이디
+                        </label>
+                        <p id="username_check" class="mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <!-- password -->
+                    <div class="relative mb-7">
+                        <div x-data="{ show: false }"
+                             class="relative h-14 input-component flex items-center empty">
+                            <input
+                                    :type=" show ? 'text': 'password' "
+                                    id="password"
+                                    name="password"
+                                    maxlength="15"
+                                    class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                            />
+                            <label for="password" class="absolute left-2 transition-all bg-white px-1">
+                                비밀번호
+                            </label>
+                            <button type="button"
+                                    class="absolute right-2 bg-transparent hover:text-blue-600"
+                                    @click="show = !show">
+                                <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                                </svg>
+
+                                <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p id="password_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <!-- 로그인 실패 시 -->
+                    <p th:if="${param.error}" class="text-red-500 text-center my-3">
+                        아이디 또는 비밀번호를 잘못 입력했습니다.<br>
+                        입력하신 내용을 다시 확인해주세요.
+                    </p>
+                    <button id="btn-login2" class="btn btn-block btn-primary mt-1">
+                        <span>로그인</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="flex justify-center">
+            <a href="/account/join" class="btn btn-link !text-gray-500 gap-2">
+                <i class="fa-solid fa-user"></i>
+                <span>회원가입 신청</span></a>
+        </div>
+    </div>
+    <style>
+        label:not(.exclusion .label) {
+            top: 0;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: rgba(37, 99, 235, 1);
+        }
+
+        .empty input:not(:focus) + label:not(.exclusion .label) {
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+
+        input:not(:focus) + label:not(.exclusion .label) {
+            color: rgba(70, 70, 70, 1);
+        }
+
+        input {
+            border-width: 1px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: rgba(37, 99, 235, 1);
+        }
+    </style>
     <script>
-        function LoginForm__submit(form) {
+        const allInputs = document.querySelectorAll('input');
+        for (const input of allInputs) {
+            input.addEventListener('input', () => {
+                const val = input.value
+                if (!val) {
+                    input.parentElement.classList.add('empty')
+                } else {
+                    input.parentElement.classList.remove('empty')
+                }
+            })
+        }
 
-            form.username.value = form.username.trim();
+        $("#username").on("keyup", function () {
+            const username = $("#username").val();
+            if (username.length === 0) {
+                $("#username_check").html("아이디를 입력해 주세요.").show();
+            } else {
+                $("#username_check").hide();
+            }
+        });
 
-            if (form.username.value.length === 0) {
-                form.username.focus();
+        $("#password").on("keyup", function () {
+            const password = $("#password").val();
+            if (password.length === 0) {
+                $("#password_check").html("비밀번호를 입력해 주세요.").show();
+            } else {
+                $("#password_check").hide();
+            }
+        });
+
+        function LoginForm__submit() {
+            const form = document.getElementById("loginForm");
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+
+            usernameInput.value = usernameInput.value.trim();
+
+            if (usernameInput.value.length === 0) {
+                usernameInput.focus();
+                $("#username_check").html("아이디를 입력해 주세요.").show();
                 return;
             }
 
-            if (form.username.value.length < 4) {
-                form.username.focus();
-                return;
-            }
+            passwordInput.value = passwordInput.value.trim();
 
-            form.password.value = form.password.value.trim();
-
-            if (form.password.value.length === 0) {
-                form.password.focus();
-                return;
-            }
-
-            if (form.password.value.length < 4) {
-                form.password.focus();
+            if (passwordInput.value.length === 0) {
+                $("#password_check").html("비밀번호를 입력해 주세요.").show();
+                passwordInput.focus();
                 return;
             }
 
             form.submit();
         }
     </script>
-
-    <div class="max-w-2xl w-full px-5">
-        <h1 class="text-center text-2xl font-bold mb-10">로그인</h1>
-
-        <form th:action method="POST" class="flex flex-col gap-6" onsubmit="LoginForm__submit(this); return false;">
-            <div class="form-control">
-                <label>
-                    <input type="text" name="username" maxlength="20"
-                           class="input input-bordered input-primary w-full"
-                           placeholder="아이디"/>
-                </label>
-            </div>
-            <div class="form-control">
-                <label>
-                    <input type="password" name="password" maxlength="20"
-                           class="input input-bordered input-primary w-full"
-                           placeholder="비밀번호"/>
-                </label>
-            </div>
-
-            <button id="btn-login" class="btn btn-block btn-primary">
-                <span>로그인</span>
-            </button>
-        </form>
-        <div class="flex justify-center">
-            <a href="#" class="btn btn-link !text-gray-500 gap-2">
-                <i class="fa-solid fa-user"></i>
-                <span>회원가입 신청</span></a>
-        </div>
-    </div>
 </main>
 </body>
 </html>

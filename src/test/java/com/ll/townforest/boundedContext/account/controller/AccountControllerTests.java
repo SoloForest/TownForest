@@ -69,4 +69,18 @@ public class AccountControllerTests {
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/"));
 	}
+
+	@Test
+	@DisplayName("회원가입 폼")
+	void t003() throws Exception {
+		ResultActions resultActions = mvc
+			.perform(get("/account/join"))
+			.andDo(print());
+
+		resultActions
+			.andExpect(handler().handlerType(AccountController.class))
+			.andExpect(handler().methodName("showJoin"))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(view().name("account/join"));
+	}
 }
