@@ -2,6 +2,7 @@ package com.ll.townforest.boundedContext.library.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
@@ -23,13 +25,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/library")
 public class LibraryController {
 	private final LibraryService libraryService;
+	private final Rq rq;
 
 	@GetMapping("/booking")
-	//@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("isAuthenticated()")
 	public String showBooking(Model model) {
-		Long aptAccountId = 5L;
-		LibraryHistory isUsing = libraryService.usingHistory(aptAccountId);
-
+		LibraryHistory isUsing = libraryService.usingHistory(rq.getAptAccount().getId());
 		List<Seat> seats = libraryService.findUseableList(1L);
 
 		model.addAttribute("isUsing", isUsing);
@@ -39,10 +40,9 @@ public class LibraryController {
 
 	@PostMapping("/booking")
 	@ResponseBody
-	//@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("isAuthenticated()")
 	public String Booking(@RequestParam("selectedSeat") int selectedSeat) {
-		Long aptAccountId = 5L;
-		RsData<AptAccount> canBookingUser = libraryService.canBooking(aptAccountId);
+		RsData<AptAccount> canBookingUser = libraryService.canBooking(rq.getAptAccount().getId());
 		if (canBookingUser.isFail()) {
 			return canBookingUser.getMsg();
 		}
