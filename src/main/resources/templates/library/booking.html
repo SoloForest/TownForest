@@ -33,10 +33,13 @@
         <div class="card-body p-3">
             <h2 class="card-title">독서실 자리 예약</h2>
             <p class="text-center my-2">
-                <b th:text="${#numbers.formatInteger(isUsing.seat.seatNumber,3)}"></b>번 좌석을 이용중입니다.
+                <b id="usingSeatNum" th:text="${#numbers.formatInteger(isUsing.seat.seatNumber,3)}"></b>번 좌석을 이용중입니다.
             </p>
             <div class="card-actions justify-end">
-                <button class="btn btn-info btn-sm text-white">취소하기</button>
+                <button class="btn btn-info btn-sm text-white"
+                        onclick="event.preventDefault(); submitCancel();">
+                    취소하기
+                </button>
             </div>
         </div>
     </div>
@@ -143,6 +146,30 @@
                 error: function (xhr, textStatus, errorThrown) {
                     console.error('Error: ' + errorThrown);
                     alert('Error: 예약에 실패했습니다.');
+                }
+            });
+        }
+
+        function submitCancel() {
+            let header = $("meta[name='_csrf_header']").attr('content');
+            let token = $("meta[name='_csrf']").attr('content');
+            let seatNumber = document.getElementById("usingSeatNum").innerText * 1;
+
+            // AJAX 요청
+            $.ajax({
+                type: 'POST',
+                url: '/library/cancel/' + seatNumber,
+                data: {},
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (result) {
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                    alert('Error: 예약 취소에 실패했습니다.');
                 }
             });
         }

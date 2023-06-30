@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,5 +54,22 @@ public class LibraryController {
 		}
 
 		return libraryService.booking(canBookingUser.getData(), canBookingSeat.getData(), selectedSeat).getMsg();
+	}
+
+	@PostMapping("/cancel/{seatNumber}")
+	@ResponseBody
+	@PreAuthorize("isAuthenticated()")
+	public String cancel(@PathVariable int seatNumber) {
+		RsData<AptAccount> canCancelUser = libraryService.canCancel(rq.getAptAccount().getId());
+		if (canCancelUser.isFail()) {
+			return canCancelUser.getMsg();
+		}
+
+		RsData<Seat> canCancelSeat = libraryService.canCancel(seatNumber);
+		if (canCancelSeat.isFail()) {
+			return canCancelSeat.getMsg();
+		}
+
+		return libraryService.cancel(canCancelUser.getData(), canCancelSeat.getData(), seatNumber).getMsg();
 	}
 }
