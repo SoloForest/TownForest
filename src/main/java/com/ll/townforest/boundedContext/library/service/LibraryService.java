@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
@@ -79,6 +80,7 @@ public class LibraryService {
 		return RsData.of("S-1", "예약에 문제 없는 자리입니다.", optSeat.get());
 	}
 
+	@Transactional
 	public RsData<String> booking(AptAccount user, Seat seat, int selectedSeat) {
 		libraryHistoryRepository.save(LibraryHistory.builder()
 			.apart(aptRepository.findById(1L).orElse(null))
@@ -125,6 +127,7 @@ public class LibraryService {
 		return RsData.of("S-1", "예약 취소 가능한 자리입니다.", optSeat.get());
 	}
 
+	@Transactional
 	public RsData<String> cancel(AptAccount user, Seat seat, int selectedSeat) {
 		libraryHistoryRepository.save(LibraryHistory.builder()
 			.apart(aptRepository.findById(1L).orElse(null))
