@@ -250,17 +250,23 @@
         </div>
     </div>
     <script>
-        const allInputs = document.querySelectorAll('input');
-        for (const input of allInputs) {
-            input.addEventListener('input', () => {
-                const val = input.value
-                if (!val) {
-                    input.parentElement.classList.add('empty')
-                } else {
-                    input.parentElement.classList.remove('empty')
-                }
-            })
+        function updateInputState(input) {
+            const val = input.value;
+            if (!val) {
+                input.parentElement.classList.add('empty');
+            } else {
+                input.parentElement.classList.remove('empty');
+            }
         }
+
+        // 페이지가 완전히 로드된 후에 실행
+        window.addEventListener('load', () => {
+            const allInputs = document.querySelectorAll('input');
+            for (const input of allInputs) {
+                updateInputState(input);
+                input.addEventListener('input', () => updateInputState(input));
+            }
+        });
 
         const usernameRegex = /^[a-z0-9]+$/;
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/;
