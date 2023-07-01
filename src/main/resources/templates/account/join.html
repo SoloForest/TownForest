@@ -9,225 +9,242 @@
         <div class="flex justify-center items-center">
             <div class='flex max-w-sm w-full justify-center bg-white shadow-md rounded-lg overflow-hidden mx-auto flex flex-col p-5'>
                 <h3 class="text-center text-2xl font-bold mb-5">회원 가입</h3>
-                <!-- username -->
-                <div class="relative h-14 input-component mb-5 empty">
-                    <input
-                            id="username"
-                            type="text"
-                            name="username"
-                            maxlength="20"
-                            class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
-                    />
-                    <label for="username" class="absolute left-2 transition-all bg-white px-1">
-                        아이디
-                    </label>
-                </div>
-                <!-- password -->
-                <div x-data="{ show: false }" class="relative h-14 input-component mb-5 flex items-center empty">
-                    <input
-                            :type=" show ? 'text': 'password' "
-                            id="password"
-                            name="password"
-                            maxlength="15"
-                            class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
-                    />
-                    <label for="password" class="absolute left-2 transition-all bg-white px-1">
-                        비밀번호
-                    </label>
-                    <button type="button"
-                            class="absolute right-2 bg-transparent hover:text-blue-600"
-                            @click="show = !show">
-                        <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-                        </svg>
+                <form id="joinForm" th:action method="POST" onsubmit="return false;">
+                    <!-- username -->
+                    <div class="relative h-14 input-component mb-7 empty">
+                        <input
+                                id="username"
+                                type="text"
+                                name="username"
+                                maxlength="20"
+                                class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                        />
+                        <label for="username" class="absolute left-2 transition-all bg-white px-1">
+                            아이디
+                        </label>
+                        <p id="username_check" class="mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <!-- password -->
+                    <div class="relative mb-7">
+                        <div x-data="{ show: false }"
+                             class="relative h-14 input-component flex items-center empty">
+                            <input
+                                    :type=" show ? 'text': 'password' "
+                                    id="password"
+                                    name="password"
+                                    maxlength="15"
+                                    class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                            />
+                            <label for="password" class="absolute left-2 transition-all bg-white px-1">
+                                비밀번호
+                            </label>
+                            <button type="button"
+                                    class="absolute right-2 bg-transparent hover:text-blue-600"
+                                    @click="show = !show">
+                                <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                                </svg>
 
-                        <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg" style="display: none;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
+                                <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p id="password_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <!-- full_name -->
+                    <div class="relative h-14 input-component mb-7 empty">
+                        <input
+                                id="fullName"
+                                type="text"
+                                name="fullName"
+                                maxlength="10"
+                                class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                        />
+                        <label for="password" class="absolute left-2 transition-all bg-white px-1">
+                            이름
+                        </label>
+                        <p id="fullName_check" class="mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <!-- email -->
+                    <div class="relative h-14 input-component mb-7 empty">
+                        <input
+                                id="email"
+                                type="text"
+                                name="email"
+                                class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                        />
+                        <label for="email" class="absolute left-2 transition-all bg-white px-1">
+                            이메일
+                        </label>
+                        <p id="email_check" class="mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <!-- phone_number -->
+                    <div class="relative h-14 input-component mb-7 empty">
+                        <input
+                                id="phoneNumber"
+                                type="text"
+                                name="phoneNumber"
+                                maxlength="11"
+                                class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
+                        />
+                        <label for="phoneNumber" class="absolute left-2 transition-all bg-white px-1">
+                            휴대전화번호
+                        </label>
+                        <p id="phoneNumber_check" class="mt-1 ml-2 text-primary text-sm"></p>
+                    </div>
+                    <div class="form-control w-56 mb-5 w-full exclusion">
+                        <label class="cursor-pointer label">
+                            <input type="checkbox" id="terms1-agree" class="toggle toggle-primary toggle-sm"/>
+                            <span class="label-text">TownForest 이용약관</span>
+                            <!-- 회원 약관 modal toggle -->
+                            <button class="btn btn-link !text-gray-500 btn-xs" type="button"
+                                    data-modal-toggle="terms1-modal">보기
+                            </button>
+                            <!-- Main modal -->
+                            <div id="terms1-modal" data-modal-show="false" aria-hidden="true"
+                                 class="hidden overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+                                <div class="relative w-full max-w-2xl px-4 h-full md:h-auto">
+                                    <!-- Modal content -->
+                                    <div class="bg-white rounded-lg shadow relative dark:bg-gray-700">
+                                        <!-- Modal header -->
+                                        <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600">
+                                            <h3 class="text-gray-900 text-xl lg:text-2xl font-semibold dark:text-white">
+                                                TownForest 이용약관
+                                            </h3>
+                                            <button type="button"
+                                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                                    data-modal-toggle="terms1-modal">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <!-- Modal body -->
+                                        <div class="p-6 space-y-6 max-h-96 overflow-y-auto">
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                본 약관은 TownForest 사이트(이하 "본 사이트"라 합니다)가 제공하는 서비스의 사용에 관한 조건과 기본 사항을 규정함을
+                                                목적으로
+                                                합니다.
+                                            </p>
+                                            <h3>제1조. 용어의 정의</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                본 약관에서 사용되는 용어의 정의는 다음과 같습니다.<br>
+                                                (1) "회원"은 본 사이트에 입회하고, 계정을 생성한 자를 의미합니다.<br>
+                                                (2) "서비스"는 본 사이트에서 제공하는 아파트 공용 시설 예약 서비스를 의미합니다.
+                                            </p>
+                                            <h3>제2조. 약관의 게시와 변경</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                (1) 본 사이트는 본 약관을 회원이 쉽게 확인할 수 있게 게시합니다.<br>
+                                                (2) 본 사이트는 회원의 이익을 해치지 않는 범위에서 약관을 변경할 수 있으며 변경된 약관은 게시함과 동시에 적용됩니다.<br>
+                                                (3) 회원은 변경된 약관에 동의하지 않을 경우, 서비스 이용을 중단하고 회원 탈퇴를 요청할 수 있습니다.
+                                            </p>
+                                        </div>
+                                        <!-- Modal footer -->
+                                        <div class="flex space-x-2 items-center justify-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                            <button data-modal-toggle="terms1-modal" class="btn btn-primary"
+                                                    onclick="document.getElementById('terms1-agree').checked = true;">
+                                                확인
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form-control w-56 mb-5 w-full exclusion">
+                        <label class="cursor-pointer label">
+                            <input type="checkbox" id="terms2-agree" class="toggle toggle-primary toggle-sm"/>
+                            <span class="label-text">개인 정보 수집/이용</span>
+                            <!-- 회원 약관 modal toggle -->
+                            <button class="btn btn-link !text-gray-500 btn-xs" type="button"
+                                    data-modal-toggle="terms2-modal">보기
+                            </button>
+                            <!-- Main modal -->
+                            <div id="terms2-modal" data-modal-show="false" aria-hidden="true"
+                                 class="hidden overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+                                <div class="relative w-full max-w-2xl px-4 h-full md:h-auto">
+                                    <!-- Modal content -->
+                                    <div class="bg-white rounded-lg shadow relative dark:bg-gray-700">
+                                        <!-- Modal header -->
+                                        <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600">
+                                            <h3 class="text-gray-900 text-xl lg:text-2xl font-semibold dark:text-white">
+                                                개인 정보 수집 및 이용 약관
+                                            </h3>
+                                            <button type="button"
+                                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                                    data-modal-toggle="terms2-modal">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <!-- Modal body -->
+                                        <div class="p-6 space-y-6 max-h-96 overflow-y-auto">
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                TownForest에 회원 가입을 신청하는 분께 개인정보의 수집 목적 및 이용, 수집하는 개인정보의 항목, 보유
+                                                및 이용기간 등을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.</p>
+                                            <h3>제1조. 개인정보의 수집 목적 및 이용</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                (1) TownForest은 회원 가입, 서비스 제공 및 이용, 개선을 위하여 개인정보를 수집하고 이용합니다.<br>
+                                                (2) TownForest은 더 나은 서비스 제공을 위해 회원의 동의 하에 기본적인 개인정보를 수집합니다.
+                                            </p>
+                                            <h3>제2조. 수집하는 개인정보의 항목</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                필수 수집 항목: 성명, 전화번호, 이메일 주소, 아이디, 비밀번호
+                                            </p>
+                                            <h3>제3조. 개인정보의 보유 및 이용기간</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                회원 탈퇴 시까지 또는 회원의 요청에 따라 개인정보를 삭제하며, 관련 법령에 따른 정보 보유 기간 후에도 해당 정보를 지체 없이
+                                                삭제합니다.
+                                            </p>
+                                            <h3>제4조. 수집한 개인정보의 제3자 제공</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                TownForest은 회원의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 단, 법률에 따라 요구되거나 회원이 사전에 동의한
+                                                경우
+                                                제3자에게 제공할 수 있습니다.
+                                            </p>
+                                            <h3>제5조. 개인정보 열람 및 수정</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                회원은 언제든지 자신의 개인정보를 조회, 수정할 수 있으며, 이를 위해 고객 지원 센터에 요청하실 수 있습니다.
+                                            </p>
+                                            <h3>제6조. 개인정보의 동의 철회</h3>
+                                            <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
+                                                회원은 가입 시 동의한 개인정보의 수집 및 이용을 동의 철회하거나, 개인 정보 삭제를 요청할 수 있습니다. 이 경우 서비스 이용에
+                                                제한이
+                                                발생할 수 있습니다.
+                                            </p>
+                                        </div>
+                                        <!-- Modal footer -->
+                                        <div class="flex space-x-2 items-center justify-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                            <button data-modal-toggle="terms2-modal" class="btn btn-primary"
+                                                    onclick="document.getElementById('terms2-agree').checked = true;">
+                                                확인
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <button id="btn-join" class="btn btn-block btn-primary"
+                            onclick="JoinForm__submit();">
+                        <span>회원 가입</span>
                     </button>
-                </div>
-                <!-- full_name -->
-                <div class="relative h-14 input-component mb-5 empty">
-                    <input
-                            id="fullName"
-                            type="text"
-                            name="fullName"
-                            maxlength="10"
-                            class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
-                    />
-                    <label for="password" class="absolute left-2 transition-all bg-white px-1">
-                        이름
-                    </label>
-                </div>
-                <!-- email -->
-                <div class="relative h-14 input-component mb-5 empty">
-                    <input
-                            id="email"
-                            type="text"
-                            name="email"
-                            class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
-                    />
-                    <label for="email" class="absolute left-2 transition-all bg-white px-1">
-                        이메일
-                    </label>
-                </div>
-                <!-- phone_number -->
-                <div class="relative h-14 input-component mb-5 empty">
-                    <input
-                            id="phoneNumber"
-                            type="text"
-                            name="phoneNumber"
-                            maxlength="16"
-                            class="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
-                    />
-                    <label for="phoneNumber" class="absolute left-2 transition-all bg-white px-1">
-                        휴대전화번호
-                    </label>
-                </div>
-                <div class="form-control w-56 mb-5 w-full exclusion">
-                    <label class="cursor-pointer label">
-                        <input type="checkbox" class="toggle toggle-primary toggle-sm"/>
-                        <span class="label-text">TownForest 이용약관</span>
-                        <!-- 회원 약관 modal toggle -->
-                        <button class="btn btn-link !text-gray-500 btn-xs" type="button"
-                                data-modal-toggle="terms1-modal">보기
-                        </button>
-                        <!-- Main modal -->
-                        <div id="terms1-modal" data-modal-show="false" aria-hidden="true"
-                             class="hidden overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
-                            <div class="relative w-full max-w-2xl px-4 h-full md:h-auto">
-                                <!-- Modal content -->
-                                <div class="bg-white rounded-lg shadow relative dark:bg-gray-700">
-                                    <!-- Modal header -->
-                                    <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600">
-                                        <h3 class="text-gray-900 text-xl lg:text-2xl font-semibold dark:text-white">
-                                            TownForest 이용약관
-                                        </h3>
-                                        <button type="button"
-                                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                                data-modal-toggle="terms1-modal">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd"
-                                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                      clip-rule="evenodd"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <!-- Modal body -->
-                                    <div class="p-6 space-y-6 max-h-96 overflow-y-auto">
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            본 약관은 TownForest 사이트(이하 "본 사이트"라 합니다)가 제공하는 서비스의 사용에 관한 조건과 기본 사항을 규정함을 목적으로
-                                            합니다.
-                                        </p>
-                                        <h3>제1조. 용어의 정의</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            본 약관에서 사용되는 용어의 정의는 다음과 같습니다.<br>
-                                            (1) "회원"은 본 사이트에 입회하고, 계정을 생성한 자를 의미합니다.<br>
-                                            (2) "서비스"는 본 사이트에서 제공하는 아파트 공용 시설 예약 서비스를 의미합니다.
-                                        </p>
-                                        <h3>제2조. 약관의 게시와 변경</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            (1) 본 사이트는 본 약관을 회원이 쉽게 확인할 수 있게 게시합니다.<br>
-                                            (2) 본 사이트는 회원의 이익을 해치지 않는 범위에서 약관을 변경할 수 있으며 변경된 약관은 게시함과 동시에 적용됩니다.<br>
-                                            (3) 회원은 변경된 약관에 동의하지 않을 경우, 서비스 이용을 중단하고 회원 탈퇴를 요청할 수 있습니다.
-                                        </p>
-                                    </div>
-                                    <!-- Modal footer -->
-                                    <div class="flex space-x-2 items-center justify-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                        <button data-modal-toggle="terms1-modal" class="btn btn-primary">
-                                            확인
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-                <div class="form-control w-56 mb-5 w-full exclusion">
-                    <label class="cursor-pointer label">
-                        <input type="checkbox" class="toggle toggle-primary toggle-sm"/>
-                        <span class="label-text">개인 정보 수집/이용</span>
-                        <!-- 회원 약관 modal toggle -->
-                        <button class="btn btn-link !text-gray-500 btn-xs" type="button"
-                                data-modal-toggle="terms2-modal">보기
-                        </button>
-                        <!-- Main modal -->
-                        <div id="terms2-modal" data-modal-show="false" aria-hidden="true"
-                             class="hidden overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
-                            <div class="relative w-full max-w-2xl px-4 h-full md:h-auto">
-                                <!-- Modal content -->
-                                <div class="bg-white rounded-lg shadow relative dark:bg-gray-700">
-                                    <!-- Modal header -->
-                                    <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600">
-                                        <h3 class="text-gray-900 text-xl lg:text-2xl font-semibold dark:text-white">
-                                            개인 정보 수집 및 이용 약관
-                                        </h3>
-                                        <button type="button"
-                                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                                data-modal-toggle="terms2-modal">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd"
-                                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                      clip-rule="evenodd"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <!-- Modal body -->
-                                    <div class="p-6 space-y-6 max-h-96 overflow-y-auto">
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            TownForest에 회원 가입을 신청하는 분께 개인정보의 수집 목적 및 이용, 수집하는 개인정보의 항목, 보유
-                                            및 이용기간 등을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.</p>
-                                        <h3>제1조. 개인정보의 수집 목적 및 이용</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            (1) TownForest은 회원 가입, 서비스 제공 및 이용, 개선을 위하여 개인정보를 수집하고 이용합니다.<br>
-                                            (2) TownForest은 더 나은 서비스 제공을 위해 회원의 동의 하에 기본적인 개인정보를 수집합니다.
-                                        </p>
-                                        <h3>제2조. 수집하는 개인정보의 항목</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            필수 수집 항목: 성명, 전화번호, 이메일 주소, 아이디, 비밀번호
-                                        </p>
-                                        <h3>제3조. 개인정보의 보유 및 이용기간</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            회원 탈퇴 시까지 또는 회원의 요청에 따라 개인정보를 삭제하며, 관련 법령에 따른 정보 보유 기간 후에도 해당 정보를 지체 없이
-                                            삭제합니다.
-                                        </p>
-                                        <h3>제4조. 수집한 개인정보의 제3자 제공</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            TownForest은 회원의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 단, 법률에 따라 요구되거나 회원이 사전에 동의한 경우
-                                            제3자에게 제공할 수 있습니다.
-                                        </p>
-                                        <h3>제5조. 개인정보 열람 및 수정</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            회원은 언제든지 자신의 개인정보를 조회, 수정할 수 있으며, 이를 위해 고객 지원 센터에 요청하실 수 있습니다.
-                                        </p>
-                                        <h3>제6조. 개인정보의 동의 철회</h3>
-                                        <p class="text-gray-500 text-base leading-relaxed dark:text-gray-400">
-                                            회원은 가입 시 동의한 개인정보의 수집 및 이용을 동의 철회하거나, 개인 정보 삭제를 요청할 수 있습니다. 이 경우 서비스 이용에 제한이
-                                            발생할 수 있습니다.
-                                        </p>
-                                    </div>
-                                    <!-- Modal footer -->
-                                    <div class="flex space-x-2 items-center justify-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                        <button data-modal-toggle="terms2-modal" class="btn btn-primary">
-                                            확인
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-                <button id="btn-join" class="btn btn-block btn-primary">
-                    <span>회원 가입</span>
-                </button>
+                </form>
             </div>
         </div>
     </div>
@@ -269,6 +286,150 @@
                     input.parentElement.classList.remove('empty')
                 }
             })
+        }
+
+        const usernameRegex = /^[a-z0-9]+$/;
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/;
+        const fullNameRegex = /^[가-힣a-zA-Z]+$/;
+        const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        const phoneNumberRegex = /^[0-9]+$/;
+
+        $("#username").on("keyup", function () {
+            const username = $("#username").val();
+            if (username.length === 0) {
+                $("#username_check").html("아이디를 입력해 주세요.").show();
+            } else if (username.length < 5 || username.length > 20 || !usernameRegex.test(username)) {
+                $("#username_check").html("5~20자의 영소문자, 숫자를 사용해 주세요.").show();
+            } else {
+                $("#username_check").hide();
+            }
+        });
+
+        $("#password").on("keyup", function () {
+            const password = $("#password").val();
+            if (password.length === 0) {
+                $("#password_check").html("비밀번호를 입력해 주세요.").show();
+            } else if (password.length < 8 || password.length > 15 || !passwordRegex.test(password)) {
+                $("#password_check").html("8~15자의 영문, 숫자, 특수문자를 사용해 주세요.").show();
+            } else {
+                $("#password_check").hide();
+            }
+        });
+
+        $("#fullName").on("keyup", function () {
+            const fullName = $("#fullName").val();
+            if (fullName.length === 0) {
+                $("#fullName_check").html("이름을 입력해 주세요.").show();
+            } else if (fullName.length < 2 || fullName.length > 10 || !fullNameRegex.test(fullName)) {
+                $("#fullName_check").html("2~10자의 한글,영문을 사용해 주세요.").show();
+            } else {
+                $("#fullName_check").hide();
+            }
+        });
+
+        $("#email").on("keyup", function () {
+            const email = $("#email").val();
+            if (email.length === 0) {
+                $("#email_check").html("이메일을 입력해 주세요.").show();
+            } else if (!emailRegex.test(email)) {
+                $("#email_check").html("이메일 주소가 정확한지 확인해 주세요.").show();
+            } else {
+                $("#email_check").hide();
+            }
+        });
+
+        $("#phoneNumber").on("keyup", function () {
+            const phoneNumber = $("#phoneNumber").val();
+            if (phoneNumber.length === 0) {
+                $("#phoneNumber_check").html("휴대전화번호를 입력해 주세요.").show();
+            } else if (phoneNumber.length < 10 || !phoneNumberRegex.test(phoneNumber)) {
+                $("#phoneNumber_check").html("휴대전화번호가 정확한지 확인해 주세요.").show();
+            } else {
+                $("#phoneNumber_check").hide();
+            }
+        });
+
+        function JoinForm__submit() {
+            const form = document.getElementById("joinForm");
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+            const fullNameInput = document.getElementById("fullName");
+            const emailNameInput = document.getElementById("email");
+            const phoneNumberInput = document.getElementById("phoneNumber");
+            const allCheckboxes = document.querySelectorAll(".toggle:checked");
+
+            usernameInput.value = usernameInput.value.trim();
+            passwordInput.value = passwordInput.value.trim();
+            fullNameInput.value = fullNameInput.value.trim();
+            emailNameInput.value = emailNameInput.value.trim();
+            phoneNumberInput.value = phoneNumberInput.value.trim();
+
+            if (usernameInput.value.length === 0) {
+                usernameInput.focus();
+                $("#username_check").html("아이디를 입력해 주세요.").show();
+                return;
+            }
+
+            if (usernameInput.value.length < 5 || usernameInput.value.length > 20 || !usernameRegex.test(usernameInput.value)) {
+                usernameInput.focus();
+                $("#username_check").html("5~20자의 영소문자, 숫자를 사용해 주세요.").show();
+                return;
+            }
+
+            if (passwordInput.value.length === 0) {
+                $("#password_check").html("비밀번호를 입력해 주세요.").show();
+                passwordInput.focus();
+                return;
+            }
+
+            if (passwordInput.value.length < 8 || passwordInput.value.length > 15 || !passwordRegex.test(passwordInput.value)) {
+                $("#password_check").html("8~15자의 영문, 숫자, 특수문자를 사용해 주세요.").show();
+                passwordInput.focus();
+                return;
+            }
+
+            if (fullNameInput.value.length === 0) {
+                $("#fullName_check").html("이름을 입력해 주세요.").show();
+                fullNameInput.focus();
+                return;
+            }
+
+            if (fullNameInput.length < 2 || fullNameInput.value.length > 10 || !fullNameRegex.test(fullNameInput.value)) {
+                $("#fullName_check").html("2~10자의 한글, 영문을 사용해 주세요.").show();
+                fullNameInput.focus();
+                return;
+            }
+
+            if (emailNameInput.value.length === 0) {
+                $("#email_check").html("이메일을 입력해 주세요.").show();
+                emailNameInput.focus();
+                return;
+            }
+
+            if (!emailRegex.test(emailNameInput.value)) {
+                $("#email_check").html("이메일 주소가 정확한지 확인해 주세요.").show();
+                emailNameInput.focus();
+                return;
+            }
+
+            if (phoneNumberInput.value.length === 0) {
+                $("#phoneNumber_check").html("휴대전화번호를 입력해 주세요.").show();
+                phoneNumberInput.focus();
+                return;
+            }
+
+            if (phoneNumberInput.value.length < 10 || !phoneNumberRegex.test(phoneNumberInput.value)) {
+                $("#phoneNumber_check").html("휴대전화번호가 정확한지 확인해 주세요.").show();
+                phoneNumberInput.focus();
+                return;
+            }
+
+            if (allCheckboxes.length !== 2) {
+                toastWarning('모든 약관에 동의해 주세요.');
+                return;
+            }
+
+            form.submit();
         }
     </script>
 </main>
