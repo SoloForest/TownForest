@@ -3,14 +3,25 @@ package com.ll.townforest.boundedContext.account.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.ll.townforest.base.rq.Rq;
+import com.ll.townforest.base.rsData.RsData;
+import com.ll.townforest.boundedContext.account.dto.AccountDTO;
+import com.ll.townforest.boundedContext.account.entity.Account;
+import com.ll.townforest.boundedContext.account.service.AccountService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/account")
 public class AccountController {
+	private final AccountService accountService;
+	private final Rq rq;
+
 	@PreAuthorize("isAnonymous()")
 	@GetMapping("/login")
 	public String showLogin() {
@@ -21,5 +32,16 @@ public class AccountController {
 	@GetMapping("/join")
 	public String showJoin() {
 		return "account/join";
+	}
+
+	@PreAuthorize("isAnonymous()")
+	@PostMapping("/join")
+	public String join(@Valid AccountDTO accountDTO) {
+		RsData<Account> accountRsData = accountService.join(accountDTO);
+
+		if (accountRsData.isFail()) {
+			return rq.historyBack(accountRsData);
+		}
+		return rq.redirectWithMsg("/account/login", accountRsData);
 	}
 }
