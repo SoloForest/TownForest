@@ -20,6 +20,6 @@ public class AccountDTO {
 	@NotBlank
 	String email;
 	@NotBlank
-	@Size(min = 11, max = 16)
+	@Size(min = 10, max = 11)
 	String phoneNumber;
 }
