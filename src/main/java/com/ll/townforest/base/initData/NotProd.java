@@ -264,6 +264,7 @@ public class NotProd {
 					.type(1)
 					.apt(apt1)
 					.gym(gym1)
+					.days(0)
 					.name("1일권")
 					.build();
 
@@ -274,6 +275,7 @@ public class NotProd {
 					.type(2)
 					.apt(apt1)
 					.gym(gym1)
+					.days(29)
 					.name("30일권")
 					.build();
 
@@ -285,6 +287,7 @@ public class NotProd {
 					.content("10% 할인가")
 					.apt(apt1)
 					.gym(gym1)
+					.days(59)
 					.name("60일권")
 					.build();
 
@@ -295,6 +298,7 @@ public class NotProd {
 					.content("20% 할인가")
 					.apt(apt1)
 					.gym(gym1)
+					.days(89)
 					.name("90일권")
 					.build();
 				gymTicketRepository.save(gymTicket4);

@@ -1,0 +1,25 @@
+<html layout:decorate="~{home/layout.html}">
+
+<head>
+    <title>결제실패</title>
+</head>
+
+<body>
+
+<main layout:fragment="main">
+    <div class="flex flex-col justify-center items-center h-screen gap-3">
+        <i class="fa-solid fa-ban text-[6rem]" style="color: #ff6b6b;"></i>
+        <h1>결제 실패</h1>
+        <p>에러메시지 : <span th:text="${message}"></span></p>
+        <p>에러코드 : <span th:text="${code}"></span></p>
+        <div class="flex gap-2 mt-2">
+            <div class="btn btn-primary" onclick="javascript: window.location.href='/';">
+                홈으로
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>
+

@@ -35,6 +35,8 @@ public class GymTicket {
 	@NotNull
 	private Integer type;
 
+	private Integer days;
+
 	@NotBlank
 	private String name;
 

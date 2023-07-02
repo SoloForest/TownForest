@@ -13,7 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,15 +42,14 @@ public class GymHistory {
 	private int price;
 	/*
 	결제 방법
-	0 : 계좌이체
-	1 : 카드
 	*/
-	private int paymentMethod;
+	private String paymentMethod;
 	/*
 	이용권 종류
+	관리자가 이용권 삭제할 경우 삭제 안되는 것을 방지하기 위해 String으로
+	예시 : 30일권
 	*/
-	@OneToOne
-	private GymTicket gymTicket;
+	private String name;
 	/*
 	상태
 	0: 결제

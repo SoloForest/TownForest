@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/css/calender.css">
     <script src="/js/calender.js"></script>
     <script src="https://js.tosspayments.com/v1/payment"></script>
+
 </head>
 
 <body>
@@ -23,10 +24,12 @@
             </div>
             <div class="form-control flex gap-2 mt-2">
                 <label th:each="ticket : ${gymTicketList}" class="flex items-center gap-2">
-                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"/>
+                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"
+                           name="ticketType"/>
                     <span class="label-text"
                           th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
-                          th:value="${ticket.price}"></span>
+                          th:value="${ticket.price}">
+                        </span>
                     <div class="font-bold" th:if="${ticket.content != null}"
                          th:text="${'(' + ticket.content + ')'}"></div>
                 </label>
@@ -64,25 +67,7 @@
                         </tbody>
                     </table>
                 </div>
-                <input id="selectedDate" class="hidden"/>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-comments-dollar" style="color: #91c0fd;"></i>
-                <div class="font-bold">결제방식</div>
-            </div>
-
-            <div class="flex justify-center items-center gap-4 mt-2">
-                <label class="flex items-center gap-1" >
-                    <input type="radio" class="radio radio-info radio-sm" name="method" value="카드" onchange="updateFontWeight(this)"/>
-                    <i class="fa-regular fa-credit-card" style="color: #91c0fd;"></i>
-                    <span id="creditCardLabel">신용카드</span>
-                </label>
-                <label class="flex items-center gap-1">
-                    <input type="radio" class="radio radio-info radio-sm" name="method" value="가상계좌" onchange="updateFontWeight(this)"/>
-                    <i class="fa-solid fa-piggy-bank" style="color: #91c0fd;"></i>
-                    <span id="virtualAccountLabel">가상계좌</span>
-                </label>
+                <input id="selectedDate" class="hidden" name="startDate"/>
             </div>
         </div>
 
@@ -92,13 +77,16 @@
             <div id="payment-amount"></div>
         </div>
         <div class="flex justify-end">
-            <button id="payment-button" class="btn shadow-xl m-2 button is-link" style="background-color: #91c0fd;">결제하기</button>
+            <button id="payment-button" class="btn shadow-xl m-2 button is-link" style="background-color: #91c0fd;">
+                결제하기
+            </button>
         </div>
     </div>
     </div>
 
-    <!-- 체크박스 선택 시 이전 선택한거 삭제 후 선택, 선택된 폰트 굵게 -->
+
     <script th:inline="javascript">
+        // 체크박스 선택 시 이전 선택한거 삭제 후 선택, 선택된 폰트 굵게
         const checkboxes = document.querySelectorAll('.checkbox');
         const paymentAmountElement = document.getElementById('payment-amount');
 
@@ -131,8 +119,6 @@
             });
         });
 
-    </script>
-    <script>
         // 라디오박스 선택 시 폰트 굵게
         function updateFontWeight(checkbox) {
             const creditCardLabel = document.getElementById("creditCardLabel");
@@ -146,33 +132,76 @@
                 virtualAccountLabel.classList.add("font-bold");
             }
         }
-    </script>
 
-    <script src="https://js.tosspayments.com/v1"></script>
-    <script>
         var tossPayments = TossPayments("test_ck_lpP2YxJ4K877wRwQ1Lp8RGZwXLOb");
         var button = document.getElementById("payment-button");
 
         var orderId = new Date().getTime();
 
         button.addEventListener("click", function () {
-            var method = document.querySelector('input[name=method]:checked').value; // "카드" 혹은 "가상계좌"
+            var checkedCheckbox = document.querySelector('.checkbox:checked');
+            var selectedDate = document.getElementById("selectedDate").value; // 시작일
 
-            var paymentData = {
-                amount: 19000,
-                orderId: orderId,
-                orderName: "토스 티셔츠",
-                customerName: "이토페",
-                successUrl: window.location.origin + "/success",
-                failUrl: window.location.origin + "/fail",
-            };
-
-            if (method === '가상계좌') {
-                paymentData.virtualAccountCallbackUrl = window.location.origin + '/virtual-account/callback'
+            // 체크박스 선택 검증
+            if (!checkedCheckbox) {
+                toastWarning("이용권을 선택해주세요");
+                return;
             }
 
-            tossPayments.requestPayment(method, paymentData);
+            // 날짜 선택 검증
+            if (!selectedDate) {
+                toastWarning("시작 날짜를 선택해주세요");
+                return;
+            }
+
+            var type = checkedCheckbox.value;
+            // 가격
+            var price = checkedCheckbox.nextElementSibling.getAttribute('value');
+
+            let path = "/";
+            let successUrl = window.location.origin + path + "gym" + path + "register" + path + "success";
+            let failUrl = window.location.origin + path + "gym" + path + "register" + path + "fail";
+
+            // 며칠권인지 구분
+            var labelText = checkedCheckbox.nextElementSibling.textContent;
+            var parsedText = labelText.substring(0, labelText.indexOf('-')).trim();
+
+            // 날짜 표기방식 변경
+            var dateObject = new Date(selectedDate);
+            var year = dateObject.getFullYear();
+            var month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+            var day = ("0" + dateObject.getDate()).slice(-2);
+            var formattedDate = year + "-" + month + "-" + day;
+
+
+            let jsons = {
+                "card": {
+                    "amount": price,
+                    "orderId": "gym" + "-type-" + type + "-" + (Math.random() + "").substring(2) +"_"+formattedDate,
+                    "orderName": parsedText + "-" + "시작일-" + formattedDate,
+                    "successUrl": successUrl,
+                    "method": "card",
+                    "failUrl": failUrl,
+                    "customerName": [[${user.account.fullName}]],
+                    "useInternationalCardOnly": false,
+                    "flowMode": "DEFAULT"
+                }
+            }
+                pay("카드", jsons.card);
+
+            function pay(method, requestJson) {
+                console.log(requestJson);
+                tossPayments.requestPayment(method, requestJson)
+                    .catch(function (error) {
+                        if (error.code === "USER_CANCEL") {
+                            alert('유저가 취소했습니다.');
+                        } else {
+                            alert(error.message);
+                        }
+                    });
+            }
         });
+
     </script>
 
 
