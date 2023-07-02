@@ -24,11 +24,11 @@ public class AccountService {
 		return accountRepository.findByUsername(username);
 	}
 
-	public Optional<Account> findByEmail(String email) {
+	private Optional<Account> findByEmail(String email) {
 		return accountRepository.findByEmail(email);
 	}
 
-	public Optional<Account> findByPhoneNumber(String phoneNumber) {
+	private Optional<Account> findByPhoneNumber(String phoneNumber) {
 		return accountRepository.findByPhoneNumber(phoneNumber);
 	}
 
