@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
@@ -30,6 +31,7 @@ public class GymService {
 		return gymTicket;
 	}
 
+	@Transactional
 	public void create(AptAccount user, LocalDateTime startDate, Integer ticketType, String method) {
 
 		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);

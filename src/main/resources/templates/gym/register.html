@@ -119,20 +119,6 @@
             });
         });
 
-        // 라디오박스 선택 시 폰트 굵게
-        function updateFontWeight(checkbox) {
-            const creditCardLabel = document.getElementById("creditCardLabel");
-            const virtualAccountLabel = document.getElementById("virtualAccountLabel");
-
-            if (checkbox.value === "카드") {
-                creditCardLabel.classList.add("font-bold");
-                virtualAccountLabel.classList.remove("font-bold");
-            } else if (checkbox.value === "가상계좌") {
-                creditCardLabel.classList.remove("font-bold");
-                virtualAccountLabel.classList.add("font-bold");
-            }
-        }
-
         var tossPayments = TossPayments("test_ck_lpP2YxJ4K877wRwQ1Lp8RGZwXLOb");
         var button = document.getElementById("payment-button");
 
