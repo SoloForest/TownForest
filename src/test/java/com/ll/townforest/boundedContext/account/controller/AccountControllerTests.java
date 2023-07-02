@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.boundedContext.account.service.AccountService;
+
 import jakarta.servlet.http.HttpSession;
 
 @SpringBootTest
@@ -31,6 +33,8 @@ import jakarta.servlet.http.HttpSession;
 public class AccountControllerTests {
 	@Autowired
 	private MockMvc mvc;
+	@Autowired
+	private AccountService accountService;
 
 	@Test
 	@DisplayName("로그인 폼")
@@ -103,5 +107,7 @@ public class AccountControllerTests {
 			.andExpect(handler().methodName("join"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrlPattern("/account/login**"));
+
+		assertThat(accountService.findByUsername("testUser").isPresent()).isEqualTo(true);
 	}
 }
