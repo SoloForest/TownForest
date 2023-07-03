@@ -30,14 +30,14 @@ public class VehicleController {
 		return "maintenance/vehicle";
 	}
 
-	@GetMapping("/write")
+	@GetMapping("/add")
 	public String getinsert(Model model) {
 		model.addAttribute("form", new VehicleForm());
 
-		return "maintenance/write";
+		return "maintenance/add";
 	}
 
-	@PostMapping("/write")
+	@PostMapping("/add")
 	public String insert(@Valid @ModelAttribute VehicleForm form) {
 		vehicleService.insert(form.getName(), form.getVehicleNumber());
 		return "maintenance/vehicle";
