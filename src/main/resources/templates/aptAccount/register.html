@@ -104,6 +104,12 @@
                 document.querySelector("#show_more").checked = false;
             });
         });
+
+        const inputSelect2 = document.querySelector("#select");
+        const checkboxToggle = () => {
+            document.querySelector("#show_more").checked = !document.querySelector("#show_more").checked;
+        };
+        inputSelect2.addEventListener("click", checkboxToggle);
     </script>
 </main>
 </body>
