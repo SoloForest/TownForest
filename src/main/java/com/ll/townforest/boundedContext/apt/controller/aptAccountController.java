@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class aptAccountController {
 	//@PreAuthorize("isAuthenticated()")
 	@GetMapping("/register")
-	public String showLogin() {
+	public String showRegister() {
 		return "aptAccount/register";
 	}
 }
