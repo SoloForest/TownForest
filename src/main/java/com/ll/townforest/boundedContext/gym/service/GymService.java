@@ -70,6 +70,7 @@ public class GymService {
 
 	}
 
+	@Transactional
 	public LocalDateTime getEndDate(GymTicket gymTicket, LocalDateTime startDate) {
 		return startDate.plusDays(gymTicket.getDays());
 	}
