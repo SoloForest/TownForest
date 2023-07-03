@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/css/calender.css">
     <script src="/js/calender.js"></script>
     <script src="https://js.tosspayments.com/v1/payment"></script>
+
 </head>
 
 <body>
@@ -23,9 +24,12 @@
             </div>
             <div class="form-control flex gap-2 mt-2">
                 <label th:each="ticket : ${gymTicketList}" class="flex items-center gap-2">
-                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"/>
-                    <span class="label-text" th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
-                          th:value="${ticket.price}"></span>
+                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"
+                           name="ticketType"/>
+                    <span class="label-text"
+                          th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
+                          th:value="${ticket.price}">
+                        </span>
                     <div class="font-bold" th:if="${ticket.content != null}"
                          th:text="${'(' + ticket.content + ')'}"></div>
                 </label>
@@ -63,22 +67,26 @@
                         </tbody>
                     </table>
                 </div>
-                <input id="selectedDate" class="hidden"/>
+                <input id="selectedDate" class="hidden" name="startDate"/>
             </div>
         </div>
+
         <div class="flex justify-end wrap items-center gap-2">
             <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
             <p>결제금액 : </p>
             <div id="payment-amount"></div>
         </div>
         <div class="flex justify-end">
-            <button id="payment-button" class="btn shadow-xl m-2" style="background-color: #91c0fd;">결제하기</button>
+            <button id="payment-button" class="btn shadow-xl m-2 button is-link" style="background-color: #91c0fd;">
+                결제하기
+            </button>
         </div>
     </div>
     </div>
 
-    <!-- 체크박스 선택 시 이전 선택한거 삭제 후 선택, 선택된 폰트 굵게 -->
+
     <script th:inline="javascript">
+        // 체크박스 선택 시 이전 선택한거 삭제 후 선택, 선택된 폰트 굵게
         const checkboxes = document.querySelectorAll('.checkbox');
         const paymentAmountElement = document.getElementById('payment-amount');
 
@@ -109,6 +117,75 @@
                     paymentAmountElement.classList.remove('font-semibold');
                 }
             });
+        });
+
+        var tossPayments = TossPayments("test_ck_lpP2YxJ4K877wRwQ1Lp8RGZwXLOb");
+        var button = document.getElementById("payment-button");
+
+        var orderId = new Date().getTime();
+
+        button.addEventListener("click", function () {
+            var checkedCheckbox = document.querySelector('.checkbox:checked');
+            var selectedDate = document.getElementById("selectedDate").value; // 시작일
+
+            // 체크박스 선택 검증
+            if (!checkedCheckbox) {
+                toastWarning("이용권을 선택해주세요");
+                return;
+            }
+
+            // 날짜 선택 검증
+            if (!selectedDate) {
+                toastWarning("시작 날짜를 선택해주세요");
+                return;
+            }
+
+            var type = checkedCheckbox.value;
+            // 가격
+            var price = checkedCheckbox.nextElementSibling.getAttribute('value');
+
+            let path = "/";
+            let successUrl = window.location.origin + path + "gym" + path + "register" + path + "success";
+            let failUrl = window.location.origin + path + "gym" + path + "register" + path + "fail";
+
+            // 며칠권인지 구분
+            var labelText = checkedCheckbox.nextElementSibling.textContent;
+            var parsedText = labelText.substring(0, labelText.indexOf('-')).trim();
+
+            // 날짜 표기방식 변경
+            var dateObject = new Date(selectedDate);
+            var year = dateObject.getFullYear();
+            var month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+            var day = ("0" + dateObject.getDate()).slice(-2);
+            var formattedDate = year + "-" + month + "-" + day;
+
+
+            let jsons = {
+                "card": {
+                    "amount": price,
+                    "orderId": "gym" + "-type-" + type + "-" + (Math.random() + "").substring(2) +"_"+formattedDate,
+                    "orderName": parsedText + "-" + "시작일-" + formattedDate,
+                    "successUrl": successUrl,
+                    "method": "card",
+                    "failUrl": failUrl,
+                    "customerName": [[${user.account.fullName}]],
+                    "useInternationalCardOnly": false,
+                    "flowMode": "DEFAULT"
+                }
+            }
+                pay("카드", jsons.card);
+
+            function pay(method, requestJson) {
+                console.log(requestJson);
+                tossPayments.requestPayment(method, requestJson)
+                    .catch(function (error) {
+                        if (error.code === "USER_CANCEL") {
+                            alert('유저가 취소했습니다.');
+                        } else {
+                            alert(error.message);
+                        }
+                    });
+            }
         });
 
     </script>
