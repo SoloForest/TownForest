@@ -2,6 +2,8 @@ package com.ll.townforest.boundedContext.library.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,10 +34,20 @@ public class LibraryController {
 	public String showBooking(Model model) {
 		LibraryHistory isUsing = libraryService.usingHistory(rq.getAptAccount().getId());
 		List<Seat> seats = libraryService.findUseableList(1L);
+		Slice<LibraryHistory> histories = libraryService.findHistories(rq.getAptAccount().getId(),
+			PageRequest.of(0, 5));
 
 		model.addAttribute("isUsing", isUsing);
 		model.addAttribute("seats", seats);
+		model.addAttribute("histories", histories);
 		return "library/booking";
+	}
+
+	@PostMapping("/histories")
+	@ResponseBody
+	@PreAuthorize("isAuthenticated()")
+	public Slice<LibraryHistory> pagingHistories(@RequestParam int page, @RequestParam int size) {
+		return libraryService.findHistories(rq.getAptAccount().getId(), PageRequest.of(page, size));
 	}
 
 	@PostMapping("/booking")

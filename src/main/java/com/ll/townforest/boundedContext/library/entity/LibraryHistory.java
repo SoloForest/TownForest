@@ -57,4 +57,13 @@ public class LibraryHistory {
 	 * */
 	@Column(nullable = false)
 	private Integer statusType;
+
+	public String getStatusTypeToString() {
+		return switch (statusType) {
+			case 0 -> "예약";
+			case 1 -> "취소";
+			case 2 -> "자동취소";
+			default -> "";
+		};
+	}
 }
