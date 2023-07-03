@@ -1,5 +1,7 @@
 package com.ll.townforest.boundedContext.maintenance.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,5 +23,9 @@ public class VehicleService {
 			.type(0)
 			.build();
 		return vehicleRepository.save(vehicle);
+	}
+
+	public List<Vehicle> gethouse(Long id) {
+		return vehicleRepository.findByUserId(id);
 	}
 }
