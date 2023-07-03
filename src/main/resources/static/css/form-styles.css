@@ -1,25 +1,25 @@
-label:not(.exclusion .label) {
+label:not(.exclusion label) {
     top: 0;
     transform: translateY(-50%);
     font-size: 11px;
     color: rgba(37, 99, 235, 1);
 }
 
-.empty input:not(:focus) + label:not(.exclusion .label) {
+.empty input:not(:focus):not(.exclusion input) + label:not(.exclusion label) {
     top: 50%;
     transform: translateY(-50%);
     font-size: 14px;
 }
 
-input:not(:focus) + label:not(.exclusion .label) {
+input:not(:focus):not(.exclusion input) + label:not(.exclusion label) {
     color: rgba(70, 70, 70, 1);
 }
 
-input {
+input:not(.exclusion input) {
     border-width: 1px;
 }
 
-input:focus {
+input:focus:not(.exclusion input) {
     outline: none;
     border-color: rgba(37, 99, 235, 1);
 }
