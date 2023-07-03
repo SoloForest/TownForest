@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.boundedContext.account.service.AccountService;
+
 import jakarta.servlet.http.HttpSession;
 
 @SpringBootTest
@@ -31,6 +33,8 @@ import jakarta.servlet.http.HttpSession;
 public class AccountControllerTests {
 	@Autowired
 	private MockMvc mvc;
+	@Autowired
+	private AccountService accountService;
 
 	@Test
 	@DisplayName("로그인 폼")
@@ -71,7 +75,7 @@ public class AccountControllerTests {
 	}
 
 	@Test
-	@DisplayName("회원가입 폼")
+	@DisplayName("회원 가입 폼")
 	void t003() throws Exception {
 		ResultActions resultActions = mvc
 			.perform(get("/account/join"))
@@ -82,5 +86,28 @@ public class AccountControllerTests {
 			.andExpect(handler().methodName("showJoin"))
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(view().name("account/join"));
+	}
+
+	@Test
+	@DisplayName("회원 가입 테스트")
+	void t004() throws Exception {
+		ResultActions resultActions = mvc
+			.perform(post("/account/join")
+				.with(csrf())
+				.param("username", "testUser")
+				.param("password", "test1234!")
+				.param("fullName", "test")
+				.param("email", "test@eamil.com")
+				.param("phoneNumber", "01000001234")
+			)
+			.andDo(print());
+
+		resultActions
+			.andExpect(handler().handlerType(AccountController.class))
+			.andExpect(handler().methodName("join"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrlPattern("/account/login**"));
+
+		assertThat(accountService.findByUsername("testUser").isPresent()).isEqualTo(true);
 	}
 }
