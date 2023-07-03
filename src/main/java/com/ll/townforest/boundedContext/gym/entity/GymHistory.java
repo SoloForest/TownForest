@@ -1,7 +1,9 @@
 package com.ll.townforest.boundedContext.gym.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ll.townforest.boundedContext.apt.entity.Apt;
@@ -36,8 +38,9 @@ public class GymHistory {
 	private Gym gym;
 	@ManyToOne
 	private Apt apt;
-	private LocalDateTime startDate;
-	private LocalDateTime endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	@CreatedDate
 	private LocalDateTime paymentDate;
 	private int price;
 	/*

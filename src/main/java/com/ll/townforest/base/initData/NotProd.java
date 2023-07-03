@@ -1,5 +1,6 @@
 package com.ll.townforest.base.initData;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.ll.townforest.boundedContext.gym.entity.Gym;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
+import com.ll.townforest.boundedContext.gym.service.GymService;
 import com.ll.townforest.boundedContext.library.entity.Library;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
@@ -43,7 +45,8 @@ public class NotProd {
 		LibraryRepository libraryRepository,
 		SeatRepository seatRepository,
 		GymRepository gymRepository,
-		GymTicketRepository gymTicketRepository
+		GymTicketRepository gymTicketRepository,
+		GymService gymService
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -302,6 +305,8 @@ public class NotProd {
 					.name("90일권")
 					.build();
 				gymTicketRepository.save(gymTicket4);
+
+				gymService.create(aptAccount4, LocalDate.now(), 3, "카드");
 			}
 		};
 	}
