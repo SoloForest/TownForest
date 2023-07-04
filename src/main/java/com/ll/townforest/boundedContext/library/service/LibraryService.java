@@ -220,7 +220,7 @@ public class LibraryService {
 		return RsData.of("S-1", "취소 가능한 자리입니다.", optSeat.get());
 	}
 
-	public AptAccount getTargetUser(Long libraryHistoryId) {
+	public AptAccount getTargetUserForAdminCancel(Long libraryHistoryId) {
 		return libraryHistoryRepository.findById(libraryHistoryId).get().getUser();
 	}
 

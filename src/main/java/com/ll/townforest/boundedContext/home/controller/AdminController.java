@@ -71,7 +71,7 @@ public class AdminController {
 			return canCancelSeat.getMsg();
 		}
 
-		AptAccount targetUser = libraryService.getTargetUser(libraryHistoryId);
+		AptAccount targetUser = libraryService.getTargetUserForAdminCancel(libraryHistoryId);
 
 		return libraryService.AdminCancel(targetUser, canCancelSeat.getData(), libraryHistoryId).getMsg();
 	}
