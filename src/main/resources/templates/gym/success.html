@@ -1,0 +1,62 @@
+<html layout:decorate="~{home/layout.html}">
+
+<head>
+    <title>결제성공</title>
+</head>
+
+<body>
+
+<main layout:fragment="main">
+    <div class="flex flex-col justify-center items-center h-screen">
+        <th:block th:if="${#strings.equals(isSuccess, 'true')}">
+            <i class="fa-regular fa-circle-check text-[6rem]" style="color: #70a5ff;"></i>
+            <div class="mt-4 font-bold">
+                결제 성공
+            </div>
+
+            <div class="overflow-x-auto mt-4">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                    <tr>
+                        <th>이용권</th>
+                        <th>시작날짜</th>
+                        <th>마지막날짜</th>
+                        <th>결제금액</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text="${gymTicket.name}"></td>
+                        <td th:text="${#temporals.format(startDate, 'yy-MM-dd')}"></td>
+                        <td th:text="${#temporals.format(endDate, 'yy-MM-dd')}"></td>
+                        <td th:text="${#numbers.formatInteger(amount, 3, 'COMMA') + '원'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex gap-2 mt-2">
+                <div class="btn btn-primary" onclick="javascript: window.location.href='/';">
+                    홈으로
+                </div>
+                <div class="btn btn-primary" onclick="javascript: window.location.href='/gym';"> 헬스장메인으로</div>
+            </div>
+        </th:block>
+        <th:block th:if="${#strings.equals(isSuccess, 'false')}">
+            <h1>결제 실패</h1>
+            <p>에러메시지 : <span th:text="${message}"></span></p>
+            <p>에러코드 : <span th:text="${code}"></span></p>
+            <div class="flex gap-2 mt-2">
+                <div class="btn btn-primary" onclick="javascript: window.location.href='/';">
+                    홈으로
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+
+</main>
+</body>
+
+</html>
+
