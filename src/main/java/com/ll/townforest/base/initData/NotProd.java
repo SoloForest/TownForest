@@ -134,6 +134,7 @@ public class NotProd {
 							House houseTemp = House.builder()
 								.dong(100 + i)
 								.ho((j * 100) + k)
+								.apt(apt1)
 								.build();
 							houseList1.add(houseTemp);
 						}
@@ -149,6 +150,7 @@ public class NotProd {
 							House houseTemp = House.builder()
 								.dong(100 + i)
 								.ho((j * 100) + k)
+								.apt(apt1)
 								.build();
 							houseList2.add(houseTemp);
 						}
@@ -164,6 +166,7 @@ public class NotProd {
 							House houseTemp = House.builder()
 								.dong(100 + i)
 								.ho((j * 100) + k)
+								.apt(apt1)
 								.build();
 							houseList3.add(houseTemp);
 						}
@@ -231,7 +234,7 @@ public class NotProd {
 				AptAccountHouse aptAccountHouse1 = AptAccountHouse.builder()
 					.relationship("세대주")
 					.user(aptAccount4)
-					.house(houseRepository.findByDongAndHo(103, 2101))
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 103, 2101).get())
 					.build();
 				aptAccountHouseRepository.save(aptAccountHouse1);
 
