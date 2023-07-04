@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,5 +145,9 @@ public class LibraryService {
 			.build());
 
 		return RsData.of("S-1", "%03d번 자리 이용을 취소합니다.".formatted(selectedSeat));
+	}
+
+	public Slice<LibraryHistory> findHistories(Long aptAccountId, Pageable pageable) {
+		return libraryHistoryRepository.findByUserIdOrderByIdDesc(aptAccountId, pageable);
 	}
 }
