@@ -37,12 +37,12 @@ public class aptAccountController {
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/register")
 	public String register(@Valid AptAccountDTO aptAccountDTO) {
-		RsData<AptAccount> accountRsData = aptAccountService.canRegister(rq.getAccount(), aptAccountDTO);
+		RsData<AptAccount> aptAccountRsData = aptAccountService.register(rq.getAccount(), aptAccountDTO);
 
-		if (accountRsData.isFail()) {
-			rq.historyBack(accountRsData);
+		if (aptAccountRsData.isFail()) {
+			return rq.historyBack(aptAccountRsData);
 		}
 
-		return rq.redirectWithMsg("/", accountRsData);
+		return rq.redirectWithMsg("/", aptAccountRsData);
 	}
 }

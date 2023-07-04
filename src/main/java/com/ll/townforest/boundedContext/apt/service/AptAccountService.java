@@ -68,6 +68,6 @@ public class AptAccountService {
 
 		aptAccountHouseRepository.save(aptAccountHouse);
 
-		return RsData.of("S-1", "내 아파트 등록 요청을 완료했습니다.<br>관리자의 승인을 기다려주세요.");
+		return RsData.of("S-1", "내 아파트 등록 요청을 완료했습니다.<br>관리자의 승인을 기다려주세요.", aptAccount);
 	}
 }
