@@ -7,55 +7,31 @@
     <h1 class="ml-5 text-xl font-bold">등록 차량 목록</h1>
     <div class="flex justify-center mt-4 mb-3 relative w-full">
         <div class="flex flex-col">
-            <div class="border-2 my-4 border-gray-500 border-x-indigo-50/0 w-80 h-50 px-2 my-4">
+            <div th:each="vehicle : ${form}"
+                 class="border-2 my-4 border-gray-500 border-x-indigo-50/0 w-80 h-50 px-2 my-4">
                 <div class="mt-4">
                     <i class="fa-solid fa-user mr-1"></i>
                     <span class="mr-2">차량주<br></span>
-                    <span class="mt-1" th:text="${name}"></span>
+                    <span class="mt-1" th:text="${vehicle.name}"></span>
                 </div>
                 <div class="mt-4">
                     <i class="fa-solid fa-car mr-1"></i>
                     <span>차량번호<br></span>
-                    <span class="mt-1" th:text="${vehicleNumber}"></span>
+                    <span class="mt-1" th:text="${vehicle.vehicleNumber}"></span>
                 </div>
                 <div class="flex justify-end">
                     <button class="text-red-400">삭제</button>
                 </div>
             </div>
-            <div class="border-2 my-4 border-gray-500 border-x-indigo-50/0 w-80 h-50 px-2 my-4">
-                <div class="mt-4">
-                    <i class="fa-solid fa-user mr-2"></i>
-                    <span class="mr-2">차량주<br></span>
-                    <span class="mt-1" th:text="${name}"></span>
-                </div>
-                <div class="mt-4">
-                    <i class="fa-solid fa-car mr-1"></i>
-                    <span class="mr-2">차량번호<br></span>
-                    <span class="mt-1" th:text="${vehicleNumber}"></span>
-                </div>
-                <div class="flex justify-end">
-                    <button class="text-red-400">삭제</button>
-                </div>
-            </div>
-            <div class="border-2 my-4 border-gray-500 border-x-indigo-50/0 w-80 h-50 px-2 my-4">
-                <div class="mt-4"><i class="fa-solid fa-user mr-1"></i>
-                    <span class="mr-2">차량주<br></span>
-                    <span class="mt-1" th:text="${name}"></span>
-                </div>
-                <div class="mt-4">
-                    <i class="fa-solid fa-car mr-1"></i>
-                    <span class="mr-2">차량번호<br></span>
-                    <span class="mt-1" th:text="${vehicleNumber}"></span>
-                </div>
-                <div class="flex justify-end text-red-400">
-                    <button>삭제</button>
-                </div>
+            <div th:if="${#lists.isEmpty(form)}" class="my-4 text-center">
+                아직 등록된 차량이 없어요
             </div>
             <div class="my-6 flex justify-center">
-                <button class="btn btn-neutral">추가등록</button>
+                <a role="button" class="btn btn-neutral" th:href="@{/maintenance/add}">추가등록</a>
             </div>
         </div>
     </div>
+
 </main>
 </body>
 </html>
