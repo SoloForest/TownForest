@@ -8,8 +8,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.Base64;
 import java.util.List;
 
@@ -17,6 +22,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +34,7 @@ import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
+
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.service.GymService;
 
@@ -50,6 +57,7 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
+
 		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
@@ -62,9 +70,11 @@ public class GymController {
 		// 시작일 전 일 경우, 시작이 며칠 남았는지
 		long beforeDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getStartDate());
 		model.addAttribute("beforeDays", beforeDays);
+    
 		// 이용권 총 며칠 남았는지
 		long afterDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getEndDate());
 		model.addAttribute("afterDays", afterDays);
+
 		return "gym/gym";
 	}
 
@@ -89,10 +99,12 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
+
 		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
+
 
 		// 연장용 일 경우 startDate를 현제 가지고 있는 이용권의 종료일+1로 지정하기 위해 필요
 		GymMembership membership = gymService.getMembership(user);
@@ -116,11 +128,9 @@ public class GymController {
 		@RequestParam(value = "paymentKey") String paymentKey)
 		throws Exception {
 
-		AptAccount user = rq.getAptAccount();
-
 		if (user == null)
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
-
+    
 		// "orderId":"gym-type-2-36600264572790997_2023-07-12" 이런 형태, -type- 다음 숫자가 이용권 종류
 		String[] parts = orderId.split("-type-");
 		String[] subParts = parts[1].split("-");
@@ -132,7 +142,7 @@ public class GymController {
 		String dateString = parts2[1];
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate startDate = LocalDate.parse(dateString, formatter);
-
+    
 		// 실제 이용권 가격
 		GymTicket gymTicket = gymService.getTicket(ticketType);
 
@@ -176,7 +186,7 @@ public class GymController {
 		responseStream.close();
 		model.addAttribute("responseStr", jsonObject.toJSONString());
 		System.out.println(jsonObject.toJSONString());
-		
+	
 		// 뷰에 보여줄 내용들을 위함
 		model.addAttribute("gymTicket", gymTicket);
 		model.addAttribute("startDate", startDate);
@@ -203,6 +213,7 @@ public class GymController {
 			else
 				gymService.update(user, startDate, endDate, ticketType, "카드");
 		}
+
 		return "gym/success";
 	}
 
@@ -235,5 +246,4 @@ public class GymController {
 
 		return "gym/history";
 	}
-
 }

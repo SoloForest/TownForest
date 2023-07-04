@@ -38,7 +38,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1' // JSONObject용 의존성, 토스페이먼츠용
-
     // 레디스 사용하여 세션 저장 시 필수 의존성
     implementation 'org.springframework.boot:spring-boot-starter-cache' // 캐시 추상화
     implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis 드라이버
