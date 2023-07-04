@@ -25,7 +25,7 @@ public class VehicleService {
 		return vehicleRepository.save(vehicle);
 	}
 
-	public List<Vehicle> getVehicle(Long id) {
+	public List<Vehicle> findByUserId(Long id) {
 		return vehicleRepository.findByUserId(id);
 	}
 }

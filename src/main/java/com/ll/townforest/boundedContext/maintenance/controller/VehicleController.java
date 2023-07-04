@@ -25,7 +25,7 @@ public class VehicleController {
 
 	@GetMapping("/vehicle/{id}")
 	public String showPage(Model model, @PathVariable("id") Long id) {
-		List<Vehicle> vehicle = vehicleService.getVehicle(id);
+		List<Vehicle> vehicle = vehicleService.findByUserId(id);
 		model.addAttribute("form", vehicle);
 		return "maintenance/vehicle";
 	}
