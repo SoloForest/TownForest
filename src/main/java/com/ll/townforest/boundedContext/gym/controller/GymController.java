@@ -16,6 +16,7 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.service.GymService;
@@ -48,7 +50,7 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
-		if (user == null)
+		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
@@ -87,7 +89,7 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
-		if (user == null)
+		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
@@ -174,17 +176,13 @@ public class GymController {
 		responseStream.close();
 		model.addAttribute("responseStr", jsonObject.toJSONString());
 		System.out.println(jsonObject.toJSONString());
-
-		model.addAttribute("method", (String)jsonObject.get("method"));
-		model.addAttribute("orderName", (String)jsonObject.get("orderName"));
-		model.addAttribute("orderId", orderId);
-		model.addAttribute("amount", amount);
-
+		
 		// 뷰에 보여줄 내용들을 위함
 		model.addAttribute("gymTicket", gymTicket);
 		model.addAttribute("startDate", startDate);
 		LocalDate endDate = gymService.getEndDate(gymTicket, startDate);
 		model.addAttribute("endDate", endDate);
+		model.addAttribute("amount", amount);
 
 		// 카드번호 표기 안할꺼라 필요 없긴한데 우선 두기.
 		if (((String)jsonObject.get("method")) != null) {
@@ -219,4 +217,23 @@ public class GymController {
 		model.addAttribute("message", message);
 		return "gym/fail";
 	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/history")
+	public String history(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+
+		AptAccount user = rq.getAptAccount();
+
+		if (user == null || !user.isStatus())
+			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+
+		model.addAttribute("user", user);
+
+		Page<GymHistory> gymHistories = gymService.getPersonalHistories(page, user.getId());
+
+		model.addAttribute("paging", gymHistories);
+
+		return "gym/history";
+	}
+
 }

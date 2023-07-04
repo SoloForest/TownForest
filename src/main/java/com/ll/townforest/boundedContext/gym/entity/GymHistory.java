@@ -56,8 +56,7 @@ public class GymHistory {
 	/*
 	상태
 	0: 결제
-	1: 만료
-	2: 연장	등
+	1: 연장
 	추가 예정	// TODO : 상태 고려
 	*/
 	private int status;

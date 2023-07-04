@@ -37,7 +37,7 @@
                         <p th:if="${gymMembership.status==0}"
                            th:text="|${#temporals.format(gymMembership.startDate, 'yy-MM-dd EEEEE요일')}|"></p>
                         <p th:if="${gymMembership.status==0}" class="font-bold"
-                           th:text="|${'(' + beforeDays + '일 남음)'}|"></p>
+                           th:text="|${'(D+' + beforeDays + ')'}|"></p>
 
                         <p th:if="${gymMembership.status==1 or gymMembership.status==3}"
                            th:text="${#temporals.format(gymMembership.startDate, 'yy-MM-dd EEEEE요일')}"></p>
@@ -52,7 +52,7 @@
                         <p th:if="${gymMembership.status==1 or gymMembership.status==3}"
                            th:text="|${#temporals.format(gymMembership.endDate, 'yy-MM-dd EEEEE요일')}|"></p>
                         <p th:if="${gymMembership.status==1 or gymMembership.status==3}" class="font-bold"
-                           th:text="|${'(' + afterDays + '일 남음)'}|"></p>
+                           th:text="|${'(D-' + afterDays + ')'}|"></p>
                     </div>
                 </div>
                 <div class="flex wrap items-center gap-2">
@@ -93,7 +93,8 @@
                 onclick="javascript: window.location.href='/gym/register';">이용권구입
         </button>
         <!-- 이용내역 기능 구현 필요 -->
-        <button class="btn shadow-xl m-2" style="background-color: #91c0fd;">이용내역
+        <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                onclick="javascript: window.location.href='/gym/history';">이용권 결제 내역
         </button>
     </div>
 </main>

@@ -71,7 +71,7 @@
                 </div>
                 <input id="selectedDate" class="hidden" th:if="${membership ==null}" name="startDate"/>
                 <input id="selectedDate2" th:if="${membership !=null}" th:value="${membership.endDate.plusDays(1)}"/>
-
+                <div th:if="${membership !=null}"> ※ 기존 이용권 종료일 다음날로 자동 선택됩니다. </div>
             </div>
         </div>
 
