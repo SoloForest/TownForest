@@ -13,7 +13,12 @@ public interface LibraryHistoryRepository extends JpaRepository<LibraryHistory, 
 	Optional<LibraryHistory> findTopByUserIdAndDateBetweenOrderByDateDesc(
 		Long UserId,
 		LocalDateTime startOfDay,
-		LocalDateTime endOfDay);
+		LocalDateTime endOfDay
+	);
+
+	Optional<LibraryHistory> findTopByUserIdOrderByIdDesc(Long aptAccountId);
 
 	Slice<LibraryHistory> findByUserIdOrderByIdDesc(Long aptAccountId, Pageable pageable);
+
+	Slice<LibraryHistory> findAllByOrderByIdDesc(Pageable pageable);
 }
