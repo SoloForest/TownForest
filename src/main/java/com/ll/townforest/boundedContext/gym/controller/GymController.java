@@ -50,7 +50,7 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
-		if (user == null)
+		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
@@ -89,7 +89,7 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
-		if (user == null)
+		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
@@ -176,17 +176,13 @@ public class GymController {
 		responseStream.close();
 		model.addAttribute("responseStr", jsonObject.toJSONString());
 		System.out.println(jsonObject.toJSONString());
-
-		model.addAttribute("method", (String)jsonObject.get("method"));
-		model.addAttribute("orderName", (String)jsonObject.get("orderName"));
-		model.addAttribute("orderId", orderId);
-		model.addAttribute("amount", amount);
-
+		
 		// 뷰에 보여줄 내용들을 위함
 		model.addAttribute("gymTicket", gymTicket);
 		model.addAttribute("startDate", startDate);
 		LocalDate endDate = gymService.getEndDate(gymTicket, startDate);
 		model.addAttribute("endDate", endDate);
+		model.addAttribute("amount", amount);
 
 		// 카드번호 표기 안할꺼라 필요 없긴한데 우선 두기.
 		if (((String)jsonObject.get("method")) != null) {
@@ -228,7 +224,7 @@ public class GymController {
 
 		AptAccount user = rq.getAptAccount();
 
-		if (user == null)
+		if (user == null || !user.isStatus())
 			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
