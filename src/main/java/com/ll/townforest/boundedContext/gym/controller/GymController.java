@@ -194,16 +194,11 @@ public class GymController {
 		model.addAttribute("endDate", endDate);
 		model.addAttribute("amount", amount);
 
-		// 카드번호 표기 안할꺼라 필요 없긴한데 우선 두기.
-		if (((String)jsonObject.get("method")) != null) {
-			if (((String)jsonObject.get("method")).equals("카드")) {
-				model.addAttribute("cardNumber", (String)((JSONObject)jsonObject.get("card")).get("number"));
-			}
-		} else {
+		if (((String)jsonObject.get("method")) == null) {
 			model.addAttribute("code", (String)jsonObject.get("code"));
 			model.addAttribute("message", (String)jsonObject.get("message"));
 		}
-
+			
 		// TODO : 결제방식 추가 시 수정 필요 / method를 받아서 넣어주기
 		if (isSuccess) {
 			GymMembership membership = gymService.getMembership(user);
