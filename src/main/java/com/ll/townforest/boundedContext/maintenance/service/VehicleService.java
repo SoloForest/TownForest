@@ -16,7 +16,7 @@ public class VehicleService {
 	private final VehicleRepository vehicleRepository;
 
 	@Transactional
-	public Vehicle insert(String name, String vehicleNumber) {
+	public Vehicle create(String name, String vehicleNumber) {
 		Vehicle vehicle = Vehicle.builder()
 			.name(name)
 			.vehicleNumber(vehicleNumber)
@@ -25,7 +25,7 @@ public class VehicleService {
 		return vehicleRepository.save(vehicle);
 	}
 
-	public List<Vehicle> gethouse(Long id) {
+	public List<Vehicle> getVehicle(Long id) {
 		return vehicleRepository.findByUserId(id);
 	}
 }

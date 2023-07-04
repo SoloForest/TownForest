@@ -25,21 +25,19 @@ public class VehicleController {
 
 	@GetMapping("/vehicle/{id}")
 	public String showPage(Model model, @PathVariable("id") Long id) {
-		List<Vehicle> vehicle = vehicleService.gethouse(id);
+		List<Vehicle> vehicle = vehicleService.getVehicle(id);
 		model.addAttribute("form", vehicle);
 		return "maintenance/vehicle";
 	}
 
 	@GetMapping("/add")
-	public String getinsert(Model model) {
-		model.addAttribute("form", new VehicleForm());
-
+	public String getinsert() {
 		return "maintenance/add";
 	}
 
 	@PostMapping("/add")
 	public String insert(@Valid @ModelAttribute VehicleForm form) {
-		vehicleService.insert(form.getName(), form.getVehicleNumber());
+		vehicleService.create(form.getName(), form.getVehicleNumber());
 		return "maintenance/vehicle";
 	}
 }
