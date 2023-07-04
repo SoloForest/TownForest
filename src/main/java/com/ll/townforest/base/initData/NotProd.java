@@ -1,6 +1,7 @@
 package com.ll.townforest.base.initData;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,9 @@ import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.apt.repository.HouseRepository;
 import com.ll.townforest.boundedContext.gym.entity.Gym;
+import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
+import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
 import com.ll.townforest.boundedContext.gym.service.GymService;
@@ -46,7 +49,8 @@ public class NotProd {
 		SeatRepository seatRepository,
 		GymRepository gymRepository,
 		GymTicketRepository gymTicketRepository,
-		GymService gymService
+		GymService gymService,
+		GymHistoryRepository gymHistoryRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -307,6 +311,25 @@ public class NotProd {
 				gymTicketRepository.save(gymTicket4);
 
 				gymService.create(aptAccount4, LocalDate.now(), 3, "카드");
+
+				List<GymHistory> gymHistoryList = new ArrayList<>();
+
+				for (int i = 0; i < 50; i++) {
+					GymHistory tmp = GymHistory.builder()
+						.user(aptAccount4)
+						.gym(gym1)
+						.apt(apt1)
+						.startDate(LocalDate.now())
+						.endDate(LocalDate.now())
+						.paymentDate(LocalDateTime.now())
+						.price(1000)
+						.paymentMethod("카드")
+						.status(0)
+						.build();
+					gymHistoryList.add(tmp);
+				}
+
+				gymHistoryRepository.saveAll(gymHistoryList);
 			}
 		};
 	}

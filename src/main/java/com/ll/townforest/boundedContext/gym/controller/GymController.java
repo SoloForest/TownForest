@@ -16,6 +16,7 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.service.GymService;
@@ -219,4 +221,23 @@ public class GymController {
 		model.addAttribute("message", message);
 		return "gym/fail";
 	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/history")
+	public String history(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+
+		AptAccount user = rq.getAptAccount();
+
+		if (user == null)
+			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+
+		model.addAttribute("user", user);
+
+		Page<GymHistory> gymHistories = gymService.getPersonalHistories(page, user.getId());
+
+		model.addAttribute("paging", gymHistories);
+
+		return "gym/history";
+	}
+
 }
