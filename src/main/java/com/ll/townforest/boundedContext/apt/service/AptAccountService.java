@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.account.entity.Account;
-import com.ll.townforest.boundedContext.account.service.AccountService;
 import com.ll.townforest.boundedContext.apt.DTO.AptAccountDTO;
 import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AptAccountService {
-	private final AccountService accountService;
 	private final AptRepository aptRepository;
 	private final HouseRepository houseRepository;
 	private final AptAccountRepository aptAccountRepository;
