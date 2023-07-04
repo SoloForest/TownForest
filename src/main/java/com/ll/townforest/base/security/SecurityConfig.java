@@ -21,7 +21,7 @@ public class SecurityConfig {
 			.formLogin(
 				formLogin -> formLogin
 					.loginPage("/account/login")
-					.defaultSuccessUrl("/aptAccount/register")
+					.defaultSuccessUrl("/")
 			)
 			.logout(
 				logout -> logout
