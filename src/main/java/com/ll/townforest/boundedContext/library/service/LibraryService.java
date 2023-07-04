@@ -225,7 +225,7 @@ public class LibraryService {
 	}
 
 	@Transactional
-	public RsData<String> AdminCancel(AptAccount targetUser, Seat seat, Long libraryHistoryId) {
+	public RsData<String> adminCancel(AptAccount targetUser, Seat seat, Long libraryHistoryId) {
 		RsData<String> addressString = makeAddressToString(targetUser);
 		if (addressString.isFail()) {
 			return addressString;
