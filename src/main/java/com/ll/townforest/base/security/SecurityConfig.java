@@ -21,14 +21,14 @@ public class SecurityConfig {
 			.formLogin(
 				formLogin -> formLogin
 					.loginPage("/account/login")
-					.defaultSuccessUrl("/")
+					.defaultSuccessUrl("/aptAccount/register")
 			)
 			.logout(
 				logout -> logout
 					.logoutUrl("/account/logout")
 					.logoutSuccessUrl("/account/login")
 			);
-		
+
 		return http.build();
 	}
 
