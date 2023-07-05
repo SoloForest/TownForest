@@ -44,6 +44,9 @@ public class LibraryHistory {
 	@ManyToOne
 	private AptAccount user;
 
+	@Column(nullable = false)
+	private String addressToString;
+
 	@ManyToOne
 	private Seat seat;
 
@@ -54,6 +57,7 @@ public class LibraryHistory {
 	 * 0: 예약
 	 * 1: 취소(반납)
 	 * 2: 자동취소
+	 * 3: 관리자취소
 	 * */
 	@Column(nullable = false)
 	private Integer statusType;
@@ -63,6 +67,7 @@ public class LibraryHistory {
 			case 0 -> "예약";
 			case 1 -> "취소";
 			case 2 -> "자동취소";
+			case 3 -> "관리자취소";
 			default -> "";
 		};
 	}
