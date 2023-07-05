@@ -10,7 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.base.rq.Rq;
+import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.gym.entity.Gym;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
@@ -28,6 +31,8 @@ public class GymService {
 	private final GymMembershipRepository gymMembershipRepository;
 	private final GymHistoryRepository gymHistoryRepository;
 	private final GymRepository gymRepository;
+
+	private final Rq rq;
 
 	public GymTicket getTicket(Integer ticketType) {
 		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
@@ -135,4 +140,23 @@ public class GymService {
 		Pageable pageable = PageRequest.of(page, 5);
 		return gymHistoryRepository.findAllByUserIdOrderByIdDesc(userId, pageable);
 	}
+
+	public List<GymMembership> getMemberList(AptAccount user) {
+		Apt apt = user.getApt();
+		Gym gym = gymRepository.findByAptId(apt.getId()).get();
+		if (gym == null)
+			new RuntimeException("잘못된 접근입니다. 회원님의 아파트에는 gym이 없습니다.");
+
+		return gymMembershipRepository.findByGymId(gym.getId());
+	}
+
+	public Page<GymMembership> getMemberPage(int page, AptAccount user) {
+		Apt apt = user.getApt();
+		Gym gym = gymRepository.findByAptId(apt.getId()).get();
+		if (gym == null)
+			new RuntimeException("잘못된 접근입니다. 회원님의 아파트에는 gym이 없습니다.");
+		Pageable pageable = PageRequest.of(page, 5);
+		return gymMembershipRepository.findAllByGymId(gym.getId(), pageable);
+	}
+
 }

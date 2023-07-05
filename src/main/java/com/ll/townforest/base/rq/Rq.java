@@ -85,6 +85,21 @@ public class Rq {
 		return aptAccount;
 	}
 
+	public boolean isGymAdmin() {
+		getAptAccount();
+		return aptAccount.getAuthority() == 3;
+	}
+
+	public String getPhoneNumString(String phone) {
+		if (phone.length() == 11) {
+			return phone.substring(0, 3) + "-" + phone.substring(3, 7) + "-" + phone.substring(7);
+		} else if (phone.length() == 10) {
+			return phone.substring(0, 3) + "-" + phone.substring(3, 6) + "-" + phone.substring(6);
+		} else {
+			return phone;
+		}
+	}
+
 	public String historyBack(String msg) {
 		String referer = req.getHeader("referer");
 		String key = "historyBackErrorMsg___" + referer;

@@ -2,6 +2,7 @@ package com.ll.townforest.boundedContext.gym.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -51,4 +52,18 @@ public class GymMembership {
 	추가 예정	// TODO : 상태 고려, 일시정지 기능 구현 시 일시정지날 기록용 변수 필요할 듯
 	*/
 	private int status;
+	// 이용권 총 며칠 남았는지
+
+	// 남은 일자 구하기, TODO : 일시정지
+	public long getRemainingDays() {
+		switch (this.status) {
+			case 0, 3 -> {
+				return ChronoUnit.DAYS.between(this.startDate, this.endDate);
+			}
+			default -> {
+				return ChronoUnit.DAYS.between(LocalDate.now(), this.endDate);
+			}
+		}
+	}
+
 }
