@@ -38,8 +38,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1' // JSONObject용 의존성, 토스페이먼츠용
+    // 레디스 사용하여 세션 저장 시 필수 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-cache' // 캐시 추상화
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis 드라이버
+    implementation 'org.springframework.session:spring-session-core' // 세션을 스프링 내부객체가 아닌 다른 저장소에 저장
+    implementation 'org.springframework.session:spring-session-data-redis' // 세션을 redis
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' // 액추에이터
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jar {
+    enabled = false
 }

@@ -1,7 +1,9 @@
 package com.ll.townforest.boundedContext.gym.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ll.townforest.boundedContext.apt.entity.Apt;
@@ -36,6 +38,17 @@ public class GymMembership {
 	private Gym gym;
 	@ManyToOne
 	private Apt apt;
-	private LocalDateTime startDate;
-	private LocalDateTime endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	@CreatedDate
+	private LocalDateTime paymentDate;
+	/*
+	상태
+	0: 이용 대기중(시작 전)
+	1: 이용중
+	2: 일시정지
+	3: 연장
+	추가 예정	// TODO : 상태 고려, 일시정지 기능 구현 시 일시정지날 기록용 변수 필요할 듯
+	*/
+	private int status;
 }
