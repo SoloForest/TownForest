@@ -21,4 +21,6 @@ public interface LibraryHistoryRepository extends JpaRepository<LibraryHistory, 
 	Slice<LibraryHistory> findByUserIdOrderByIdDesc(Long aptAccountId, Pageable pageable);
 
 	Slice<LibraryHistory> findAllByOrderByIdDesc(Pageable pageable);
+
+	Optional<LibraryHistory> findTopBySeatIdAndDateBetween(Long id, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -247,5 +248,37 @@ public class LibraryService {
 
 		return RsData.of("S-1",
 			"%s님의 %03d번 자리 이용을 취소합니다.".formatted(targetUser.getAccount().getFullName(), seat.getSeatNumber()));
+	}
+
+	@Scheduled(cron = "0 0 0 * * ?")
+	public void autoCancelAtMidnight() {
+		LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+		LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+
+		List<Seat> usingSeat = seatRepository.findByStatus(1);
+		for (int i = 0; i < usingSeat.size(); i++) {
+			Seat seat = usingSeat.get(i);
+			Optional<LibraryHistory> usingHistoriesOfToday =
+				libraryHistoryRepository.findTopBySeatIdAndDateBetween(seat.getId(), startOfDay, endOfDay);
+			if (usingHistoriesOfToday.isEmpty() || usingHistoriesOfToday.get().getStatusType() != 0) {
+				System.out.println(
+					"[Error]autoCancelAtMidnight : seatId=" + seat.getId() + "'s LibraryHistory can't find");
+				continue;
+			}
+			LibraryHistory history = usingHistoriesOfToday.get();
+			libraryHistoryRepository.save(LibraryHistory.builder()
+				.apart(history.getApart())
+				.library(history.getLibrary())
+				.user(history.getUser())
+				.addressToString(history.getAddressToString())
+				.seat(history.getSeat())
+				.date(LocalDateTime.now())
+				.statusType(2)
+				.build());
+
+			seatRepository.save(seat.toBuilder()
+				.status(0)
+				.build());
+		}
 	}
 }
