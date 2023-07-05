@@ -9,7 +9,7 @@
     <div class="card bg-base-100 shadow-xl m-[5%]">
         <div class="card-body">
             <h2 class="card-title">방문차량 등록</h2>
-            <form>
+            <form th:action method="post" onsubmit="submitGuestVehicle(this); return false;">
                 <!-- 캘린더 날짜 선택 -->
                 <div class="flex justify-center">
                     <table class="Calendar">
@@ -37,23 +37,57 @@
                         </tbody>
                     </table>
                 </div>
-                <input id="selectedDate" class="hidden"/>
+                <input type="datetime-local" id="selectedDate" name="selectedDate" class="hidden"/>
+
+                <!-- 신청자 이름 입력 -->
+                <div class="form-control w-full my-3">
+                    <label class="label">
+                        <span class="label-text">신청자 이름</span>
+                    </label>
+                    <input type="text" placeholder="홍길동"
+                           id="name" name="name"
+                           class="input input-bordered input-sm w-full"/>
+                </div>
 
                 <!-- 차량 번호 입력 -->
                 <div class="form-control w-full my-3">
                     <label class="label">
                         <span class="label-text">차량번호</span>
                     </label>
-                    <input type="text" placeholder="123가 4567" class="input input-bordered w-full max-w-xs"/>
+                    <input type="text" placeholder="123가 4567"
+                           id="vehicleNumber" name="vehicleNumber"
+                           class="input input-bordered input-sm w-full"/>
                 </div>
 
                 <!-- 등록 버튼 -->
-                <div class="card-actions">
+                <div class="card-actions mt-6">
                     <button class="btn btn-info btn-sm btn-outline w-full">등록하기</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <script>
+        function submitGuestVehicle(form) {
+            
+            if (form.selectedDate.value.trim().length === 0) {
+                toastWarning("방문 날짜를 선택해주세요");
+                return;
+            }
+
+            if (form.name.value.trim().length === 0) {
+                toastWarning("신청자 이름을 입력해주세요.");
+                return;
+            }
+
+            if (form.vehicleNumber.value.trim().length === 0) {
+                toastWarning("차량 번호를 입력해주세요.");
+                return;
+            }
+
+            form.submit();
+        }
+    </script>
 </main>
 </body>
 </html>
