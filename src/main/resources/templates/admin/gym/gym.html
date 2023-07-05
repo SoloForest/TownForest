@@ -3,7 +3,7 @@
     <title>헬스장 관리자 페이지</title>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" class="flex items-center justify-center h-screen mx-auto">
     <div class="w-full px-2 flex flex-col">
         <div class="card-body bg-base-100 shadow-xl m-2">
             <th:block th:if="${@rq.gymAdmin}">
@@ -50,13 +50,13 @@
         </div>
         <th:block th:if="${@rq.gymAdmin}">
             <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
-                    onclick="javascript: window.location.href='/admin/gym/locker';">이용자 현황
+                    onclick="javascript: window.location.href='/admin/gym/member';">이용자 현황
             </button>
             <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
-                    onclick="javascript: window.location.href='/gym/register';">헬스장 이용 현황
+                    onclick="javascript: window.location.href='/';">헬스장 이용 현황
             </button>
             <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
-                    onclick="javascript: window.location.href='/gym/pause';">이용권 관리
+                    onclick="javascript: window.location.href='/';">이용권 관리
             </button>
         </th:block>
     </div>

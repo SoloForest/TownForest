@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -235,39 +234,5 @@ public class GymController {
 		model.addAttribute("paging", gymHistories);
 
 		return "gym/history";
-	}
-
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/admin/gym")
-	public String adminMain(Model model) {
-		AptAccount user = rq.getAptAccount();
-		if (!rq.isGymAdmin())
-			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
-
-		List<GymMembership> currentUsers = gymService.getMemberList(user);
-		model.addAttribute("currentUsers", currentUsers);
-
-		// 이용권 정지시킨 회원 필터링
-		List<GymMembership> pauseUsers = currentUsers
-			.stream()
-			.filter(a -> a.getStatus() == 3)
-			.collect(Collectors.toList());
-
-		model.addAttribute("pauseUsers", pauseUsers);
-
-		return "gym/admin/gym";
-	}
-
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/admin/gym/member")
-	public String showMember(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
-		AptAccount user = rq.getAptAccount();
-		if (!rq.isGymAdmin())
-			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
-
-		Page<GymMembership> paging = gymService.getMemberPage(page, user);
-		model.addAttribute("paging", paging);
-
-		return "gym/admin/members";
 	}
 }

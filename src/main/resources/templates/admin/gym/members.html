@@ -7,19 +7,19 @@
 <body>
 
 <main layout:fragment="main">
-    <div class="flex items-center justify-center h-screen">
-        <div class="text-center flex flex-col wrap gap-2">
-            <div class="flex gap-2 justify-center items-center">
-                <i class="fa-solid fa-comments-dollar" style="color: #70a5ff;"></i>
+    <div class="flex items-center justify-center h-screen mx-auto" style="overflow:visible">
+        <div class="text-center flex flex-col wrap gap-2 ">
+            <div class="flex gap-2 justify-center items-center text-[1.5rem]">
+                <i class="fa-regular fa-calendar-check" style="color: #70a5ff;"></i>
                 <p class="font-bold">이용자 현황</p>
             </div>
             <th:block th:if="${paging.totalElements !=0}">
-                <div class="flex justify-start">
+                <div class="flex justify-start ml-[20%] mt-4">
                     <div>현재&nbsp;</div>
                     <div th:text="${paging.totalElements}" class="font-bold"></div>
                     <div>명이 이용중입니다.</div>
                 </div>
-                <div class="overflow-x-auto mt-4">
+                <div class="ml-[18%] mt-2">
                     <div class="table-container">
                         <table class="table table-sm">
                             <!-- head -->
@@ -38,16 +38,18 @@
                             <tbody>
                             <tr class="text-center" th:each="gymMember, loop : ${paging}">
                                 <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
-                                <td th:text="${(paging.number * paging.size) + loop.index +1}">
-                                <td>주소</td>
-                                <td th:text="${gymMember.user.account.fullName}"></td>
+                                <td th:text="${(paging.number * paging.size) + loop.index +1}"
+                                    style="min-width:40px; padding: 12px 0;"></td>
+                                <td style="min-width:60px; padding: 12px 0;">주소</td>
+                                <td th:text="${gymMember.user.account.fullName}"
+                                    style="min-width:40px; padding: 12px 0;"></td>
                                 <td th:text="${#temporals.format(gymMember.startDate, 'yy-MM-dd')}"
-                                    style="min-width:40px; padding: 12px 0;"></td>
+                                    style="min-width:80px; padding: 12px 0;"></td>
                                 <td th:text="${#temporals.format(gymMember.endDate, 'yy-MM-dd')}"
-                                    style="min-width:40px; padding: 12px 0;"></td>
+                                    style="min-width:80px; padding: 12px 0;"></td>
                                 <td th:text="${gymMember.remainingDays}" style="min-width:40px; padding: 12px 0;"></td>
                                 <td th:text="${@rq.getPhoneNumString(gymMember.user.account.phoneNumber)}"
-                                    style="min-width:40px; padding: 12px 0;"></td>
+                                    style="min-width:120px; padding: 12px 0;"></td>
                                 <td th:if="${gymMember.status==0}" style="min-width:40px; padding: 12px 0;">시작전</td>
                                 <td th:if="${gymMember.status==1}" style="min-width:40px; padding: 12px 0;">이용중</td>
                                 <td th:if="${gymMember.status==2}" style="min-width:40px; padding: 12px 0;">일시정지</td>
