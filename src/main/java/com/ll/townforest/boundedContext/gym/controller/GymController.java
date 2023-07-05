@@ -60,13 +60,15 @@ public class GymController {
 		GymMembership gymMembership = gymService.getMembership(user);
 		model.addAttribute("gymMembership", gymMembership);
 
-		// 시작일 전 일 경우, 시작이 며칠 남았는지
-		long beforeDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getStartDate());
-		model.addAttribute("beforeDays", beforeDays);
+		if (gymMembership != null) {
+			// 시작일 전 일 경우, 시작이 며칠 남았는지
+			long beforeDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getStartDate());
+			model.addAttribute("beforeDays", beforeDays);
+			// 이용권 총 며칠 남았는지
+			long afterDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getEndDate());
+			model.addAttribute("afterDays", afterDays);
 
-		// 이용권 총 며칠 남았는지
-		long afterDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getEndDate());
-		model.addAttribute("afterDays", afterDays);
+		}
 
 		return "gym/gym";
 	}
