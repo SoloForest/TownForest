@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.boundedContext.maintenance.entity.Vehicle;
 import com.ll.townforest.boundedContext.maintenance.form.VehicleForm;
 import com.ll.townforest.boundedContext.maintenance.service.VehicleService;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VehicleController {
 	private final VehicleService vehicleService;
+	private final Rq rq;
 
 	@GetMapping("/vehicle/{id}")
 	public String showPage(Model model, @PathVariable("id") Long id) {
@@ -31,13 +33,16 @@ public class VehicleController {
 	}
 
 	@GetMapping("/add")
-	public String getinsert() {
+	public String getInsert(Model model) {
+		//등록페이지에서 작성한 값이 들어갈 빈 객체
+		model.addAttribute("form", new VehicleForm());
 		return "maintenance/add";
 	}
 
 	@PostMapping("/add")
 	public String insert(@Valid @ModelAttribute VehicleForm form) {
-		vehicleService.create(form.getName(), form.getVehicleNumber());
-		return "maintenance/vehicle";
+		form.setUser(rq.getAptAccount());
+		vehicleService.create(form.getName(), form.getVehicleNumber(), form.getUser());
+		return "redirect:/maintenance/vehicle/%d".formatted(form.getUser().getId());
 	}
 }

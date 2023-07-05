@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.maintenance.entity.Vehicle;
 import com.ll.townforest.boundedContext.maintenance.repository.VehicleRepository;
 
@@ -16,11 +17,12 @@ public class VehicleService {
 	private final VehicleRepository vehicleRepository;
 
 	@Transactional
-	public Vehicle create(String name, String vehicleNumber) {
+	public Vehicle create(String name, String vehicleNumber, AptAccount id) {
 		Vehicle vehicle = Vehicle.builder()
 			.name(name)
 			.vehicleNumber(vehicleNumber)
 			.type(0)
+			.user(id)
 			.build();
 		return vehicleRepository.save(vehicle);
 	}
