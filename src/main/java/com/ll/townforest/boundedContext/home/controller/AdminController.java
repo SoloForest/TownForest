@@ -20,6 +20,7 @@ import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.service.GymService;
+import com.ll.townforest.boundedContext.home.dto.SearchDTO;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
@@ -107,12 +108,14 @@ public class AdminController {
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/gym/member")
-	public String showMember(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+	public String showMember(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+		SearchDTO searchDTO) {
+
 		AptAccount user = rq.getAptAccount();
 		if (!rq.isGymAdmin())
 			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
 
-		Page<GymMembership> paging = gymService.getMemberPage(page, user);
+		Page<GymMembership> paging = gymService.getMemberPage(page, user, searchDTO);
 		model.addAttribute("paging", paging);
 
 		return "admin/gym/members";

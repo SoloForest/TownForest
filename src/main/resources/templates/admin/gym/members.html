@@ -11,99 +11,113 @@
         <i class="fa-regular fa-calendar-check" style="color: #70a5ff;"></i>
         <p class="font-bold">이용자 현황</p>
     </div>
-    <th:block th:if="${paging.totalElements !=0}">
-        <div class="flex mt-4">
-            <div>현재&nbsp;</div>
-            <div th:text="${paging.totalElements}" class="font-bold"></div>
-            <div>명이 이용중입니다.</div>
+    <div class="flex items-center mt-4 ml-2"
+         th:if="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}">
+        <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+        <div>&nbsp;현재&nbsp;</div>
+        <div th:text="${paging.totalElements}" class="font-bold"></div>
+        <div>명이 이용중입니다.</div>
+    </div>
+    <div class="flex items-center mt-4 ml-2"
+         th:unless="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}">
+        <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+        <div>&nbsp;검색 결과&nbsp;</div>
+        <div th:text="${paging.totalElements}" class="font-bold"></div>
+        <div>명이 조회되었습니다.</div>
+    </div>
+    <div class="mt-2 ml-2">
+        <div class="table-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <table class="table table-sm">
+                <!-- head -->
+                <thead>
+                <tr class="text-center">
+                    <th>순번</th>
+                    <th>주소</th>
+                    <th>이름</th>
+                    <th>시작일</th>
+                    <th>종료일</th>
+                    <th>잔여일</th>
+                    <th>연락처</th>
+                    <th>비고</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-center" th:each="gymMember, loop : ${paging}">
+                    <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
+                    <td th:text="${(paging.number * paging.size) + loop.index +1}"
+                        style="min-width:40px; padding: 12px 0;"></td>
+                    <td style="min-width:60px; padding: 12px 0;">주소</td>
+                    <td th:text="${gymMember.user.account.fullName}"
+                        style="min-width:40px; padding: 12px 0;"></td>
+                    <td th:text="${#temporals.format(gymMember.startDate, 'yy-MM-dd')}"
+                        style="min-width:80px; padding: 12px 0;"></td>
+                    <td th:text="${#temporals.format(gymMember.endDate, 'yy-MM-dd')}"
+                        style="min-width:80px; padding: 12px 0;"></td>
+                    <td th:text="${gymMember.remainingDays}" style="min-width:40px; padding: 12px 0;"></td>
+                    <td th:text="${@rq.getPhoneNumString(gymMember.user.account.phoneNumber)}"
+                        style="min-width:120px; padding: 12px 0;"></td>
+                    <td th:if="${gymMember.status==0}" style="min-width:40px; padding: 12px 0;">시작전</td>
+                    <td th:if="${gymMember.status==1}" style="min-width:40px; padding: 12px 0;">이용중</td>
+                    <td th:if="${gymMember.status==2}" style="min-width:40px; padding: 12px 0;">일시정지</td>
+                    <td th:if="${gymMember.status==3}" style="min-width:40px; padding: 12px 0;">연장</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="mt-2">
-            <div class="table-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                <table class="table table-sm">
-                    <!-- head -->
-                    <thead>
-                    <tr class="text-center">
-                        <th>순번</th>
-                        <th>주소</th>
-                        <th>이름</th>
-                        <th>시작일</th>
-                        <th>종료일</th>
-                        <th>잔여일</th>
-                        <th>연락처</th>
-                        <th>비고</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="text-center" th:each="gymMember, loop : ${paging}">
-                        <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
-                        <td th:text="${(paging.number * paging.size) + loop.index +1}"
-                            style="min-width:40px; padding: 12px 0;"></td>
-                        <td style="min-width:60px; padding: 12px 0;">주소</td>
-                        <td th:text="${gymMember.user.account.fullName}"
-                            style="min-width:40px; padding: 12px 0;"></td>
-                        <td th:text="${#temporals.format(gymMember.startDate, 'yy-MM-dd')}"
-                            style="min-width:80px; padding: 12px 0;"></td>
-                        <td th:text="${#temporals.format(gymMember.endDate, 'yy-MM-dd')}"
-                            style="min-width:80px; padding: 12px 0;"></td>
-                        <td th:text="${gymMember.remainingDays}" style="min-width:40px; padding: 12px 0;"></td>
-                        <td th:text="${@rq.getPhoneNumString(gymMember.user.account.phoneNumber)}"
-                            style="min-width:120px; padding: 12px 0;"></td>
-                        <td th:if="${gymMember.status==0}" style="min-width:40px; padding: 12px 0;">시작전</td>
-                        <td th:if="${gymMember.status==1}" style="min-width:40px; padding: 12px 0;">이용중</td>
-                        <td th:if="${gymMember.status==2}" style="min-width:40px; padding: 12px 0;">일시정지</td>
-                        <td th:if="${gymMember.status==3}" style="min-width:40px; padding: 12px 0;">연장</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- 페이징 부분-->
-            <div class="btn-group flex justify-center mt-7" th:if="${!paging.isEmpty()}">
-                <div class="btn" th:classappend="${paging.number == 0} ? 'btn-disabled' : ''"
-                     th:attr="onclick='window.location.href=\'?page=0\''">
-                    &laquo;
-                </div>
-                <!-- 페이징 -->
-                <div th:attr="onclick='window.location.href=\'?page=' + (${paging.number - 1}) + '\''"
-                     class="btn" th:classappend="${!paging.hasPrevious} ? 'btn-disabled' : ''">
-                    이전
-                </div>
-                <div class="btn" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                     th:classappend="${paging.number == page} ? 'btn-active' : ''"
-                     th:if="${page >= paging.number - 1 and page <= paging.number + 2}"
-                     th:attr="onclick='window.location.href=\'?page=' + (${page}) + '\''"
-                     th:text="${page+1}">
-                </div>
-                <div class="btn" th:classappend="${!paging.hasNext} ? 'btn-disabled' :''"
-                     th:attr="onclick='window.location.href=\'?page=' + (${paging.number + 1}) + '\''">
-                    다음
-                </div>
-                <div th:attr="onclick='window.location.href=\'?page=' + (${paging.totalPages - 1}) + '\''"
-                     class="btn"
-                     th:classappend="${paging.number == paging.totalPages - 1} ? 'btn-disabled' : ''">
-                    &raquo;
-                </div>
-            </div>
-            <div class="flex gap-2 mt-2 justify-center mt-9">
-                <div class="btn btn-primary" onclick="javascript: window.location.href='/admin';">
-                    관리자 메인
-                </div>
-                <div class="btn btn-primary" onclick="javascript: window.location.href='/admin/gym';"> 헬스장 관리</div>
+        <!-- 페이징 부분-->
+        <div class="btn-group flex justify-center mt-7" th:if="${!paging.isEmpty()}"
+             th:with="search = '?searchQuery=' + ${param.searchQuery != null ? param.searchQuery : ''}, type = 'searchType=' + ${param.searchType != null ? param.searchType : ''}">
+            <a class="btn" th:classappend="${paging.number == 0} ? 'btn-disabled' : ''"
+               th:href="@{|${search}&${type}&page=0|}">
+                &laquo;
+            </a>
+            <a class="btn" th:classappend="${!paging.hasPrevious} ? 'btn-disabled' : ''"
+               th:href="@{|${search}&${type}&page=${paging.number - 1}|}">
+                이전
+            </a>
+            <a class="btn" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+               th:classappend="${paging.number == page} ? 'btn-active' : ''"
+               th:if="${page >= paging.number - 1 and page <= paging.number + 2}"
+               th:href="@{|${search}&${type}&page=${page}|}"
+               th:text="${page+1}">
+            </a>
+            <a class="btn" th:classappend="${!paging.hasNext} ? 'btn-disabled' : ''"
+               th:href="@{|${search}&${type}&page=${paging.number + 1}|}">
+                다음
+            </a>
+            <a class="btn"
+               th:classappend="${paging.number == paging.totalPages - 1} ? 'btn-disabled' : ''"
+               th:href="@{|${search}&${type}&page=${paging.totalPages - 1}|}">
+                &raquo;
+            </a>
+        </div>
+    </div>
+    <div>
+        <form class="flex gap-2 items-center justify-center mt-3">
+            <select class="select select-info" name="searchType">
+                <option value="name">이름</option>
+                <option value="phone">연락처</option>
+            </select>
+            <input type="text" placeholder="검색어를 입력해주세요" class="input input-bordered input-info"
+                   name="searchQuery" th:value="${param.searchQuery != null ? param.searchQuery : ''}"/>
+            <button class="btn btn-primary">검색</button>
+        </form>
+    </div>
+    <div class="flex gap-2 justify-center" onclick="javascript: window.location.href='/admin/gym/member';">
+        <div class="btn btn-outline btn-primary flex justify-center items-center"
+             th:unless="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}">
+            <i class="fa-regular fa-trash-can" style="color: #669eff;"></i>
+            <div th:text="${param.searchQuery + ' (검색어 초기화)'}">
             </div>
         </div>
-    </th:block>
-    <th:block th:if="${paging.totalElements ==0}">
-        <div class="flex flex-col justify-center items-center h-screen gap-3">
-            <i class="fa-solid fa-ban text-[6rem]" style="color: #ff6b6b;"></i>
-            <div>현재 이용중인 회원이 없습니다.</div>
-
-            <div class="flex gap-2 mt-2">
-                <div class="btn btn-primary" onclick="javascript: window.location.href='/';">
-                    홈으로
-                </div>
-                <div class="btn btn-primary" onclick="javascript: window.location.href='/gym';"> 헬스장메인으로</div>
+    </div>
+        <div class="flex gap-2 justify-center">
+            <div class="btn btn-primary" onclick="javascript: window.location.href='/admin';">
+                관리자 메인
             </div>
+            <div class="btn btn-primary" onclick="javascript: window.location.href='/admin/gym';"> 헬스장 관리</div>
         </div>
-    </th:block>
+    </div>
 </main>
 </body>
 

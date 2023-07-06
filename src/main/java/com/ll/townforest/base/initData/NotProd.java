@@ -24,8 +24,10 @@ import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.apt.repository.HouseRepository;
 import com.ll.townforest.boundedContext.gym.entity.Gym;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
+import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
+import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
 import com.ll.townforest.boundedContext.gym.service.GymService;
@@ -50,7 +52,8 @@ public class NotProd {
 		GymRepository gymRepository,
 		GymTicketRepository gymTicketRepository,
 		GymService gymService,
-		GymHistoryRepository gymHistoryRepository
+		GymHistoryRepository gymHistoryRepository,
+		GymMembershipRepository gymMembershipRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -330,6 +333,54 @@ public class NotProd {
 				}
 
 				gymHistoryRepository.saveAll(gymHistoryList);
+
+				List<Account> tmpList = new ArrayList<>();
+				List<AptAccount> tmpAptAccountList = new ArrayList<>();
+
+				for (int i = 0; i < 50; i++) {
+					String tmpNum = "" + i;
+					if (i < 10)
+						tmpNum = "0" + tmpNum;
+
+					Account tmp = Account.builder()
+						.username("test" + i)
+						.password(passwordEncoder.encode("1234"))
+						.fullName("test" + i)
+						.email("test" + i + "@test.com")
+						.phoneNumber("010123456" + tmpNum)
+						.build();
+
+					tmpList.add(tmp);
+				}
+
+				accountRepository.saveAll(tmpList);
+
+				for (Account account : tmpList) {
+					AptAccount tmp2 = AptAccount.builder()
+						.account(account)
+						.apt(apt1)
+						.build();
+					tmpAptAccountList.add(tmp2);
+				}
+
+				aptAccountRepository.saveAll(tmpAptAccountList);
+
+				List<GymMembership> gymTicketList22 = new ArrayList<>();
+
+				for (AptAccount aptAccount : tmpAptAccountList) {
+					GymMembership membership = GymMembership.builder()
+						.user(aptAccount)
+						.gym(gym1)
+						.apt(apt1)
+						.startDate(LocalDate.now())
+						.endDate(LocalDate.now())
+						.paymentDate(LocalDateTime.now())
+						.status(1)
+						.build();
+					gymTicketList22.add(membership);
+				}
+
+				gymMembershipRepository.saveAll(gymTicketList22);
 			}
 		};
 	}

@@ -21,6 +21,7 @@ import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
+import com.ll.townforest.boundedContext.home.dto.SearchDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -150,13 +151,27 @@ public class GymService {
 		return gymMembershipRepository.findByGymId(gym.getId());
 	}
 
-	public Page<GymMembership> getMemberPage(int page, AptAccount user) {
+	public Page<GymMembership> getMemberPage(int page, AptAccount user, SearchDTO searchDTO) {
 		Apt apt = user.getApt();
 		Gym gym = gymRepository.findByAptId(apt.getId()).get();
 		if (gym == null)
 			new RuntimeException("잘못된 접근입니다. 회원님의 아파트에는 gym이 없습니다.");
 		Pageable pageable = PageRequest.of(page, 5);
-		return gymMembershipRepository.findAllByGymId(gym.getId(), pageable);
+
+		Page<GymMembership> result = gymMembershipRepository.findAllByGymId(gym.getId(), pageable);
+
+		// 검색어가 없다 -> 전체 리스트 반환
+		// 검색어 대로 검색한 페이지 반환
+		if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
+			// 이름 아니면 연락처로 검색 가능
+			if ("name".equals(searchDTO.getSearchType())) {
+				result = gymMembershipRepository.findAllByFullName(searchDTO.getSearchQuery(), pageable);
+			} else {
+				result = gymMembershipRepository.findAllByPhoneNumber(searchDTO.getSearchQuery(), pageable);
+			}
+		}
+
+		return result;
 	}
 
 }
