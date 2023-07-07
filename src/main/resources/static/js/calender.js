@@ -61,9 +61,9 @@ function choiceDate(newDIV) {
     }
     newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
 
-    let newYear = document.getElementById("calYear").innerHTML * 1; // String을 Number로 변환(1을 곱한다.)
-    let newMonth = document.getElementById("calMonth").innerHTML * 1 - 1; // Month는 0부터 시작(달력에 표시된 것과 1만큼 차이난다.)
-    let newDay = new Date(newYear, newMonth, newDIV.innerHTML * 1);
+    let newYear = document.getElementById("calYear").innerHTML;
+    let newMonth = document.getElementById("calMonth").innerHTML;
+    let newDay = `${newYear}-${newMonth}-${newDIV.innerHTML}T00:00:00`;
     document.getElementById("selectedDate").value = newDay; // hidden input에 선택한 날짜 넣기
 }
 
