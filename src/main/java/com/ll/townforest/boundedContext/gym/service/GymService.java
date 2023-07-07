@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.service.AptAccountService;
 import com.ll.townforest.boundedContext.gym.entity.Gym;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
@@ -32,6 +33,8 @@ public class GymService {
 	private final GymMembershipRepository gymMembershipRepository;
 	private final GymHistoryRepository gymHistoryRepository;
 	private final GymRepository gymRepository;
+
+	private final AptAccountService aptAccountService;
 
 	private final Rq rq;
 
@@ -58,6 +61,8 @@ public class GymService {
 			status = 0;
 		}
 
+		String userHasAddress = aptAccountService.makeAddressToString(user).getData();
+
 		GymMembership tmp = GymMembership.builder()
 			.apt(user.getApt())
 			.gym(gymRepository.findById(1L).orElse(null))
@@ -65,6 +70,9 @@ public class GymService {
 			.endDate(endDate)
 			.user(user)
 			.status(status)
+			.contact(user.getAccount().getPhoneNumString())
+			.address(userHasAddress != null ?
+				aptAccountService.makeAddressToString(user).getData() : "알수없음")
 			.build();
 
 		gymMembershipRepository.save(tmp);
@@ -79,6 +87,9 @@ public class GymService {
 			.status(0)
 			.paymentMethod(method)
 			.user(user)
+			.contact(user.getAccount().getPhoneNumString() != null ? user.getAccount().getPhoneNumString() : "알수없음")
+			.address(userHasAddress != null ?
+				aptAccountService.makeAddressToString(user).getData() : "알수없음")
 			.build();
 
 		gymHistoryRepository.save(tmp2);

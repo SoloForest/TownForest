@@ -39,6 +39,8 @@ public class GymMembership {
 	private Gym gym;
 	@ManyToOne
 	private Apt apt;
+	private String address;
+	private String contact;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	@CreatedDate
