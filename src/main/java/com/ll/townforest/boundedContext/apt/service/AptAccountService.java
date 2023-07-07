@@ -68,4 +68,15 @@ public class AptAccountService {
 
 		return RsData.of("S-1", "내 아파트 등록 요청을 완료했습니다.", aptAccount);
 	}
+
+	private RsData<String> makeAddressToString(AptAccount user) {
+
+		AptAccountHouse aptAccountHouse = aptAccountHouseRepository.findByUserId(user.getId()).orElse(null);
+		if (aptAccountHouse == null) {
+			return RsData.of("F-1", "주소를 알 수 없는 계정입니다.");
+		}
+
+		return RsData.of("S-1", "주소를 문자열로 변환합니다.",
+			aptAccountHouse.getHouse().getDong() + "동 " + aptAccountHouse.getHouse().getHo() + "호");
+	}
 }
