@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.service.AptAccountService;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
+	private final AptAccountService aptAccountService;
 
 	@GetMapping("")
 	@PreAuthorize("isAuthenticated()")
@@ -74,5 +76,10 @@ public class AdminController {
 		AptAccount targetUser = libraryService.getTargetUserForAdminCancel(libraryHistoryId);
 
 		return libraryService.adminCancel(targetUser, canCancelSeat.getData(), libraryHistoryId).getMsg();
+	}
+
+	@GetMapping("/management")
+	public String showAptAccountManagement() {
+		return "admin/aptAccount/management";
 	}
 }
