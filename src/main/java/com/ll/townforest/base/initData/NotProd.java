@@ -250,21 +250,21 @@ public class NotProd {
 					.user(aptAccount5)
 					.house(houseRepository.findByAptAndDongAndHo(apt1, 101, 303).get())
 					.build();
-				aptAccountHouseRepository.save(aptAccountHouse1);
+				aptAccountHouseRepository.save(aptAccountHouse2);
 
 				AptAccountHouse aptAccountHouse3 = AptAccountHouse.builder()
 					.relationship("본인")
 					.user(aptAccount6)
 					.house(houseRepository.findByAptAndDongAndHo(apt1, 102, 702).get())
 					.build();
-				aptAccountHouseRepository.save(aptAccountHouse1);
+				aptAccountHouseRepository.save(aptAccountHouse3);
 
 				AptAccountHouse aptAccountHouse4 = AptAccountHouse.builder()
 					.relationship("본인")
 					.user(aptAccount7)
 					.house(houseRepository.findByAptAndDongAndHo(apt1, 103, 2101).get())
 					.build();
-				aptAccountHouseRepository.save(aptAccountHouse1);
+				aptAccountHouseRepository.save(aptAccountHouse4);
 
 				// 독서실 생성
 				Library library1 = Library.builder()
