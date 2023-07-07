@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.service.AptAccountService;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.service.GymService;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
+	private final AptAccountService aptAccountService;
 
 	private final GymService gymService;
 
@@ -119,5 +121,10 @@ public class AdminController {
 		model.addAttribute("paging", paging);
 
 		return "admin/gym/members";
+	}
+
+	@GetMapping("/management")
+	public String showAptAccountManagement() {
+		return "admin/aptAccount/management";
 	}
 }

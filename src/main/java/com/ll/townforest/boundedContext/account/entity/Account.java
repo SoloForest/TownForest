@@ -48,4 +48,16 @@ public class Account {
 
 		return grantedAuthorities;
 	}
+
+	public String getPhoneNumString() {
+		if (this.phoneNumber.length() == 11) {
+			return this.phoneNumber.substring(0, 3) + "-" + this.phoneNumber.substring(3, 7) + "-"
+				+ this.phoneNumber.substring(7);
+		} else if (this.phoneNumber.length() == 10) {
+			return this.phoneNumber.substring(0, 3) + "-" + this.phoneNumber.substring(3, 6) + "-"
+				+ this.phoneNumber.substring(6);
+		} else {
+			return this.phoneNumber;
+		}
+	}
 }
