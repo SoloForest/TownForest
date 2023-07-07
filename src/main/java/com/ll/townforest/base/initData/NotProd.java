@@ -239,8 +239,29 @@ public class NotProd {
 
 				//주민과 주거지 연결
 				AptAccountHouse aptAccountHouse1 = AptAccountHouse.builder()
-					.relationship("세대주")
+					.relationship("본인")
 					.user(aptAccount4)
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 101, 101).get())
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse1);
+
+				AptAccountHouse aptAccountHouse2 = AptAccountHouse.builder()
+					.relationship("본인")
+					.user(aptAccount5)
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 101, 303).get())
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse1);
+
+				AptAccountHouse aptAccountHouse3 = AptAccountHouse.builder()
+					.relationship("본인")
+					.user(aptAccount6)
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 102, 702).get())
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse1);
+
+				AptAccountHouse aptAccountHouse4 = AptAccountHouse.builder()
+					.relationship("본인")
+					.user(aptAccount7)
 					.house(houseRepository.findByAptAndDongAndHo(apt1, 103, 2101).get())
 					.build();
 				aptAccountHouseRepository.save(aptAccountHouse1);
