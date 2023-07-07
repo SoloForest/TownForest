@@ -98,7 +98,7 @@ public class GymController {
 
 		model.addAttribute("user", user);
 
-		// 연장용 일 경우 startDate를 현제 가지고 있는 이용권의 종료일+1로 지정하기 위해 필요
+		// 연장용 일 경우 startDate를 현재 가지고 있는 이용권의 종료일+1로 지정하기 위해 필요
 		GymMembership membership = gymService.getMembership(user);
 		model.addAttribute("membership", membership);
 
