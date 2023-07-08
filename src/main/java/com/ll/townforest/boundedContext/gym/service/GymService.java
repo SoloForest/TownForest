@@ -145,15 +145,15 @@ public class GymService {
 	public RsData<GymMembership> pauseMembership(GymMembership pauseMembership) {
 		LocalDate localDate = LocalDate.now();
 
-		long remainingDate = ChronoUnit.DAYS.between(localDate, pauseMembership.getEndDate());
+		long remainingDay = ChronoUnit.DAYS.between(localDate, pauseMembership.getEndDate());
 
-		if (remainingDate <= 0)
+		if (remainingDay <= 0)
 			return RsData.of("F-1", "당일 종료권 또는 기한 지난 이용권은 일시정지가 불가능합니다.");
 
 		GymMembership tmp = pauseMembership.toBuilder()
 			.status(2)
 			.pauseDate(localDate)
-			.remainingDate((int)remainingDate)
+			.remainingDay((int)remainingDay)
 			.build();
 
 		AptAccount user = pauseMembership.getUser();
@@ -163,7 +163,7 @@ public class GymService {
 		GymHistory tmp2 = GymHistory.builder()
 			.status(2)
 			.pauseDate(localDate)
-			.remainingDate((int)remainingDate)
+			.remainingDay((int)remainingDay)
 			.apt(tmp.getApt())
 			.gym(tmp.getGym())
 			.user(tmp.getUser())
@@ -175,5 +175,37 @@ public class GymService {
 
 		return RsData.of("S-1", "일시정지 성공");
 
+	}
+
+	public RsData<GymMembership> unPauseMembership(GymMembership pauseMembership) {
+
+		LocalDate localDate = LocalDate.now();
+		LocalDate pauseDate = pauseMembership.getPauseDate();
+
+		// 이용 종료일 갱신
+		int remainingDay = pauseMembership.getRemainingDay();
+		LocalDate updatedEndDate = pauseDate.plusDays(remainingDay);
+
+		GymMembership tmp = pauseMembership.toBuilder()
+			.status(4)
+			.pauseDate(null)
+			.remainingDay(null)
+			.endDate(updatedEndDate)
+			.build();
+
+		gymMembershipRepository.save(tmp);
+
+		GymHistory tmp2 = GymHistory.builder()
+			.status(3)
+			.apt(tmp.getApt())
+			.gym(tmp.getGym())
+			.user(tmp.getUser())
+			.startDate(tmp.getStartDate())
+			.endDate(tmp.getEndDate())
+			.build();
+
+		gymHistoryRepository.save(tmp2);
+
+		return RsData.of("S-1", "일시정지 해제");
 	}
 }

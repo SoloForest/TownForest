@@ -55,5 +55,5 @@ public class GymMembership {
 	// 일시정지 한 날
 	private LocalDate pauseDate;
 	// 일시정지 후 남은 날짜
-	private Integer remainingDate;
+	private Integer remainingDay;
 }

@@ -129,6 +129,31 @@ public class GymController {
 		return rq.redirectWithMsg("/gym", result);
 	}
 
+	@PostMapping("/unpause")
+	@PreAuthorize("isAuthenticated()")
+	public String unPause(@RequestParam Long membershipId) {
+		AptAccount user = rq.getAptAccount();
+
+		if (user == null || !user.isStatus())
+			return rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+
+		GymMembership membership = gymService.getMembershipByUser(user);
+		GymMembership pauseMembership = gymService.getMembershopByMembershipId(membershipId);
+
+		if (pauseMembership == null)
+			return rq.historyBack("정지를 풀고자 하는 이용권이 없습니다.");
+
+		if (!membership.equals(pauseMembership))
+			return rq.historyBack("본인 이용권만 일시정지 가능합니다.");
+
+		if (membership.getStatus() != 2)
+			return rq.historyBack("이미 일시정지가 풀린 이용권입니다.");
+
+		RsData<GymMembership> result = gymService.unPauseMembership(pauseMembership);
+
+		return rq.redirectWithMsg("/gym", result);
+	}
+
 	@GetMapping("/refund")
 	public String refund() {
 		return "gym/refund";
