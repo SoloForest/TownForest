@@ -1,5 +1,7 @@
 package com.ll.townforest.boundedContext.home.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
-import com.ll.townforest.boundedContext.apt.service.AptAccountService;
+import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
+import com.ll.townforest.boundedContext.apt.service.AptAccountHouseService;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
@@ -27,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
-	private final AptAccountService aptAccountService;
+	private final AptAccountHouseService aptAccountHouseService;
 
 	@GetMapping("")
 	@PreAuthorize("isAuthenticated()")
@@ -79,7 +82,11 @@ public class AdminController {
 	}
 
 	@GetMapping("/management")
-	public String showAptAccountManagement() {
+	public String showAptAccountManagement(Model model, @RequestParam(defaultValue = "1") int sortCode) {
+		List<AptAccountHouse> aptAccountHouseList = aptAccountHouseService.findAptAccountHouse(sortCode);
+		
+		model.addAttribute("aptAccountHouseList", aptAccountHouseList);
+		model.addAttribute("sortCode", sortCode);
 		return "admin/aptAccount/management";
 	}
 }
