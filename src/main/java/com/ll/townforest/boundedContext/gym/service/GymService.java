@@ -142,6 +142,7 @@ public class GymService {
 		return gymMembershipRepository.findById(membershipId).get();
 	}
 
+	@Transactional
 	public RsData<GymMembership> pauseMembership(GymMembership pauseMembership) {
 		LocalDate localDate = LocalDate.now();
 
@@ -177,6 +178,7 @@ public class GymService {
 
 	}
 
+	@Transactional
 	public RsData<GymMembership> unPauseMembership(GymMembership pauseMembership) {
 
 		LocalDate localDate = LocalDate.now();
