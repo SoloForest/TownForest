@@ -48,7 +48,12 @@ public class GymMembership {
 	1: 이용중
 	2: 일시정지
 	3: 연장
-	추가 예정	// TODO : 상태 고려, 일시정지 기능 구현 시 일시정지날 기록용 변수 필요할 듯
+	4: 재시작
 	*/
 	private int status;
+
+	// 일시정지 한 날
+	private LocalDate pauseDate;
+	// 일시정지 후 남은 날짜
+	private Integer remainingDate;
 }

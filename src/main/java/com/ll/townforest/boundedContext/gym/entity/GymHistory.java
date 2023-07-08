@@ -57,7 +57,14 @@ public class GymHistory {
 	상태
 	0: 결제
 	1: 연장
+	2: 일시정지
+	3: 재시작
 	추가 예정	// TODO : 상태 고려
 	*/
 	private int status;
+
+	// 일시정지 한 날
+	private LocalDate pauseDate;
+	// 일시정지 후 남은 날짜
+	private Integer remainingDate;
 }

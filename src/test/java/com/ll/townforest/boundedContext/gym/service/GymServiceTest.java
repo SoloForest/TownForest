@@ -57,7 +57,7 @@ public class GymServiceTest {
 
 		AptAccount aptAccount = rq.getAptAccount();
 
-		GymMembership gymMembership = gymService.getMembership(aptAccount);
+		GymMembership gymMembership = gymService.getMembershipByUser(aptAccount);
 
 		gymService.update(aptAccount, LocalDate.now(), LocalDate.now(), 1, "카드");
 

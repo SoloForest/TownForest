@@ -2,6 +2,7 @@ package com.ll.townforest.boundedContext.gym.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
@@ -90,7 +92,7 @@ public class GymService {
 		return startDate.plusDays(gymTicket.getDays());
 	}
 
-	public GymMembership getMembership(AptAccount user) {
+	public GymMembership getMembershipByUser(AptAccount user) {
 		return gymMembershipRepository.findByUserId(user.getId()).orElse(null);
 	}
 
@@ -134,5 +136,44 @@ public class GymService {
 	public Page<GymHistory> getPersonalHistories(int page, Long userId) {
 		Pageable pageable = PageRequest.of(page, 5);
 		return gymHistoryRepository.findAllByUserIdOrderByIdDesc(userId, pageable);
+	}
+
+	public GymMembership getMembershopByMembershipId(Long membershipId) {
+		return gymMembershipRepository.findById(membershipId).get();
+	}
+
+	public RsData<GymMembership> pauseMembership(GymMembership pauseMembership) {
+		LocalDate localDate = LocalDate.now();
+
+		long remainingDate = ChronoUnit.DAYS.between(localDate, pauseMembership.getEndDate());
+
+		if (remainingDate <= 0)
+			return RsData.of("F-1", "당일 종료권 또는 기한 지난 이용권은 일시정지가 불가능합니다.");
+
+		GymMembership tmp = pauseMembership.toBuilder()
+			.status(2)
+			.pauseDate(localDate)
+			.remainingDate((int)remainingDate)
+			.build();
+
+		AptAccount user = pauseMembership.getUser();
+
+		gymMembershipRepository.save(tmp);
+
+		GymHistory tmp2 = GymHistory.builder()
+			.status(2)
+			.pauseDate(localDate)
+			.remainingDate((int)remainingDate)
+			.apt(tmp.getApt())
+			.gym(tmp.getGym())
+			.user(tmp.getUser())
+			.startDate(tmp.getStartDate())
+			.endDate(tmp.getEndDate())
+			.build();
+
+		gymHistoryRepository.save(tmp2);
+
+		return RsData.of("S-1", "일시정지 성공");
+
 	}
 }
