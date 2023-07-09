@@ -1,0 +1,63 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title>마이페이지</title>
+</head>
+<body>
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-2xl w-full px-8 mt-5">
+        <div class="flex justify-center items-center">
+            <div class='flex max-w-sm w-full justify-center bg-white shadow-md rounded-lg overflow-hidden mx-auto flex flex-col p-5'>
+                <h3 class="text-center text-2xl font-bold mb-6">마이페이지</h3>
+                <div class="rounded-box flex justify-center">
+                    <div class="bg-white shadow-md border border-primary w-80 h-24 rounded-3xl p-4 flex flex-col justify-center items-center">
+                        <div class="flex justify-center items-center">
+                            <span class="ml-2 font-bold text-primary-focus">000</span>
+                            <span>님 안녕하세요! 🙌🏻</span>
+                        </div>
+                        <div class="text-sm text-gray-500">000동 0000호</div>
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <label class="label mr-4">
+                        <a href="#" class="label-text-alt link link-hover text-primary-focus">계정정보 ></a>
+                    </label>
+                </div>
+                <h3 class="px-4 m-2 font-semibold text-left">세대원 정보</h3>
+                <div class="rounded-box flex justify-center">
+                    <div class="bg-white border border-primary-focus w-80 min-h-24 rounded-3xl p-2 flex flex-col justify-center items-center">
+                        <div class="overflow-x-auto p-3">
+                            <table class="w-full table-auto">
+                                <tbody class="divide-y divide-primary-focus text-sm">
+                                <tr>
+                                    <td class="p-2">
+                                        <div class="font-medium text-gray-800">배우자</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="text-center">000</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="text-center">010-0000-0000</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">
+                                        <div class="font-medium text-center text-gray-800">자녀</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="text-center">000</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="text-center">010-0000-0000</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
