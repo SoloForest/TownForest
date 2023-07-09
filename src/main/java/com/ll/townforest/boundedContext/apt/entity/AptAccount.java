@@ -4,7 +4,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ll.townforest.boundedContext.account.entity.Account;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -29,9 +28,9 @@ public class AptAccount {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne(cascade = {CascadeType.REMOVE})
+	@OneToOne
 	private Account account;
-	@ManyToOne(cascade = {CascadeType.REMOVE})
+	@ManyToOne
 	private Apt apt;
 
 	/*
