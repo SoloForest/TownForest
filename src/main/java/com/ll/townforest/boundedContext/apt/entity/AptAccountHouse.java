@@ -29,7 +29,7 @@ public class AptAccountHouse {
 	private Long id;
 	@Column(nullable = false)
 	private String relationship;
-	@OneToOne(cascade = {CascadeType.REMOVE})
+	@OneToOne(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
 	private AptAccount user;
 	@OneToOne
 	private House house;

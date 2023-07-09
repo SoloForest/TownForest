@@ -103,10 +103,26 @@ public class AdminController {
 	}
 
 	@PostMapping("/approve/{id}")
+	@PreAuthorize("isAuthenticated()")
 	public String approve(@PathVariable Long id, @RequestParam int sortCode) {
 		AptAccountHouse aptAccountHouse = aptAccountHouseService.findById(id).orElse(null);
 
 		RsData<AptAccountHouse> aptAccountHouseRsData = aptAccountHouseService.canApprove(rq.getAptAccount(),
+			aptAccountHouse);
+
+		if (aptAccountHouseRsData.isFail()) {
+			return rq.historyBack(aptAccountHouseRsData);
+		}
+
+		return rq.redirectWithMsg("/admin/management?sortCode=%d".formatted(sortCode), aptAccountHouseRsData);
+	}
+
+	@PostMapping("/delete/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public String delete(@PathVariable Long id, @RequestParam int sortCode) {
+		AptAccountHouse aptAccountHouse = aptAccountHouseService.findById(id).orElse(null);
+
+		RsData<AptAccountHouse> aptAccountHouseRsData = aptAccountHouseService.canDelete(rq.getAptAccount(),
 			aptAccountHouse);
 
 		if (aptAccountHouseRsData.isFail()) {
