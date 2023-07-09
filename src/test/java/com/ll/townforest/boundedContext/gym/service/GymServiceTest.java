@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
-import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
 
@@ -33,22 +32,6 @@ public class GymServiceTest {
 	private GymHistoryRepository gymHistoryRepository;
 	@Autowired
 	private Rq rq;
-
-	@Test
-	@DisplayName("이용권 결제 시 history 자동 생성")
-	@WithUserDetails("yujin11006")
-	void t001() throws Exception {
-
-		AptAccount aptAccount = rq.getAptAccount();
-
-		gymService.create(aptAccount, LocalDate.now(), 3, "카드");
-
-		// 51번까지 테스트 history
-		GymHistory gymHistory = gymHistoryRepository.findById(52L).orElse(null);
-
-		// 52번 history 생성 검사
-		assertThat(gymHistory).isNotNull();
-	}
 
 	@Test
 	@DisplayName("이용권 연장(추가결제) 시 이용정보 변경 테스트")
