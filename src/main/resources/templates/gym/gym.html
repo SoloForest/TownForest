@@ -39,6 +39,13 @@
                            th:text="${#temporals.format(gymMembership.startDate, 'yy-MM-dd EEEEE요일')}"></p>
                     </div>
                 </div>
+                <div class="flex wrap items-center gap-2" th:if="${gymMembership.status==4}">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2">
+                        <p>재시작일 : </p>
+                        <p th:text="|${#temporals.format(gymMembership.restartDate, 'yy-MM-dd EEEEE요일')}|"></p>
+                    </div>
+                </div>
                 <div class="flex wrap items-center gap-2">
                     <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
                     <div class="flex gap-2">

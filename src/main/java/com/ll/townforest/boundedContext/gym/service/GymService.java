@@ -197,6 +197,7 @@ public class GymService {
 			.pauseDate(null)
 			.remainingDay(null)
 			.endDate(updatedEndDate)
+			.restartDate(localDate)
 			.build();
 
 		gymMembershipRepository.save(tmp);
@@ -208,6 +209,7 @@ public class GymService {
 			.user(tmp.getUser())
 			.startDate(tmp.getStartDate())
 			.endDate(tmp.getEndDate())
+			.restartDate(localDate)
 			.build();
 
 		gymHistoryRepository.save(tmp2);
