@@ -28,9 +28,9 @@ public class AptAccountHouseService {
 	public List<AptAccountHouse> findAptAccountHouse(int sortCode) {
 
 		return switch (sortCode) {
-			case 2 -> aptAccountHouseRepository.findByUser_StatusTrue();
-			case 3 -> aptAccountHouseRepository.findByUser_StatusFalse();
-			default -> aptAccountHouseRepository.findAllDesc();
+			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueOrderByUserIdDesc();
+			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseOrderByUserIdDesc();
+			default -> aptAccountHouseRepository.findAllByOrderByIdDesc();
 		};
 	}
 
