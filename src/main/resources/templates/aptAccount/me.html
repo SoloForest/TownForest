@@ -11,7 +11,7 @@
                 <div class="rounded-box flex justify-center">
                     <div class="bg-white shadow-md border border-primary w-80 h-24 rounded-3xl p-4 flex flex-col justify-center items-center">
                         <div class="flex justify-center items-center">
-                            <span class="ml-2 font-bold text-primary-focus">000</span>
+                            <span th:text="${@rq.account.fullName}" class="ml-2 font-bold text-primary-focus"></span>
                             <span>님 안녕하세요! 🙌🏻</span>
                         </div>
                         <div class="text-sm text-gray-500">000동 0000호</div>
@@ -28,7 +28,7 @@
                         <div class="overflow-x-auto p-3">
                             <table class="w-full table-auto">
                                 <tbody class="divide-y divide-primary-focus text-sm">
-                                <tr>
+                                <tr class="text-center">
                                     <td class="p-2">
                                         <div class="font-medium text-gray-800">배우자</div>
                                     </td>
@@ -54,6 +54,12 @@
                             </table>
                         </div>
                     </div>
+                </div>
+                <div class="flex justify-end">
+                    <a class="btn btn-link mr-2 text-xs text-gray-400 " sec:authorize="isAuthenticated()"
+                       href="javascript:"
+                       onclick="$(this).next().submit();">로그아웃</a>
+                    <form class="!hidden" th:action="|/account/logout|" method="POST"></form>
                 </div>
             </div>
         </div>
