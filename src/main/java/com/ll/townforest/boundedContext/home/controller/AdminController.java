@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.service.AptAccountService;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
+import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.service.GymService;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
@@ -141,6 +143,32 @@ public class AdminController {
 		model.addAttribute("paging", gymHistories);
 
 		return "admin/gym/history";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/gym/ticket")
+	public String showAllGymTicket(Model model) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+
+		// 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기
+		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
+		model.addAttribute("gymTicketList", gymTicketList);
+
+		return "admin/gym/ticket";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/gym/ticket/modify/{type}")
+	public String showAllGymTicket(Model model, @PathVariable Integer id) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+
+		// 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기
+		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
+		model.addAttribute("gymTicketList", gymTicketList);
+
+		return "admin/gym/ticket";
 	}
 
 }
