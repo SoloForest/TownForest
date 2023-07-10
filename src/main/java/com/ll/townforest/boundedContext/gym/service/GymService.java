@@ -76,6 +76,7 @@ public class GymService {
 			.endDate(endDate)
 			.user(user)
 			.status(status)
+			.paymentDate(LocalDateTime.now())
 			.contact(user.getAccount().getPhoneNumString())
 			.address(userHasAddress != null ?
 				aptAccountService.makeAddressToString(user).getData() : "알수없음")
@@ -92,6 +93,7 @@ public class GymService {
 			.endDate(endDate)
 			.status(0)
 			.paymentMethod(method)
+			.paymentDate(LocalDateTime.now())
 			.user(user)
 			.contact(user.getAccount().getPhoneNumString() != null ? user.getAccount().getPhoneNumString() : "알수없음")
 			.address(userHasAddress != null ?
