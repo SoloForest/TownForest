@@ -1,0 +1,65 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title>헬스장 관리자 페이지</title>
+</head>
+<body>
+<main layout:fragment="main" class="flex items-center justify-center h-screen mx-auto">
+    <div class="w-full px-2 flex flex-col">
+        <div class="card-body bg-base-100 shadow-xl m-2">
+            <th:block th:if="${@rq.gymAdmin}">
+                <div class="flex gap-2 items-center">
+                    <i class="fa-solid fa-user text-[2rem]" style="color: #91c0fd;"></i>
+                    <h2 class="card-title">관리자님 환영합니다.</h2>
+                </div>
+                <div class="flex wrap items-center gap-2 mt-2">
+                    <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+                    <p class="font-bold">이용자 현황</p>
+                </div>
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2">
+                        <p>이용중 : </p>
+                        <p th:if="${currentUsers==null}">0명</p>
+                        <p th:if="${currentUsers!=null}" th:text="|${#lists.size(currentUsers) + '명'}|"></p>
+                    </div>
+                </div>
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2">
+                        <p>일시정지 : </p>
+                        <p th:if="${pauseUsers==null}">0명</p>
+                        <p th:if="${pauseUsers!=null}" th:text="|${#lists.size(pauseUsers) + '명'}|"></p>
+                    </div>
+                </div>
+            </th:block>
+            <th:block th:if="${!@rq.gymAdmin}">
+                <div class="flex flex-col items-center justify-center gap-3">
+                    <i class="fa-solid fa-xmark text-[3rem]" style="color: #5794ff;"></i>
+                    <div class="font-bold"> 관리자만 접속할 수 있습니다.</div>
+                    <div class="font-bold"> 돌아가주세요
+                        <i class="fa-regular fa-face-smile" style="color: #7aabff;"></i>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <div class="btn btn-primary" onclick="javascript: window.location.href='/';">
+                        홈으로
+                    </div>
+                    <div class="btn btn-primary" onclick="javascript: window.location.href='/gym';"> 헬스장메인으로</div>
+                </div>
+            </th:block>
+        </div>
+        <th:block th:if="${@rq.gymAdmin}">
+            <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                    onclick="javascript: window.location.href='/admin/gym/member';">이용자 현황
+            </button>
+            <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                    onclick="javascript: window.location.href='/';">헬스장 이용 현황
+            </button>
+            <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                    onclick="javascript: window.location.href='/';">이용권 관리
+            </button>
+        </th:block>
+    </div>
+</main>
+</body>
+</html>

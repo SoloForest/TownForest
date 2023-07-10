@@ -91,6 +91,11 @@ public class Rq {
 		return aptAccount;
 	}
 
+	public boolean isGymAdmin() {
+		getAptAccount();
+		return aptAccount.getAuthority() == 3;
+	}
+
 	public String historyBack(String msg) {
 		String referer = req.getHeader("referer");
 		String key = "historyBackErrorMsg___" + referer;

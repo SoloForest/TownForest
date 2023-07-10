@@ -60,4 +60,7 @@ public class GymHistory {
 	추가 예정	// TODO : 상태 고려
 	*/
 	private int status;
+
+	private String address;
+	private String contact;
 }
