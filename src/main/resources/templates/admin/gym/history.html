@@ -2,18 +2,19 @@
 <head><title>이용 현황</title></head>
 <body>
 <main layout:fragment="main" class="text-center flex flex-col h-screen justify-center gap-2">
-    <div class="flex gap-2 justify-center items-center text-[1.5rem]"><i class="fa-regular fa-calendar-check"
-                                                                         style="color: #70a5ff;"></i>
-        <p class="font-bold">이용 현황</p></div>
+    <div class="flex gap-2 justify-center items-center text-[1.5rem]">
+        <i class="fa-regular fa-calendar-check" style="color: #70a5ff;"></i>
+        <p class="font-bold">이용 현황</p>
+    </div>
     <div class="flex items-center mt-4 ml-2 gap-2"
-         th:if="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}"><i
-            class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+         th:if="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}">
+        <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
         <div th:text="${paging.totalElements}" class="font-bold"></div>
         <div>건의 내역이 있습니다.</div>
     </div>
     <div class="flex items-center mt-4 ml-2"
-         th:unless="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}"><i
-            class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+         th:unless="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}">
+        <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
         <div>&nbsp;검색 결과&nbsp;</div>
         <div th:text="${paging.totalElements}" class="font-bold"></div>
         <div>건이 조회되었습니다.</div>
@@ -41,9 +42,11 @@
                         style="min-width:40px; padding: 12px 0;"></td>
                     <td th:text="${gymHistory.address}" style="min-width:60px; padding: 12px 0;"></td>
                     <td th:text="${gymHistory.user.account.fullName}" style="min-width:40px; padding: 12px 0;"></td>
-                    <td th:if ="${gymHistory.restartDate ==null}" th:text="${#temporals.format(gymHistory.startDate, 'yy-MM-dd')}"
+                    <td th:if="${gymHistory.restartDate ==null}"
+                        th:text="${#temporals.format(gymHistory.startDate, 'yy-MM-dd')}"
                         style="min-width:80px; padding: 12px 0;"></td>
-                    <td th:if ="${gymHistory.restartDate !=null}" th:text="${#temporals.format(gymHistory.startDate, 'yy-MM-dd')}"
+                    <td th:if="${gymHistory.restartDate !=null}"
+                        th:text="${#temporals.format(gymHistory.startDate, 'yy-MM-dd')}"
                         style="min-width:80px; padding: 12px 0;"></td>
                     <td th:text="${#temporals.format(gymHistory.endDate, 'yy-MM-dd')}"
                         style="min-width:80px; padding: 12px 0;"></td>
@@ -52,7 +55,7 @@
                     <td th:if="${gymHistory.paymentDate !=null}" th:text="${gymHistory.paymentDate}"></td>
                     <td th:if="${gymHistory.paymentDate ==null}">-</td>
                     <td th:if="${gymHistory.price!=null}"
-                        th:text="${#numbers.formatInteger(gymHistory.price, 3, 'COMMA') + '원'}"> </td>
+                        th:text="${#numbers.formatInteger(gymHistory.price, 3, 'COMMA') + '원'}"></td>
                     <td th:if="${gymHistory.price==null}">-</td>
                     <td th:text="${gymHistory.contact}" style="min-width:120px; padding: 12px 0;"></td>
                     <td th:if="${gymHistory.status==0}" style="min-width:40px; padding: 12px 0;">결제</td>
@@ -63,19 +66,20 @@
                 </tr>
                 </tbody>
             </table>
-        </div><!-- 페이징 부분-->
+        </div>
+        <!-- 페이징 부분-->
         <div class="btn-group flex justify-center mt-7" th:if="${!paging.isEmpty()}"
              th:with="search = '?searchQuery=' + ${param.searchQuery != null ? param.searchQuery : ''}, type = 'searchType=' + ${param.searchType != null ? param.searchType : ''}">
             <a class="btn" th:classappend="${paging.number == 0} ? 'btn-disabled' : ''"
-               th:href="@{|${search}&${type}&page=0|}">&laquo;</a><a class="btn"
-                                                                     th:classappend="${!paging.hasPrevious} ? 'btn-disabled' : ''"
-                                                                     th:href="@{|${search}&${type}&page=${paging.number - 1}|}">이전</a><a
+               th:href="@{|${search}&${type}&page=0|}">&laquo;</a>
+            <a class="btn" th:classappend="${!paging.hasPrevious} ? 'btn-disabled' : ''"
+               th:href="@{|${search}&${type}&page=${paging.number - 1}|}">이전</a><a
                 class="btn" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
                 th:classappend="${paging.number == page} ? 'btn-active' : ''"
                 th:if="${page >= paging.number - 1 and page <= paging.number + 2}"
-                th:href="@{|${search}&${type}&page=${page}|}" th:text="${page+1}"></a><a class="btn"
-                                                                                         th:classappend="${!paging.hasNext} ? 'btn-disabled' : ''"
-                                                                                         th:href="@{|${search}&${type}&page=${paging.number + 1}|}">다음</a><a
+                th:href="@{|${search}&${type}&page=${page}|}" th:text="${page+1}"></a>
+            <a class="btn" th:classappend="${!paging.hasNext} ? 'btn-disabled' : ''"
+               th:href="@{|${search}&${type}&page=${paging.number + 1}|}">다음</a><a
                 class="btn" th:classappend="${paging.number == paging.totalPages - 1} ? 'btn-disabled' : ''"
                 th:href="@{|${search}&${type}&page=${paging.totalPages - 1}|}">&raquo;</a></div>
     </div>
@@ -86,7 +90,7 @@
                 <option value="phone">연락처</option>
             </select>
             <input type="text" placeholder="검색어를 입력해주세요" class="input input-bordered input-info" name="searchQuery"
-                        th:value="${param.searchQuery != null ? param.searchQuery : ''}"/>
+                   th:value="${param.searchQuery != null ? param.searchQuery : ''}"/>
             <button class="btn btn-primary">검색</button>
         </form>
     </div>
@@ -101,6 +105,7 @@
         <div class="btn btn-primary" onclick="javascript: window.location.href='/admin';">관리자 메인</div>
         <div class="btn btn-primary" onclick="javascript: window.location.href='/admin/gym';"> 헬스장 관리</div>
     </div>
-    </div></main>
+    </div>
+</main>
 </body>
 </html>
