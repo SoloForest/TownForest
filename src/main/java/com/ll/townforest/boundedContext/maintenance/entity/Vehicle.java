@@ -36,4 +36,12 @@ public class Vehicle {
 	private Integer type; // 방문차량(1), 세대주 차량(0) 구분
 	private LocalDateTime date; // 방문일
 
+	public Vehicle(Vehicle vehicle) {
+		this.id = vehicle.id;
+		this.user = vehicle.user;
+		this.vehicleNumber = vehicle.vehicleNumber;
+		this.name = vehicle.name;
+		this.type = vehicle.type;
+		this.date = vehicle.date;
+	}
 }
