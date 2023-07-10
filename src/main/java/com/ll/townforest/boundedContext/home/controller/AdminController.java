@@ -9,6 +9,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,10 +27,12 @@ import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
 import com.ll.townforest.boundedContext.gym.service.GymService;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
+import com.ll.townforest.boundedContext.home.dto.TicketForm;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -155,20 +159,87 @@ public class AdminController {
 		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
 		model.addAttribute("gymTicketList", gymTicketList);
 
-		return "admin/gym/ticket";
+		return "admin/gym/ticket/ticket";
 	}
 
 	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/gym/ticket/modify/{type}")
-	public String showAllGymTicket(Model model, @PathVariable Integer id) {
+	@GetMapping("/gym/ticket/create")
+	public String showCreateGymTicket(TicketForm ticketForm) {
 		if (!rq.isGymAdmin())
 			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
 
-		// 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기
-		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
-		model.addAttribute("gymTicketList", gymTicketList);
+		return "admin/gym/ticket/ticket_form";
+	}
 
-		return "admin/gym/ticket";
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/gym/ticket/create")
+	public String createGymTicket(@Valid TicketForm ticketForm, BindingResult bindingResult) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+
+		if (bindingResult.hasErrors()) {
+			return "admin/gym/ticket/ticket_form";
+		}
+
+		AptAccount user = rq.getAptAccount();
+
+		RsData rsTicket = gymService.createTicket(user, ticketForm);
+
+		return rq.redirectWithMsg("/admin/gym/ticket", rsTicket.getMsg());
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/gym/ticket/modify/{id}")
+	public String showModifyGymTicket(@PathVariable("id") Long id, TicketForm ticketForm) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+
+		GymTicket gymTicket = gymService.getTicket(id);
+
+		if (gymTicket == null) {
+			return rq.historyBack("존재하지 않는 이용권입니다.");
+		}
+
+		ticketForm.setName(gymTicket.getName());
+		ticketForm.setDays(gymTicket.getDays());
+		ticketForm.setPrice(gymTicket.getPrice());
+		ticketForm.setContent(gymTicket.getContent());
+
+		return "admin/gym/ticket/ticket_form";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/gym/ticket/modify/{id}")
+	public String modifyGymTicket(@Valid TicketForm ticketForm, @PathVariable Long id) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+
+		GymTicket gymTicket = gymService.getTicket(id);
+
+		if (gymTicket == null) {
+			return rq.historyBack("존재하지 않는 이용권입니다.");
+		}
+
+		RsData result = gymService.modifyTicket(gymTicket, ticketForm);
+
+		return rq.redirectWithMsg("/admin/gym/ticket", result.getMsg());
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@DeleteMapping("/gym/ticket/{id}")
+	public String deleteGymTicket(@PathVariable Long id) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 삭제 가능합니다");
+
+		GymTicket gymTicket = gymService.getTicket(id);
+
+		if (gymTicket == null) {
+			return rq.historyBack("존재하지 않는 이용권입니다.");
+		}
+
+		RsData result = gymService.deleteTicket(gymTicket);
+
+		return rq.redirectWithMsg("/admin/gym/ticket", result.getMsg());
 	}
 
 }

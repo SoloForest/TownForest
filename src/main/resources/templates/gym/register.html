@@ -32,7 +32,7 @@
                           th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
                           th:value="${ticket.price}">
                         </span>
-                    <div class="font-bold" th:if="${ticket.content != null}"
+                    <div class="font-bold" th:if="${!#strings.isEmpty(ticket.content)}"
                          th:text="${'(' + ticket.content + ')'}"></div>
                 </label>
             </div>

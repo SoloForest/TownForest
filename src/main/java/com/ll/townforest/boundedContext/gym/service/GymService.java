@@ -27,6 +27,7 @@ import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
+import com.ll.townforest.boundedContext.home.dto.TicketForm;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +107,7 @@ public class GymService {
 
 	public List<GymTicket> getGymTickets(Long gymId) {
 
-		return gymTicketRepository.findAllByGymId(gymId);
+		return gymTicketRepository.findAllByGymIdOrderByPrice(gymId);
 
 	}
 
@@ -342,5 +343,45 @@ public class GymService {
 		}
 
 		return result;
+	}
+
+	@Transactional
+	public RsData createTicket(AptAccount user, TicketForm ticketForm) {
+
+		GymTicket gymTicket = GymTicket.builder()
+			.days(ticketForm.getDays())
+			.content(ticketForm.getContent())
+			.price(ticketForm.getPrice())
+			.name(ticketForm.getName())
+			.apt(user.getApt())
+			.gym(gymRepository.findById(1L).orElse(null))
+			.build();
+
+		gymTicketRepository.save(gymTicket);
+
+		return RsData.of("S-1", "이용권 생성 성공");
+	}
+
+	@Transactional
+	public RsData modifyTicket(GymTicket gymTicket, TicketForm ticketForm) {
+
+		GymTicket modifyTicket = gymTicket.toBuilder()
+			.days(ticketForm.getDays())
+			.content(ticketForm.getContent())
+			.name(ticketForm.getName())
+			.price(ticketForm.getPrice())
+			.build();
+
+		gymTicketRepository.save(modifyTicket);
+
+		return RsData.of("S-1", "이용권 정보 수정 성공");
+	}
+
+	@Transactional
+	public RsData deleteTicket(GymTicket gymTicket) {
+
+		gymTicketRepository.delete(gymTicket);
+
+		return RsData.of("S-1", "이용권 삭제 성공");
 	}
 }
