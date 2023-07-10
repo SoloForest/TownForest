@@ -55,7 +55,7 @@ public class GymController {
 			model.addAttribute("user", user);
 
 			// 이용중인 이용권 정보
-			GymMembership gymMembership = gymService.getMembership(user);
+			GymMembership gymMembership = gymService.getMembershipByUser(user);
 			model.addAttribute("gymMembership", gymMembership);
 
 			if (gymMembership != null) {
