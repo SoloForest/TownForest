@@ -25,6 +25,8 @@ import com.ll.townforest.boundedContext.home.dto.SearchDTO;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
+import com.ll.townforest.boundedContext.maintenance.form.GuestVehicleHistory;
+import com.ll.townforest.boundedContext.maintenance.service.VehicleService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +37,7 @@ public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
 	private final AptAccountService aptAccountService;
+	private final VehicleService vehicleService;
 
 	private final GymService gymService;
 
@@ -47,6 +50,7 @@ public class AdminController {
 		return "admin/main";
 	}
 
+	// 독서실 관리자 페이지 시작
 	@GetMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
 	public String showLibraryHistories(Model model) {
@@ -86,6 +90,7 @@ public class AdminController {
 
 		return libraryService.adminCancel(targetUser, canCancelSeat.getData(), libraryHistoryId).getMsg();
 	}
+	// 독서실 관리자 페이지 끝
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/gym")
@@ -127,4 +132,25 @@ public class AdminController {
 	public String showAptAccountManagement() {
 		return "admin/aptAccount/management";
 	}
+
+	// 방문차량 조회 페이지 시작
+	@GetMapping("/guest/vehicle")
+	@PreAuthorize("isAuthenticated()")
+	public String showGuestVehicles(
+		Model model,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "1") int tab
+	) {
+		if (rq.getAptAccount().getAuthority() != 1) {
+			return "redirect:/admin";
+		}
+
+		Page<GuestVehicleHistory> vehicles = vehicleService.findGuestByTab(page, tab);
+
+		model.addAttribute("vehicles", vehicles);
+		model.addAttribute("tab", tab);
+
+		return "admin/guest/vehicle";
+	}
+	//방문자량 조회 페이지 끝
 }
