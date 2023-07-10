@@ -25,6 +25,10 @@ public class AptAccountHouseService {
 		return aptAccountHouseRepository.findById(id);
 	}
 
+	public Optional<AptAccountHouse> findByAptAccount(AptAccount aptAccount) {
+		return aptAccountHouseRepository.findByUser(aptAccount);
+	}
+
 	public List<AptAccountHouse> findAptAccountHouse(int sortCode) {
 
 		return switch (sortCode) {

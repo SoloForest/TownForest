@@ -14,7 +14,8 @@
                             <span th:text="${@rq.account.fullName}" class="ml-2 font-bold text-primary-focus"></span>
                             <span>님 안녕하세요! 🙌🏻</span>
                         </div>
-                        <div class="text-sm text-gray-500">000동 0000호</div>
+                        <div th:if="${aptAccountHouse != null}" class="text-sm text-gray-500">
+                            <span th:text="${aptAccountHouse.getHouse().getDong()+'동'+aptAccountHouse.getHouse().getHo()+'호'}"></div>
                     </div>
                 </div>
                 <div class="flex justify-end">
@@ -24,36 +25,27 @@
                         </a>
                     </label>
                 </div>
-                <h3 class="px-4 m-2 font-semibold text-left">세대원 정보</h3>
-                <div class="rounded-box flex justify-center">
-                    <div class="bg-white border border-primary-focus w-80 min-h-24 rounded-3xl p-2 flex flex-col justify-center items-center">
-                        <div class="overflow-x-auto p-3">
-                            <table class="w-full table-auto">
-                                <tbody class="divide-y divide-primary-focus text-sm">
-                                <tr class="text-center">
-                                    <td class="p-2">
-                                        <div class="font-medium text-gray-800">배우자</div>
-                                    </td>
-                                    <td class="p-2">
-                                        <div class="text-center">000</div>
-                                    </td>
-                                    <td class="p-2">
-                                        <div class="text-center">010-0000-0000</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2">
-                                        <div class="font-medium text-center text-gray-800">자녀</div>
-                                    </td>
-                                    <td class="p-2">
-                                        <div class="text-center">000</div>
-                                    </td>
-                                    <td class="p-2">
-                                        <div class="text-center">010-0000-0000</div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                <div th:if="${household} != null">
+                    <h3 class="px-4 m-2 font-semibold text-left">세대원 정보</h3>
+                    <div class="rounded-box flex justify-center">
+                        <div class="bg-white border border-gray-500 shadow-md w-80 min-h-24 rounded-3xl p-2 flex flex-col justify-center items-center">
+                            <div class="overflow-x-auto p-3">
+                                <table class="w-full table-auto">
+                                    <tbody class="divide-y divide-primary-focus text-sm">
+                                    <tr class="text-center" th:each="household, loop : ${household}">
+                                        <td class="p-2">
+                                            <div th:text="${(household.relationship == '본인') ? '세대주' : household.relationship}" class="font-medium text-gray-800"></div>
+                                        </td>
+                                        <td class="p-2">
+                                            <div th:text="${household.user.account.fullName}" class="font-medium text-center"></div>
+                                        </td>
+                                        <td class="p-2">
+                                            <div th:text="${household.user.account.phoneNumString}" class="font-medium text-center"></div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
