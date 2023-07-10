@@ -170,38 +170,6 @@
         </div>
     </div>
     <script src="/js/editForm_validation.js"></script>
-    <script>
-        const header = $("meta[name='_csrf_header']").attr('content');
-        const token = $("meta[name='_csrf']").attr('content');
-
-        $("#toggleClick").on("click", function () {
-            $("#confirmPassword").val("");
-            $("#confirmPassword_check").html("").hide();
-        });
-
-        $("#confirm").on("click", function () {
-            const confirmPassword = $("#confirmPassword").val();
-            $.ajax({
-                url: '/account/confirmPwd',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader(header, token);
-                },
-                type: 'GET',
-                data: {'password': confirmPassword},
-                success: function (data) {
-                    if (data) {
-                        document.getElementById("modalClick").click();
-                        document.getElementById("editClick").click();
-                    } else {
-                        $("#confirmPassword_check").html("비밀번호가 올바르지 않습니다.").show();
-                    }
-                }, error: function (error) {
-                    $("#confirmPassword_check").html("비밀번호를 입력해 주세요.").show();
-                    alert(JSON.stringify(error));
-                }
-            });
-        });
-    </script>
 </main>
 </body>
 </html>
