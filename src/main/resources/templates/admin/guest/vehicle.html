@@ -1,0 +1,89 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title>방문 예정 차량</title>
+    <script src="/js/dateUtil.js"></script>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+</head>
+<body>
+<!-- main -->
+<main layout:fragment="main" class="flex flex-col">
+    <!-- card ui, 방문차량 출력 -->
+    <div class="m-[5%]">
+        <h2 class="card-title">방문차량 등록 현황</h2>
+        <div class="tabs flex justify-center">
+            <a class="tab tab-bordered" data-tab="0" href="?page=0&tab=0">지난 방문</a>
+            <a class="tab tab-bordered" data-tab="1" href="?page=0&tab=1">오늘 방문</a>
+            <a class="tab tab-bordered" data-tab="2" href="?page=0&tab=2">방문 예정</a>
+            <input id="tabNumber" th:value="${tab}" hidden/>
+        </div>
+
+        <!-- 차량 리스트 -->
+        <div class="tab-content">
+            <P th:if="${vehicles.numberOfElements} == 0" class="text-center my-5">
+                기록이 없습니다.
+            </P>
+            <div th:if="${vehicles.numberOfElements} != 0">
+                <div class="overflow-x-auto">
+                    <table class="table text-center">
+                        <!-- head -->
+                        <thead>
+                        <tr>
+                            <th>Date.</th>
+                            <th>vehicle No.</th>
+                            <th>User.</th>
+                            <th>Address.</th>
+                        </tr>
+                        </thead>
+
+                        <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
+                        <tbody id="beforeList">
+                        <tr th:each="vehicle : ${vehicles}">
+                            <td th:text="${#temporals.format(vehicle.date, 'yyyy.MM.dd')}"></td>
+                            <td th:text="${vehicle.vehicleNumber}"></td>
+                            <td th:text="${vehicle.name}" style="min-width: 75px;"></td>
+                            <td th:text="${vehicle.address}"></td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <!-- 넘버링 페이지 -->
+                <div class="btn-group flex justify-center mt-7" th:if="${!vehicles.isEmpty()}">
+                    <div class="btn" th:classappend="${vehicles.number == 0} ? 'btn-disabled' : ''"
+                         th:attr="onclick='window.location.href=\'?page=0\&tab=' + ${tab} + '\''">
+                        &laquo;
+                    </div>
+                    <div th:attr="onclick='window.location.href=\'?page=' + (${vehicles.number - 1}) + '\&tab=' + ${tab} + '\''"
+                         class="btn" th:classappend="${!vehicles.hasPrevious} ? 'btn-disabled' : ''">
+                        이전
+                    </div>
+                    <div class="btn" th:each="page: ${#numbers.sequence(0, vehicles.totalPages - 1)}"
+                         th:classappend="${vehicles.number == page} ? 'btn-active' : ''"
+                         th:if="${page >= vehicles.number - 1 and page <= vehicles.number + 2}"
+                         th:attr="onclick='window.location.href=\'?page=' + (${page}) + '\&tab=' + ${tab} + '\''"
+                         th:text="${page+1}">
+                    </div>
+                    <div class="btn" th:classappend="${!vehicles.hasNext} ? 'btn-disabled' :''"
+                         th:attr="onclick='window.location.href=\'?page=' + (${vehicles.number + 1}) + '\&tab=' + ${tab} + '\''">
+                        다음
+                    </div>
+                    <div th:attr="onclick='window.location.href=\'?page=' + (${vehicles.totalPages - 1}) + '\&tab=' + ${tab} + '\''"
+                         class="btn"
+                         th:classappend="${vehicles.number == vehicles.totalPages - 1} ? 'btn-disabled' : ''">
+                        &raquo;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+    <script>
+        let tabIndex = $('#tabNumber').val();
+        $(".tab").eq(tabIndex).addClass("tab-active");
+    </script>
+</main>
+</body>
+</html>
