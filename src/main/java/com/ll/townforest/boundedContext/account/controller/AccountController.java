@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
@@ -66,5 +68,10 @@ public class AccountController {
 		}
 
 		return rq.redirectWithMsg("/account/edit", accountRsData);
+	}
+
+	@GetMapping("/confirmPwd")
+	public @ResponseBody boolean confirmPassword(@RequestParam String password) {
+		return accountService.confirmPassword(rq.getAccount(), password);
 	}
 }

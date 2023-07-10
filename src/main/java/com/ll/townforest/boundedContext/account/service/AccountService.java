@@ -70,6 +70,15 @@ public class AccountService {
 	@Transactional
 	public RsData<Account> edit(Account account, EditForm editForm) {
 
+		if (findByEmail(editForm.getEmail()).isPresent() && !findByEmail(editForm.getEmail()).get().equals(account)) {
+			return RsData.of("F-1", "사용할 수 없는 이메일입니다.<br>다른 이메일을 입력해 주세요.");
+		}
+
+		if (findByPhoneNumber(editForm.getPhoneNumber()).isPresent() && !findByPhoneNumber(
+			editForm.getPhoneNumber()).get().equals(account)) {
+			return RsData.of("F-2", "사용할 수 없는 휴대전화번호입니다.<br>다른 휴대전화번호를 입력해 주세요.");
+		}
+
 		String password = passwordEncoder.encode(editForm.getPassword());
 
 		Account editAccount = account.toBuilder()
@@ -86,5 +95,9 @@ public class AccountService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		return RsData.of("S-1", "회원 정보를 수정하였습니다.");
+	}
+
+	public boolean confirmPassword(Account account, String password) {
+		return passwordEncoder.matches(password, account.getPassword());
 	}
 }
