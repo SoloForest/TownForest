@@ -20,7 +20,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class AptAccountHouse {
@@ -29,7 +29,7 @@ public class AptAccountHouse {
 	private Long id;
 	@Column(nullable = false)
 	private String relationship;
-	@OneToOne(cascade = {CascadeType.REMOVE})
+	@OneToOne(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
 	private AptAccount user;
 	@OneToOne
 	private House house;
