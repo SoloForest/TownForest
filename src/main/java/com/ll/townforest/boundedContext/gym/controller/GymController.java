@@ -51,11 +51,14 @@ public class GymController {
 	public String gymMain(Model model) {
 
 		AptAccount user = rq.getAptAccount();
+
+		// rq.redirectWithMsg 메서드가 특정 페이지를 들렸다가 다시 돌아가야 메시지 발생
+		// 따라서 권한 없어도 접속은 가능하게 수정
 		if (user != null) {
 			model.addAttribute("user", user);
 
 			// 이용중인 이용권 정보
-			GymMembership gymMembership = gymService.getMembership(user);
+			GymMembership gymMembership = gymService.getMembershipByUser(user);
 			model.addAttribute("gymMembership", gymMembership);
 
 			if (gymMembership != null) {
