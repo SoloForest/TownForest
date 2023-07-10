@@ -56,9 +56,13 @@
     </div>
     <!-- 버튼메뉴 -->
     <div class="flex justify-center flex-wrap gap-3">
-        <button id="gym"
+        <button id="management" onclick="javascript: window.location.href='/admin/management';"
                 class="btn btn-outline btn-primary">
-            헬스장 신청
+            회원 관리
+        </button>
+        <button id="gym" onclick="javascript: window.location.href='/admin/gym';"
+                class="btn btn-outline btn-primary">
+            헬스장 관리
         </button>
         <button id="library" onclick="javascript: window.location.href='/admin/library/histories';"
                 class="btn btn-outline btn-primary">
@@ -76,9 +80,9 @@
                 class="btn btn-outline btn-primary">
             게스트하우스 신청
         </button>
-        <button id="guest-vehicle"
+        <button id="guest-vehicle" onclick="javascript: window.location.href='/admin/guest/vehicle';"
                 class="btn btn-outline btn-primary">
-            방문차량 등록
+            방문차량 조회
         </button>
         <button id="mypage"
                 class="btn btn-outline btn-primary">

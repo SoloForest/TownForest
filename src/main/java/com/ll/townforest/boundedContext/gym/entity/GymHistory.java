@@ -3,7 +3,6 @@ package com.ll.townforest.boundedContext.gym.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ll.townforest.boundedContext.apt.entity.Apt;
@@ -40,7 +39,7 @@ public class GymHistory {
 	private Apt apt;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	@CreatedDate
+
 	private LocalDateTime paymentDate;
 	private int price;
 	/*
@@ -57,7 +56,18 @@ public class GymHistory {
 	상태
 	0: 결제
 	1: 연장
-	추가 예정	// TODO : 상태 고려
+	2: 일시정지
+	3: 재시작
+	4. 만료
 	*/
 	private int status;
+
+	// 일시정지 한 날
+	private LocalDate pauseDate;
+	// 일시정지 후 남은 날짜
+	private Integer remainingDay;
+	// 재시작일
+	private LocalDate restartDate;
+	private String address;
+	private String contact;
 }

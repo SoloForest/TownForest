@@ -59,6 +59,12 @@ public class Rq {
 		return !isLogin();
 	}
 
+	//관리자인지 체크
+	public boolean isAdmin() {
+		getAptAccount();
+		return aptAccount.getAuthority() != 0;
+	}
+
 	// 로그인 된 회원의 객체
 	public Account getAccount() {
 		if (isLogout())
@@ -83,6 +89,11 @@ public class Rq {
 		}
 
 		return aptAccount;
+	}
+
+	public boolean isGymAdmin() {
+		getAptAccount();
+		return aptAccount.getAuthority() == 3;
 	}
 
 	public String historyBack(String msg) {
