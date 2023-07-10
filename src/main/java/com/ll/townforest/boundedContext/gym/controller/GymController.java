@@ -198,20 +198,20 @@ public class GymController {
 		if (user == null || !user.isStatus())
 			return rq.historyBack("승인된 아파트 주민만 <br> 이용할 수 있습니다.");
 
-		// "orderId":"gym-type-2-36600264572790997_2023-07-12" 이런 형태, -type- 다음 숫자가 이용권 종류
-		String[] parts = orderId.split("-type-");
+		// "orderId":"gym-ticketId-2-36600264572790997_2023-07-12" 이런 형태, -ticketId- 다음 숫자가 이용권 종류
+		String[] parts = orderId.split("-ticketId-");
 		String[] subParts = parts[1].split("-");
 		String ticketNumberStr = subParts[0];
-		int ticketType = Integer.parseInt(ticketNumberStr);
+		Long ticketId = Long.parseLong(ticketNumberStr);
 
-		// "orderId":"gym-type-2-36600264572790997_2023-07-12" 이런 형태, 마지막 부분이 시작일자를 나타냄
+		// "orderId":"gym-ticketId-2-36600264572790997_2023-07-12" 이런 형태, 마지막 부분이 시작일자를 나타냄
 		String[] parts2 = orderId.split("_");
 		String dateString = parts2[1];
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate startDate = LocalDate.parse(dateString, formatter);
 
 		// 실제 이용권 가격
-		GymTicket gymTicket = gymService.getTicket(ticketType);
+		GymTicket gymTicket = gymService.getTicket(ticketId);
 
 		if (orderId.startsWith("gym-") && !amount.equals(gymTicket.getPrice())) {
 			throw new RuntimeException("해킹의심 : 실제 이용권 금액 %d원이 아닙니다.".formatted(gymTicket.getPrice()));
@@ -271,9 +271,9 @@ public class GymController {
 			GymMembership membership = gymService.getMembershipByUser(user);
 
 			if (membership == null)
-				gymService.create(user, startDate, ticketType, "카드");
+				gymService.create(user, startDate, ticketId, "카드");
 			else
-				gymService.update(user, startDate, endDate, ticketType, "카드");
+				gymService.update(user, startDate, endDate, ticketId, "카드");
 		}
 
 		return "gym/success";

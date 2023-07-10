@@ -25,16 +25,6 @@ public class GymTicket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	/* 이용권 종료를 나타내는 변수
-	1 : 1일권
-	2 : 30일권
-	3 : 60일권
-	4 : 90일권
-	 */
-	@NotNull
-	private Integer type;
-
 	private Integer days;
 
 	@NotBlank

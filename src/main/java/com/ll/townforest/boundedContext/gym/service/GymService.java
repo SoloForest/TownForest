@@ -44,16 +44,16 @@ public class GymService {
 
 	private final Rq rq;
 
-	public GymTicket getTicket(Integer ticketType) {
-		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
+	public GymTicket getTicket(Long ticketId) {
+		GymTicket gymTicket = gymTicketRepository.findById(ticketId).orElse(null);
 
 		return gymTicket;
 	}
 
 	@Transactional
-	public void create(AptAccount user, LocalDate startDate, Integer ticketType, String method) {
+	public void create(AptAccount user, LocalDate startDate, Long ticketId, String method) {
 
-		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
+		GymTicket gymTicket = gymTicketRepository.findById(ticketId).orElse(null);
 		if (gymTicket == null) {
 			throw new RuntimeException("존재하지 않는 이용권입니다. 다시 시도해주세요");
 		}
@@ -120,8 +120,8 @@ public class GymService {
 	}
 
 	@Transactional
-	public void update(AptAccount user, LocalDate startDate, LocalDate endDate, int ticketType, String method) {
-		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
+	public void update(AptAccount user, LocalDate startDate, LocalDate endDate, Long ticketId, String method) {
+		GymTicket gymTicket = gymTicketRepository.findById(ticketId).orElse(null);
 
 		if (gymTicket == null) {
 			throw new RuntimeException("존재하지 않는 이용권입니다. 다시 시도해주세요");

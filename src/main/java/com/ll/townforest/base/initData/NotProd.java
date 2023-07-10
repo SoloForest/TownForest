@@ -274,7 +274,6 @@ public class NotProd {
 
 				GymTicket gymTicket1 = GymTicket.builder()
 					.price(1000)
-					.type(1)
 					.apt(apt1)
 					.gym(gym1)
 					.days(0)
@@ -285,7 +284,6 @@ public class NotProd {
 
 				GymTicket gymTicket2 = GymTicket.builder()
 					.price(30000)
-					.type(2)
 					.apt(apt1)
 					.gym(gym1)
 					.days(29)
@@ -296,7 +294,6 @@ public class NotProd {
 
 				GymTicket gymTicket3 = GymTicket.builder()
 					.price(54000)
-					.type(3)
 					.content("10% 할인가")
 					.apt(apt1)
 					.gym(gym1)
@@ -307,7 +304,6 @@ public class NotProd {
 				gymTicketRepository.save(gymTicket3);
 				GymTicket gymTicket4 = GymTicket.builder()
 					.price(72000)
-					.type(4)
 					.content("20% 할인가")
 					.apt(apt1)
 					.gym(gym1)
@@ -316,7 +312,7 @@ public class NotProd {
 					.build();
 				gymTicketRepository.save(gymTicket4);
 
-				gymService.create(aptAccount4, LocalDate.now(), 3, "카드");
+				gymService.create(aptAccount4, LocalDate.now(), 3L, "카드");
 
 				Account tmp1111 = Account.builder()
 					.username("test" + 0)
@@ -336,7 +332,7 @@ public class NotProd {
 
 				aptAccountRepository.save(tmp222);
 
-				gymService.create(tmp222, LocalDate.now(), 3, "카드");
+				gymService.create(tmp222, LocalDate.now(), 3L, "카드");
 
 				List<GymHistory> gymHistoryList = new ArrayList<>();
 
