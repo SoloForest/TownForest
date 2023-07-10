@@ -14,5 +14,5 @@ public class VehicleForm {
 	@Size(min = 2, max = 17)
 	private String name;
 	private AptAccount user;
-	private AptAccountHouse house;
+	private AptAccountHouse aptHouse;
 }

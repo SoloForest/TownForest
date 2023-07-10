@@ -2,10 +2,10 @@ package com.ll.townforest.boundedContext.maintenance.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,24 +25,39 @@ public class VehicleController {
 	private final VehicleService vehicleService;
 	private final Rq rq;
 
+	@GetMapping("/vehicle")
+	@PreAuthorize("isAuthenticated()")
+	public String showPage() { // 맨 처음에 들어가는 페이지
+		Long userId = rq.getAptAccount().getId();
+		Long houseId = vehicleService.findByUserId(userId).getHouse().getId();
+		return String.format("redirect:/maintenance/vehicle/%d", houseId);
+	}
+
 	@GetMapping("/vehicle/{id}")
-	public String showPage(Model model, @PathVariable("id") Long id) {
-		List<Vehicle> vehicle = vehicleService.findByUserId(id);
+	@PreAuthorize("isAuthenticated()")
+	public String getPage(Model model, @PathVariable(name = "id") Long id) {//차량목록을 조회할 페이지
+		List<Vehicle> vehicle = vehicleService.findByHouseId(id);
 		model.addAttribute("form", vehicle);
-		return "maintenance/vehicle";
+		return "/maintenance/vehicle";
 	}
 
 	@GetMapping("/add")
+	@PreAuthorize("isAuthenticated()")
 	public String getInsert(Model model) {
 		//등록페이지에서 작성한 값이 들어갈 빈 객체
 		model.addAttribute("form", new VehicleForm());
-		return "maintenance/add";
+		return "/maintenance/add";
 	}
 
 	@PostMapping("/add")
-	public String insert(@Valid @ModelAttribute VehicleForm form) {
+	@PreAuthorize("isAuthenticated()")
+	public String insert(@Valid VehicleForm form) {
+		Long userId = rq.getAptAccount().getId();
+		form.setAptHouse(vehicleService.findByUserId(userId));
 		form.setUser(rq.getAptAccount());
-		vehicleService.create(form.getName(), form.getVehicleNumber(), form.getUser());
-		return "redirect:/maintenance/vehicle/%d".formatted(form.getUser().getId());
+
+		vehicleService.create(form);
+		return String.format("redirect:/maintenance/vehicle/%d", form.getAptHouse().getHouse().getId());
+
 	}
 }

@@ -3,6 +3,7 @@ package com.ll.townforest.boundedContext.maintenance.entity;
 import java.time.LocalDateTime;
 
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,5 +36,6 @@ public class Vehicle {
 	@Column(nullable = false)
 	private Integer type; // 방문차량(1), 세대주 차량(0) 구분
 	private LocalDateTime date; // 방문일
-
+	@ManyToOne
+	private AptAccountHouse aptHouse;
 }
