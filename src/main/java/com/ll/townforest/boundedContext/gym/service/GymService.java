@@ -10,7 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.base.rq.Rq;
+import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.service.AptAccountService;
+import com.ll.townforest.boundedContext.gym.entity.Gym;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
@@ -18,6 +22,7 @@ import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
+import com.ll.townforest.boundedContext.home.dto.SearchDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +33,10 @@ public class GymService {
 	private final GymMembershipRepository gymMembershipRepository;
 	private final GymHistoryRepository gymHistoryRepository;
 	private final GymRepository gymRepository;
+
+	private final AptAccountService aptAccountService;
+
+	private final Rq rq;
 
 	public GymTicket getTicket(Integer ticketType) {
 		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
@@ -52,6 +61,8 @@ public class GymService {
 			status = 0;
 		}
 
+		String userHasAddress = aptAccountService.makeAddressToString(user).getData();
+
 		GymMembership tmp = GymMembership.builder()
 			.apt(user.getApt())
 			.gym(gymRepository.findById(1L).orElse(null))
@@ -59,6 +70,9 @@ public class GymService {
 			.endDate(endDate)
 			.user(user)
 			.status(status)
+			.contact(user.getAccount().getPhoneNumString())
+			.address(userHasAddress != null ?
+				aptAccountService.makeAddressToString(user).getData() : "알수없음")
 			.build();
 
 		gymMembershipRepository.save(tmp);
@@ -73,6 +87,9 @@ public class GymService {
 			.status(0)
 			.paymentMethod(method)
 			.user(user)
+			.contact(user.getAccount().getPhoneNumString() != null ? user.getAccount().getPhoneNumString() : "알수없음")
+			.address(userHasAddress != null ?
+				aptAccountService.makeAddressToString(user).getData() : "알수없음")
 			.build();
 
 		gymHistoryRepository.save(tmp2);
@@ -135,4 +152,37 @@ public class GymService {
 		Pageable pageable = PageRequest.of(page, 5);
 		return gymHistoryRepository.findAllByUserIdOrderByIdDesc(userId, pageable);
 	}
+
+	public List<GymMembership> getMemberList(AptAccount user) {
+		Apt apt = user.getApt();
+		Gym gym = gymRepository.findByAptId(apt.getId()).get();
+		if (gym == null)
+			new RuntimeException("잘못된 접근입니다. 회원님의 아파트에는 gym이 없습니다.");
+
+		return gymMembershipRepository.findByGymId(gym.getId());
+	}
+
+	public Page<GymMembership> getMemberPage(int page, AptAccount user, SearchDTO searchDTO) {
+		Apt apt = user.getApt();
+		Gym gym = gymRepository.findByAptId(apt.getId()).get();
+		if (gym == null)
+			new RuntimeException("잘못된 접근입니다. 회원님의 아파트에는 gym이 없습니다.");
+		Pageable pageable = PageRequest.of(page, 5);
+
+		Page<GymMembership> result = gymMembershipRepository.findAllByGymId(gym.getId(), pageable);
+
+		// 검색어가 없다 -> 전체 리스트 반환
+		// 검색어 대로 검색한 페이지 반환
+		if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
+			// 이름 아니면 연락처로 검색 가능
+			if ("name".equals(searchDTO.getSearchType())) {
+				result = gymMembershipRepository.findAllByFullName(searchDTO.getSearchQuery(), pageable);
+			} else {
+				result = gymMembershipRepository.findAllByPhoneNumber(searchDTO.getSearchQuery(), pageable);
+			}
+		}
+
+		return result;
+	}
+
 }

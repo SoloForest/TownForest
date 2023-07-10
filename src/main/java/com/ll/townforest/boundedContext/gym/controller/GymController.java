@@ -49,23 +49,22 @@ public class GymController {
 	public String gymMain(Model model) {
 
 		AptAccount user = rq.getAptAccount();
+		if (user != null) {
+			model.addAttribute("user", user);
 
-		if (user == null || !user.isStatus())
-			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+			// 이용중인 이용권 정보
+			GymMembership gymMembership = gymService.getMembership(user);
+			model.addAttribute("gymMembership", gymMembership);
 
-		model.addAttribute("user", user);
-
-		// 이용중인 이용권 정보
-		GymMembership gymMembership = gymService.getMembership(user);
-		model.addAttribute("gymMembership", gymMembership);
-
-		// 시작일 전 일 경우, 시작이 며칠 남았는지
-		long beforeDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getStartDate());
-		model.addAttribute("beforeDays", beforeDays);
-
-		// 이용권 총 며칠 남았는지
-		long afterDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getEndDate());
-		model.addAttribute("afterDays", afterDays);
+			if (gymMembership != null) {
+				// 시작일 전 일 경우, 시작이 며칠 남았는지
+				long beforeDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getStartDate());
+				model.addAttribute("beforeDays", beforeDays);
+				// 이용권 총 며칠 남았는지
+				long afterDays = ChronoUnit.DAYS.between(LocalDate.now(), gymMembership.getEndDate());
+				model.addAttribute("afterDays", afterDays);
+			}
+		}
 
 		return "gym/gym";
 	}
@@ -92,11 +91,11 @@ public class GymController {
 		AptAccount user = rq.getAptAccount();
 
 		if (user == null || !user.isStatus())
-			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+			return rq.historyBack("승인된 아파트 주민만 <br> 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
 
-		// 연장용 일 경우 startDate를 현제 가지고 있는 이용권의 종료일+1로 지정하기 위해 필요
+		// 연장용 일 경우 startDate를 현재 가지고 있는 이용권의 종료일+1로 지정하기 위해 필요
 		GymMembership membership = gymService.getMembership(user);
 		model.addAttribute("membership", membership);
 
@@ -121,7 +120,7 @@ public class GymController {
 		AptAccount user = rq.getAptAccount();
 
 		if (user == null || !user.isStatus())
-			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+			return rq.historyBack("승인된 아파트 주민만 <br> 이용할 수 있습니다.");
 
 		// "orderId":"gym-type-2-36600264572790997_2023-07-12" 이런 형태, -type- 다음 숫자가 이용권 종류
 		String[] parts = orderId.split("-type-");
@@ -223,7 +222,7 @@ public class GymController {
 		AptAccount user = rq.getAptAccount();
 
 		if (user == null || !user.isStatus())
-			rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
+			return rq.historyBack("승인된 아파트 주민만 <br> 이용할 수 있습니다.");
 
 		model.addAttribute("user", user);
 
