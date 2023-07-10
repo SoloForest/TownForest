@@ -19,6 +19,7 @@ import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.service.AptAccountService;
+import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.service.GymService;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
@@ -127,4 +128,19 @@ public class AdminController {
 	public String showAptAccountManagement() {
 		return "admin/aptAccount/management";
 	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/gym/history")
+	public String showAllGymHistory(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+		SearchDTO searchDTO) {
+		if (!rq.isGymAdmin())
+			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+
+		Page<GymHistory> gymHistories = gymService.getAllHistories(page, searchDTO);
+
+		model.addAttribute("paging", gymHistories);
+
+		return "admin/gym/history";
+	}
+
 }
