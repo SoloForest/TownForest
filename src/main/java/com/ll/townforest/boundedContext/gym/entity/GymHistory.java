@@ -68,4 +68,6 @@ public class GymHistory {
 	private Integer remainingDay;
 	// 재시작일
 	private LocalDate restartDate;
+	private String address;
+	private String contact;
 }
