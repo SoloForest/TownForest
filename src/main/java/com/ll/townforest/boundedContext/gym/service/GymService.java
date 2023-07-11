@@ -28,6 +28,7 @@ import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
 import com.ll.townforest.boundedContext.home.dto.TicketForm;
+import com.ll.townforest.standard.util.Ut;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -329,16 +330,58 @@ public class GymService {
 
 		Pageable pageable = PageRequest.of(page, 5);
 
+		// case 6 - 결제일자 필터 x, 검색어x : 가장 기본 검색이기에 먼저 값을 가져옴
 		Page<GymHistory> result = gymHistoryRepository.findAllByGymId(gym.getId(), pageable);
 
-		// 검색어가 없다 -> 전체 리스트 반환
-		// 검색어 대로 검색한 페이지 반환
-		if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
-			// 이름 아니면 연락처로 검색 가능
-			if ("name".equals(searchDTO.getSearchType())) {
-				result = gymHistoryRepository.findAllByFullName(searchDTO.getSearchQuery(), pageable);
-			} else {
-				result = gymHistoryRepository.findAllByPhoneNumber(searchDTO.getSearchQuery(), pageable);
+		// 결제일 선택 안했다면 null로 바꾸기
+		String yearMonth = searchDTO.getYearMonth();
+		if (yearMonth != null) {
+			if (yearMonth.isBlank()) {
+				yearMonth = null;
+			}
+		}
+		// case 1, 2, 3 - 결제일 필터
+		if (yearMonth != null) {
+			// 결제일 필터가 있다면 해당 달에 해당하는 날짜를 구하기 위함
+			int monthEndDay = Ut.date.getEndDayOf(yearMonth);
+			String fromDateStr = yearMonth + "-01 00:00:00.000000";
+			String toDateStr = yearMonth + "-%02d 23:59:59.999999".formatted(monthEndDay);
+			LocalDateTime fromDate = Ut.date.parse(fromDateStr);
+			LocalDateTime toDate = Ut.date.parse(toDateStr);
+
+			// case 1, 2 - 결제일 필터와 검색어가 있을 경우
+			if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
+				// case 1 - 이름 검색
+				if (searchDTO.getSearchType().equals("name")) {
+					result = gymHistoryRepository.findAllByFullNameAndPaymentDate(searchDTO.getSearchQuery(), fromDate,
+						toDate, pageable);
+				}
+				// case 2 - 핸드폰 번호 검색
+				if (searchDTO.getSearchType().equals("phone")) {
+					result = gymHistoryRepository.findAllByPhoneNumberAndPaymentDate(searchDTO.getSearchQuery(),
+						fromDate, toDate, pageable);
+				}
+			}
+			// case 3 - 결제일 필터가 있으나 검색을 하지 않은 경우
+			// gymId를 JQuery가 아니기에 넘겨줌
+			else {
+				result = gymHistoryRepository.findAllByGymIdAndPaymentDateBetweenOrderByIdAsc(gym.getId(), fromDate,
+					toDate, pageable);
+			}
+		}
+		// case 4, 5 -결제일 필터가 없다
+		else {
+			// 검색어가 없다 -> 전체 리스트 반환 case 6
+			// 검색어가 있다 -> 검색한 페이지 반환
+			if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
+				// 이름 아니면 연락처로 검색 가능
+				// 해당 쿼리에 gym이 account가 속한 gym과 동일한지 검사하므로 gym을 넘겨주지 않음
+				if (searchDTO.getSearchType().equals("name")) {
+					result = gymHistoryRepository.findAllByFullName(searchDTO.getSearchQuery(), pageable);
+				}
+				if (searchDTO.getSearchType().equals("phone")) {
+					result = gymHistoryRepository.findAllByPhoneNumber(searchDTO.getSearchQuery(), pageable);
+				}
 			}
 		}
 

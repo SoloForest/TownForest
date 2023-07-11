@@ -1,5 +1,7 @@
 <html layout:decorate="~{home/layout.html}">
-<head><title>이용 현황</title></head>
+<head>
+    <title>이용 현황</title>
+</head>
 <body>
 <main layout:fragment="main" class="text-center flex flex-col h-screen justify-center gap-2">
     <div class="flex gap-2 justify-center items-center text-[1.5rem]">
@@ -69,36 +71,50 @@
         </div>
         <!-- 페이징 부분-->
         <div class="btn-group flex justify-center mt-7" th:if="${!paging.isEmpty()}"
-             th:with="search = '?searchQuery=' + ${param.searchQuery != null ? param.searchQuery : ''}, type = 'searchType=' + ${param.searchType != null ? param.searchType : ''}">
+             th:with="search = '?searchQuery=' + ${param.searchQuery != null ? param.searchQuery : ''}, type = 'searchType=' + ${param.searchType != null ? param.searchType : ''},
+             yearMonth = 'yearMonth=' + ${param.yearMonth != null ? param.yearMonth : ''}">
             <a class="btn" th:classappend="${paging.number == 0} ? 'btn-disabled' : ''"
-               th:href="@{|${search}&${type}&page=0|}">&laquo;</a>
+               th:href="@{|${search}&${type}&${yearMonth}&page=0|}">&laquo;</a>
             <a class="btn" th:classappend="${!paging.hasPrevious} ? 'btn-disabled' : ''"
-               th:href="@{|${search}&${type}&page=${paging.number - 1}|}">이전</a><a
-                class="btn" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+               th:href="@{|${search}&${type}&${yearMonth}&page=${paging.number - 1}|}">이전</a>
+            <a class="btn" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
                 th:classappend="${paging.number == page} ? 'btn-active' : ''"
                 th:if="${page >= paging.number - 1 and page <= paging.number + 2}"
-                th:href="@{|${search}&${type}&page=${page}|}" th:text="${page+1}"></a>
+                th:href="@{|${search}&${type}&${yearMonth}&page=${page}|}" th:text="${page+1}"></a>
             <a class="btn" th:classappend="${!paging.hasNext} ? 'btn-disabled' : ''"
-               th:href="@{|${search}&${type}&page=${paging.number + 1}|}">다음</a><a
+               th:href="@{|${search}&${type}&${yearMonth}&page=${paging.number + 1}|}">다음</a><a
                 class="btn" th:classappend="${paging.number == paging.totalPages - 1} ? 'btn-disabled' : ''"
-                th:href="@{|${search}&${type}&page=${paging.totalPages - 1}|}">&raquo;</a></div>
+                th:href="@{|${search}&${type}&${yearMonth}&page=${paging.totalPages - 1}|}">&raquo;</a>
+        </div>
     </div>
-    <div>
-        <form class="flex gap-2 items-center justify-center mt-3">
+    <div class="table-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <form id="search-form" class="flex gap-2 items-center justify-center mt-2 flex-wrap">
+            <select class="select select-info" name="yearMonth" id="yearMonth">
+                <option value="" selected>결제일 필터</option>
+                <option value="2023-06" th:selected="${searchDTO.yearMonth} == '2023-06'">2023-06</option>
+                <option value="2023-07" th:selected="${searchDTO.yearMonth} == '2023-07'">2023-07</option>
+                <option value="2023-08" th:selected="${searchDTO.yearMonth} == '2023-08'">2023-08</option>
+                <option value="2023-09" th:selected="${searchDTO.yearMonth} == '2023-09'">2023-09</option>
+                <option value="2023-10" th:selected="${searchDTO.yearMonth} == '2023-10'">2023-10</option>
+                <option value="2023-11" th:selected="${searchDTO.yearMonth} == '2023-11'">2023-11</option>
+                <option value="2023-12" th:selected="${searchDTO.yearMonth} == '2023-12'">2023-12</option>
+            </select>
             <select class="select select-info" name="searchType">
-                <option value="name">이름</option>
-                <option value="phone">연락처</option>
+                <option value="name" th:selected="${searchDTO.searchType} == 'name'">이름</option>
+                <option value="phone" th:selected="${searchDTO.searchType} == 'phone'">연락처</option>
             </select>
             <input type="text" placeholder="검색어를 입력해주세요" class="input input-bordered input-info" name="searchQuery"
                    th:value="${param.searchQuery != null ? param.searchQuery : ''}"/>
             <button class="btn btn-primary">검색</button>
         </form>
     </div>
-    <div class="flex gap-2 justify-center" onclick="javascript: window.location.href='/admin/gym/member';">
+
+    <div class="flex gap-2 justify-center" onclick="javascript: window.location.href='/admin/gym/history';">
         <div class="btn btn-outline btn-primary flex justify-center items-center"
-             th:unless="${param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()}"><i
+             th:unless="${(param.searchQuery == null || #strings.trim(param.searchQuery).isEmpty()) and (searchDTO.yearMonth == null || #strings.trim(searchDTO.yearMonth).isEmpty())}">
+            <i
                 class="fa-regular fa-trash-can" style="color: #669eff;"></i>
-            <div th:text="${param.searchQuery + ' (검색어 초기화)'}"></div>
+            <div>검색 조건 초기화</div>
         </div>
     </div>
     <div class="flex gap-2 justify-center">
@@ -106,6 +122,17 @@
         <div class="btn btn-primary" onclick="javascript: window.location.href='/admin/gym';"> 헬스장 관리</div>
     </div>
     </div>
+
+    <script th:inline="javascript">
+        function submitForm() {
+            document.getElementById("search-form").submit();
+        }
+
+        document.getElementById("yearMonth").addEventListener("change", function () {
+            submitForm();
+        });
+    </script>
+
 </main>
 </body>
 </html>

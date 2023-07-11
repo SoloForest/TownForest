@@ -1,5 +1,6 @@
 package com.ll.townforest.boundedContext.gym.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -35,6 +36,33 @@ public interface GymHistoryRepository extends JpaRepository<GymHistory, Long> {
 		+ "a.fullName like %:kw% ")
 	Page<GymHistory> findAllByFullName(@Param("kw") String kw, Pageable pageable);
 
+	@Query("select "
+		+ "distinct q "
+		+ "from GymHistory q "
+		+ "left outer join AptAccount u1 on q.user=u1 "
+		+ "left outer join Account a on u1.account=a "
+		+ "left outer join Gym g on q.gym=g "
+		+ "where "
+		+ "a.fullName like %:kw% "
+		+ "and (q.paymentDate BETWEEN :fromDate AND :toDate)")
+	Page<GymHistory> findAllByFullNameAndPaymentDate(@Param("kw") String kw, @Param("fromDate") LocalDateTime fromDate,
+		@Param("toDate") LocalDateTime toDate, Pageable pageable);
+
+	@Query("select "
+		+ "distinct q "
+		+ "from GymHistory q "
+		+ "left outer join AptAccount u1 on q.user=u1 "
+		+ "left outer join Account a on u1.account=a "
+		+ "left outer join Gym g on q.gym=g "
+		+ "where "
+		+ "a.phoneNumber like %:kw% "
+		+ "and (q.paymentDate BETWEEN :fromDate AND :toDate)")
+	Page<GymHistory> findAllByPhoneNumberAndPaymentDate(@Param("kw") String kw,
+		@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate, Pageable pageable);
+
 	// 관리자 화면에서 인원수를 나타내기 위한 리스트
 	List<GymHistory> findByGymId(Long gymId);
+
+	Page<GymHistory> findAllByGymIdAndPaymentDateBetweenOrderByIdAsc(Long gymId, LocalDateTime fromDate,
+		LocalDateTime toDate, Pageable pageable);
 }
