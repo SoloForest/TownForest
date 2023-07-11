@@ -36,21 +36,93 @@ public class VehicleService {
 		return vehicleRepository.findByAptHouse_House_Id(houseId);
 	}
 
-	public AptAccountHouse findByUserId(Long id) { //유저id 조회
-		Optional<AptAccountHouse> aptAccountHouseOptional = aptAccountHouseRepository.findByUserId(id);
-		return aptAccountHouseOptional.orElse(null);
+	public AptAccountHouse findByUserId(Long userId) {
+		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
+
+		if (ownedAptAccountHouse.isPresent()) {
+			return ownedAptAccountHouse.get();
+		}
+		return null;
 	}
 
-	public boolean accessTokenVehicle(Long userId, Long houseId) {
-		AptAccountHouse ownedAptAccountHouse = findByUserId(userId);
-		return ownedAptAccountHouse != null && houseId.equals(ownedAptAccountHouse.getHouse().getId());
-	}
+	public List<Vehicle> getVehicleList(Long userId, Long houseId) {
+		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
 
-	public void deleteVehicleById(Long id) {
-		vehicleRepository.deleteById(id);
+		if (ownedAptAccountHouse.isPresent() && houseId.equals(ownedAptAccountHouse.get().getHouse().getId())) {
+			return findByHouseId(houseId);
+		} else {
+			return null;
+		}
 	}
 
 	public Optional<Vehicle> findByVehicleId(Long id) {
 		return vehicleRepository.findById(id);
+	}
+
+	public String getUserid(Long userId) {
+		AptAccountHouse aptAccountHouse = findByUserId(userId);
+		if (aptAccountHouse == null) {
+			return null;
+		}
+		Long houseId = aptAccountHouse.getHouse().getId();
+		return String.format("redirect:/maintenance/vehicle/%d", houseId);
+	}
+
+	public VehicleResult delete(Long vehicleId, Long userId) {
+		Optional<Vehicle> vehicleOptional = findByVehicleId(vehicleId);
+		if (vehicleOptional.isPresent()) {
+			Vehicle vehicle = vehicleOptional.get();
+			if (vehicle.getUser().getId().equals(userId)) {
+				vehicleRepository.deleteById(vehicleId);
+				return VehicleResult.SUCCESS;
+			}
+		}
+		return VehicleResult.FAILED;
+	}
+
+	public VehicleResult getAllId(Long userId, VehicleForm form) {
+		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
+		if (ownedAptAccountHouse.isPresent()) {
+			List<AptAccountHouse> allMembersOfHouse = aptAccountHouseRepository.findAllByHouseId(
+				ownedAptAccountHouse.get().getHouse().getId());
+
+			if (!getHouseMembers(form.getName(), allMembersOfHouse)) {
+				return VehicleResult.NAME_INVALID;
+			}
+
+			if (getVehicleNumber(form.getVehicleNumber(), ownedAptAccountHouse.get().getHouse().getId())) {
+				return VehicleResult.VEHICLE_DUPLICATION;
+			}
+
+			create(form);
+			return VehicleResult.SUCCESS;
+		}
+		return VehicleResult.FAILED;
+	}
+
+	private boolean getHouseMembers(String inputFullName, List<AptAccountHouse> allMembersOfHouse) {
+		for (AptAccountHouse member : allMembersOfHouse) {
+			if (inputFullName != null && inputFullName.equals(member.getUser().getAccount().getFullName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean getVehicleNumber(String inputVehiclePlateNumber, Long houseId) {
+		List<Vehicle> memberVehicles = vehicleRepository.findByAptHouse_House_Id(houseId);
+		for (Vehicle vehicle : memberVehicles) {
+			if (inputVehiclePlateNumber.equals(vehicle.getVehicleNumber())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public enum VehicleResult {
+		SUCCESS,
+		NAME_INVALID,
+		VEHICLE_DUPLICATION,
+		FAILED
 	}
 }

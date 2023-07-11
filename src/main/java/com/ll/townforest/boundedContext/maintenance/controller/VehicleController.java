@@ -28,18 +28,21 @@ public class VehicleController {
 
 	@GetMapping("/vehicle")
 	@PreAuthorize("isAuthenticated()")
-	public String showPage() { //처음 접속할 페이지
+	public String showPage() {
 		Long userId = rq.getAptAccount().getId();
-		Long houseId = vehicleService.findByUserId(userId).getHouse().getId();
-		return String.format("redirect:/maintenance/vehicle/%d", houseId);
+		String aptCheck = vehicleService.getUserid(userId);
+		if (aptCheck == null) {
+			return rq.redirectWithMsg("/", "동호수 등록후 이용해주십시오");
+		}
+		return aptCheck;
 	}
 
 	@GetMapping("/vehicle/{id}")
 	@PreAuthorize("isAuthenticated()")
-	public String getPage(Model model, @PathVariable(name = "id") Long id) {//차량목록을 조회할 페이지
-		if (vehicleService.accessTokenVehicle(rq.getAptAccount().getId(), id)) {
-			List<Vehicle> vehicle = vehicleService.findByHouseId(id);
-			model.addAttribute("form", vehicle);
+	public String getPage(Model model, @PathVariable(name = "id") Long id) {
+		List<Vehicle> vehicleList = vehicleService.getVehicleList(rq.getAptAccount().getId(), id);
+		if (vehicleList != null) {
+			model.addAttribute("form", vehicleList);
 			return "/maintenance/vehicle";
 		} else {
 			return rq.historyBack(RsData.of("F-1", "잘못된 접근"));
@@ -58,24 +61,34 @@ public class VehicleController {
 	@PreAuthorize("isAuthenticated()")
 	public String insert(@Valid VehicleForm form) {
 		Long userId = rq.getAptAccount().getId();
-		form.setAptHouse(vehicleService.findByUserId(userId));
 		form.setUser(rq.getAptAccount());
+		form.setAptHouse(vehicleService.findByUserId(userId));
 
-		vehicleService.create(form);
-		return String.format("redirect:/maintenance/vehicle/%d", form.getAptHouse().getHouse().getId());
+		VehicleService.VehicleResult result = vehicleService.getAllId(rq.getAptAccount().getId(), form);
+
+		switch (result) {
+			case SUCCESS:
+				return String.format("redirect:/maintenance/vehicle/%d", form.getAptHouse().getHouse().getId());
+			case NAME_INVALID:
+				return rq.historyBack(RsData.of("F-1", "존재하지 않는 세대원입니다."));
+			case VEHICLE_DUPLICATION:
+				return rq.historyBack(RsData.of("F-2", "이미 존재하는 차량번호 입니다."));
+			default:
+				return rq.historyBack(RsData.of("F-3", "알 수 없는 오류가 발생했습니다."));
+		}
 	}
 
 	@GetMapping("/delete/{id}")
 	@PreAuthorize("isAuthenticated()")
 	public String delete(@PathVariable("id") Long id) {
-		Vehicle vehicle = vehicleService.findByVehicleId(id).get();
-		Long UserId = rq.getAptAccount().getId();
+		Long userId = rq.getAptAccount().getId();
 
-		if (vehicle.getUser().getId().equals(UserId)) {
-			vehicleService.deleteVehicleById(id);
+		VehicleService.VehicleResult result = vehicleService.delete(id, userId);
+		if (result == VehicleService.VehicleResult.SUCCESS) {
 			return rq.redirectWithMsg("/maintenance/vehicle", "삭제되었습니다.");
-		} else {
-			return rq.historyBack(RsData.of("F-1", "본인만 삭제할 수 있습니다."));
+		} else if (result == VehicleService.VehicleResult.FAILED) {
+			return rq.historyBack(RsData.of("F-1", "등록자만 삭제할 수 있습니다."));
 		}
+		return rq.historyBack(RsData.of("F-2", "알 수 없는 오류가 발생했습니다."));
 	}
 }
