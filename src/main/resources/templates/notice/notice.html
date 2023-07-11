@@ -1,0 +1,79 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title>공지사항</title>
+</head>
+<body>
+<main layout:fragment="main">
+    <div class="px-4 flex flex-col">
+        <div class="card-body bg-base-100 shadow-xl m-2">
+            <div class="flex gap-2 items-center">
+                <i class="fa-solid fa-bullhorn" style="color: #91c0fd;"></i>
+                <h2 class="card-title"> 공지사항</h2>
+            </div>
+            <div class="overflow-x-auto mt-4">
+                <div class="table-container">
+                    <table class="table table-sm">
+                        <!-- head -->
+                        <thead>
+                        <tr class="text-center">
+                            <th>순번</th>
+                            <th>제목</th>
+                            <th>작성일</th>
+                            <th>글쓴이</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="text-center" th:each="notice, loop : ${paging}">
+                            <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
+                            <td th:text="${(paging.number * paging.size) + loop.index +1}">
+                            <td>
+                                <a th:href="@{|/notice/${notice.id}|}" th:text="${notice.title}" style="min-width:50px; padding: 5px 0;" ></a>
+                            </td>
+                            <td th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"
+                                style="min-width:40px; padding: 12px 0;"></td>
+                            <td th:if="${notice.writer.authority==1}">아파트관리자</td>
+                            <td th:if="${notice.writer.authority==2}">독서실관리자</td>
+                            <td th:if="${notice.writer.authority==3}">헬스장관리자</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="btn-group flex justify-center mt-7" th:if="${!paging.isEmpty()}">
+                    <div class="btn" th:classappend="${paging.number == 0} ? 'btn-disabled' : ''"
+                         th:attr="onclick='window.location.href=\'?page=0\''">
+                        &laquo;
+                    </div>
+                    <div th:attr="onclick='window.location.href=\'?page=' + (${paging.number - 1}) + '\''"
+                         class="btn" th:classappend="${!paging.hasPrevious} ? 'btn-disabled' : ''">
+                        이전
+                    </div>
+                    <div class="btn" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                         th:classappend="${paging.number == page} ? 'btn-active' : ''"
+                         th:if="${page >= paging.number - 1 and page <= paging.number + 2}"
+                         th:attr="onclick='window.location.href=\'?page=' + (${page}) + '\''"
+                         th:text="${page+1}">
+                    </div>
+                    <div class="btn" th:classappend="${!paging.hasNext} ? 'btn-disabled' :''"
+                         th:attr="onclick='window.location.href=\'?page=' + (${paging.number + 1}) + '\''">
+                        다음
+                    </div>
+                    <div th:attr="onclick='window.location.href=\'?page=' + (${paging.totalPages - 1}) + '\''"
+                         class="btn"
+                         th:classappend="${paging.number == paging.totalPages - 1} ? 'btn-disabled' : ''">
+                        &raquo;
+                    </div>
+                </div>
+                <div th:if="${@rq.admin}" class="flex justify-end mt-2">
+                    <div class="btn btn-primary" onclick="javascript: window.location.href='/notice/create';">새글작성</div>
+                </div>
+                <div class="flex gap-2 mt-2 justify-center mt-5">
+                    <div class="btn btn-primary" onclick="javascript: window.location.href='/';">
+                        홈으로
+                    </div>
+                    <div class="btn btn-primary" onclick="javascript: window.location.href='/gym';"> 헬스장메인으로</div>
+                </div>
+            </div>
+
+</main>
+
+</body>

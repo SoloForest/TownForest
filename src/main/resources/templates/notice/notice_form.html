@@ -1,0 +1,67 @@
+<html layout:decorate="~{home/layout.html}">
+
+<head>
+    <title th:if="${noticeForm.content == null}">공지사항 등록</title>
+    <title th:if="${noticeForm.content != null}">글수정</title>
+</head>
+
+<body>
+
+<main layout:fragment="main" class="flex items-center justify-center h-screen">
+    <div class="px-2 flex flex-col overflow-auto">
+        <form th:action method="POST" th:object="${noticeForm}" onsubmit="NoticeForm__submit(this); return false;">
+            <div class="card-body bg-base-100 shadow-xl mt-4">
+                <div class="flex gap-2 items-center justify-center">
+                    <i class="fa-solid fa-bullhorn" style="color: #91c0fd;"></i>
+                    <h2 class="card-title" th:if="${noticeForm.content == null}">공지사항 등록</h2>
+                    <h2 class="card-title" th:if="${noticeForm.content != null}">공지사항 등록</h2>
+                </div>
+                <div class="flex items-center gap-2 mt-4">
+                    <i class="fa-solid fa-pen" style="color: #91c0fd;"></i>
+                    <p class="font-bold">제목</p>
+                </div>
+                <div class="flex gap-2 items-center mt-2">
+                    <input type="text" placeholder="제목을 입력해주세요"
+                           class="input input-bordered input-info w-full min-h-[50px]" th:field="*{title}"/>
+                </div>
+
+                <div class="flex items-center gap-2 mt-4">
+                    <i class="fa-solid fa-pen" style="color: #91c0fd;"></i>
+                    <p class="font-bold">내용</p>
+                </div>
+                <div class="flex gap-2 items-center mt-2">
+                        <textarea class="textarea textarea-info w-full min-h-[300px]"
+                                  placeholder="내용을 입력해주세요"
+                                  th:field="*{content}"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end mt-3">
+                <button class="btn btn-primary" th:if="${noticeForm.content == null}">등록</button>
+                <button class="btn btn-primary" th:if="${noticeForm.content != null}">수정</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function NoticeForm__submit(form) {
+            form.title.value = form.title.value.trim(); // 입력란의 입력값에 있을지 모르는 좌우공백제거
+            form.content.value = form.content.value.trim(); // 입력란의 입력값에 있을지 모르는 좌우공백제거
+
+            if (form.title.value.length === 0) {
+                toastWarning('제목을 입력해주세요');
+                form.title.focus();
+                return;
+            }
+
+            if (form.content.value.length === 0) {
+                toastWarning('내용을 입력해주세요');
+                form.content.focus();
+                return;
+            }
+            form.submit(); // 폼 발송
+        }
+    </script>
+
+</main>
+</body>
+</html>
