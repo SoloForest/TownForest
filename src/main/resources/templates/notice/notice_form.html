@@ -2,7 +2,7 @@
 
 <head>
     <title th:if="${noticeForm.content == null}">공지사항 등록</title>
-    <title th:if="${noticeForm.content != null}">글수정</title>
+    <title th:if="${noticeForm.content != null}">공지사항 수정</title>
 </head>
 
 <body>
@@ -14,7 +14,7 @@
                 <div class="flex gap-2 items-center justify-center">
                     <i class="fa-solid fa-bullhorn" style="color: #91c0fd;"></i>
                     <h2 class="card-title" th:if="${noticeForm.content == null}">공지사항 등록</h2>
-                    <h2 class="card-title" th:if="${noticeForm.content != null}">공지사항 등록</h2>
+                    <h2 class="card-title" th:if="${noticeForm.content != null}">공지사항 수정</h2>
                 </div>
                 <div class="flex items-center gap-2 mt-4">
                     <i class="fa-solid fa-pen" style="color: #91c0fd;"></i>
