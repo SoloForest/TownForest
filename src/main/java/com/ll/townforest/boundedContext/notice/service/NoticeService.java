@@ -1,5 +1,7 @@
 package com.ll.townforest.boundedContext.notice.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -69,7 +71,12 @@ public class NoticeService {
 	@Transactional
 	public RsData delete(Notice notice) {
 		noticeRepository.delete(notice);
-		
+
 		return RsData.of("S-1", "공지글 삭제 성공");
+	}
+
+	public List<Notice> getNoticeTop5LatestByUser_AptId(AptAccount user) {
+		Long aptId = user.getApt().getId();
+		return noticeRepository.findTop5ByAptIdOrderByCreateDateDesc(aptId);
 	}
 }

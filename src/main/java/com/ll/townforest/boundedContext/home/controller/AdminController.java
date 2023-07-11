@@ -30,6 +30,8 @@ import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
 import com.ll.townforest.boundedContext.maintenance.form.GuestVehicleHistory;
 import com.ll.townforest.boundedContext.maintenance.service.VehicleService;
+import com.ll.townforest.boundedContext.notice.entity.Notice;
+import com.ll.townforest.boundedContext.notice.service.NoticeService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,12 +46,21 @@ public class AdminController {
 	private final AptAccountHouseService aptAccountHouseService;
 	private final GymService gymService;
 
+	private final NoticeService noticeService;
+
 	@GetMapping("")
 	@PreAuthorize("isAuthenticated()")
-	public String showAdmin() {
+	public String showAdmin(Model model) {
 		if (rq.getAptAccount().getAuthority() == 0) {
 			return "redirect:/";
 		}
+
+		// 여기까지 온거면 관리자
+		AptAccount user = rq.getAptAccount();
+		List<Notice> noticeList = noticeService.getNoticeTop5LatestByUser_AptId(user);
+
+		model.addAttribute("noticeList", noticeList);
+
 		return "admin/main";
 	}
 
