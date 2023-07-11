@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,10 @@ public class VehicleService {
 			.build());
 
 		return RsData.of("S-1", "방문 차량을 등록했습니다!", vehicle);
+	}
+
+	public Slice<Vehicle> findGuestHistories(Long aptAccountId, Pageable pageable) {
+		return vehicleRepository.findByUserIdAndTypeOrderByIdDesc(aptAccountId, 1, pageable);
 	}
 
 	public Page<Vehicle> findBeforeGuest(LocalDateTime endDate, int page) {
