@@ -1,5 +1,6 @@
 package com.ll.townforest.boundedContext.apt.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -78,5 +79,15 @@ public class AptAccountService {
 
 		return RsData.of("S-1", "주소를 문자열로 변환합니다.",
 			aptAccountHouse.getHouse().getDong() + "동 " + aptAccountHouse.getHouse().getHo() + "호");
+	}
+
+	public List<AptAccountHouse> findAllByHouse(AptAccountHouse aptAccountHouse) {
+		if (aptAccountHouse == null)
+			return null;
+		House house = aptAccountHouse.getHouse();
+		List<AptAccountHouse> household = aptAccountHouseRepository.findAllByHouse(house);
+		household.remove(aptAccountHouse);
+
+		return household;
 	}
 }

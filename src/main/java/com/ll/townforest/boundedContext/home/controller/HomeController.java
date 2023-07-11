@@ -20,6 +20,9 @@ public class HomeController {
 		if (rq.getAptAccount() == null)
 			return "redirect:/aptAccount/register";
 
+		if (rq.isAdmin())
+			return "redirect:/admin";
+
 		if (!rq.getAptAccount().isStatus())
 			return "aptAccount/awaiting_approval";
 

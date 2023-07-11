@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
+import com.ll.townforest.boundedContext.apt.service.AptAccountHouseService;
 import com.ll.townforest.boundedContext.apt.service.AptAccountService;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
@@ -31,6 +33,8 @@ import com.ll.townforest.boundedContext.home.dto.TicketForm;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.service.LibraryService;
+import com.ll.townforest.boundedContext.maintenance.form.GuestVehicleHistory;
+import com.ll.townforest.boundedContext.maintenance.service.VehicleService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +46,8 @@ public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
 	private final AptAccountService aptAccountService;
-
+	private final VehicleService vehicleService;
+	private final AptAccountHouseService aptAccountHouseService;
 	private final GymService gymService;
 
 	@GetMapping("")
@@ -54,6 +59,7 @@ public class AdminController {
 		return "admin/main";
 	}
 
+	// 독서실 관리자 페이지 시작
 	@GetMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
 	public String showLibraryHistories(Model model) {
@@ -93,6 +99,7 @@ public class AdminController {
 
 		return libraryService.adminCancel(targetUser, canCancelSeat.getData(), libraryHistoryId).getMsg();
 	}
+	// 독서실 관리자 페이지 끝
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/gym")
@@ -131,7 +138,22 @@ public class AdminController {
 	}
 
 	@GetMapping("/management")
-	public String showAptAccountManagement() {
+	@PreAuthorize("isAuthenticated()")
+	public String showAptAccountManagement(Model model, @RequestParam(defaultValue = "1") int sortCode) {
+		int authority = rq.getAptAccount().getAuthority();
+
+		if (authority == 0) {
+			return "redirect:/";
+		}
+
+		if (authority == 2 || authority == 3) {
+			return "redirect:/admin";
+		}
+
+		List<AptAccountHouse> aptAccountHouseList = aptAccountHouseService.findAptAccountHouse(sortCode);
+
+		model.addAttribute("aptAccountHouseList", aptAccountHouseList);
+		model.addAttribute("sortCode", sortCode);
 		return "admin/aptAccount/management";
 	}
 
@@ -242,4 +264,54 @@ public class AdminController {
 		return rq.redirectWithMsg("/admin/gym/ticket", result.getMsg());
 	}
 
+	// 방문차량 조회 페이지 시작
+	@GetMapping("/guest/vehicle")
+	@PreAuthorize("isAuthenticated()")
+	public String showGuestVehicles(
+		Model model,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "1") int tab
+	) {
+		if (rq.getAptAccount().getAuthority() != 1) {
+			return "redirect:/admin";
+		}
+
+		Page<GuestVehicleHistory> vehicles = vehicleService.findGuestByTab(page, tab);
+
+		model.addAttribute("vehicles", vehicles);
+		model.addAttribute("tab", tab);
+
+		return "admin/guest/vehicle";
+	}
+	//방문자량 조회 페이지 끝
+
+	@PostMapping("/approve/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public String approve(@PathVariable Long id, @RequestParam int sortCode) {
+		AptAccountHouse aptAccountHouse = aptAccountHouseService.findById(id).orElse(null);
+
+		RsData<AptAccountHouse> aptAccountHouseRsData = aptAccountHouseService.canApprove(rq.getAptAccount(),
+			aptAccountHouse);
+
+		if (aptAccountHouseRsData.isFail()) {
+			return rq.historyBack(aptAccountHouseRsData);
+		}
+
+		return rq.redirectWithMsg("/admin/management?sortCode=%d".formatted(sortCode), aptAccountHouseRsData);
+	}
+
+	@PostMapping("/delete/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public String delete(@PathVariable Long id, @RequestParam int sortCode) {
+		AptAccountHouse aptAccountHouse = aptAccountHouseService.findById(id).orElse(null);
+
+		RsData<AptAccountHouse> aptAccountHouseRsData = aptAccountHouseService.canDelete(rq.getAptAccount(),
+			aptAccountHouse);
+
+		if (aptAccountHouseRsData.isFail()) {
+			return rq.historyBack(aptAccountHouseRsData);
+		}
+
+		return rq.redirectWithMsg("/admin/management?sortCode=%d".formatted(sortCode), aptAccountHouseRsData);
+	}
 }
