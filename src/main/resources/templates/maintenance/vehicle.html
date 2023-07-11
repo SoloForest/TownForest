@@ -8,7 +8,7 @@
     <div class="flex justify-center mt-4 mb-3 relative w-full">
         <div class="flex flex-col">
             <div th:each="vehicle : ${form}"
-                 class="border-2 my-4 border-gray-500 border-x-indigo-50/0 w-80 h-50 px-2 my-4">
+                 class="border-2 my-4 border-gray-400 border-x-indigo-50/0 w-80 h-50 px-2 my-4">
                 <div class="mt-4">
                     <i class="fa-solid fa-user mr-1"></i>
                     <span class="mr-2">차량주<br></span>
@@ -20,7 +20,9 @@
                     <span class="mt-1" th:text="${vehicle.vehicleNumber}"></span>
                 </div>
                 <div class="flex justify-end">
-                    <button class="text-red-400">삭제</button>
+                    <a th:href="@{'/maintenance/delete/' + ${vehicle.getId()}}"
+                       onclick="return confirm('게시글을 삭제하시겠습니까?');"
+                       class="text-red-400">삭제</a>
                 </div>
             </div>
             <div th:if="${#lists.isEmpty(form)}" class="my-4 text-center">

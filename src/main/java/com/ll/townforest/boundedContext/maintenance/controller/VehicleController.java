@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ll.townforest.base.rq.Rq;
+import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.maintenance.entity.Vehicle;
 import com.ll.townforest.boundedContext.maintenance.form.VehicleForm;
 import com.ll.townforest.boundedContext.maintenance.service.VehicleService;
@@ -27,7 +28,7 @@ public class VehicleController {
 
 	@GetMapping("/vehicle")
 	@PreAuthorize("isAuthenticated()")
-	public String showPage() { // 맨 처음에 들어가는 페이지
+	public String showPage() { //처음 접속할 페이지
 		Long userId = rq.getAptAccount().getId();
 		Long houseId = vehicleService.findByUserId(userId).getHouse().getId();
 		return String.format("redirect:/maintenance/vehicle/%d", houseId);
@@ -36,9 +37,13 @@ public class VehicleController {
 	@GetMapping("/vehicle/{id}")
 	@PreAuthorize("isAuthenticated()")
 	public String getPage(Model model, @PathVariable(name = "id") Long id) {//차량목록을 조회할 페이지
-		List<Vehicle> vehicle = vehicleService.findByHouseId(id);
-		model.addAttribute("form", vehicle);
-		return "/maintenance/vehicle";
+		if (vehicleService.accessTokenVehicle(rq.getAptAccount().getId(), id)) {
+			List<Vehicle> vehicle = vehicleService.findByHouseId(id);
+			model.addAttribute("form", vehicle);
+			return "/maintenance/vehicle";
+		} else {
+			return rq.historyBack(RsData.of("F-1", "잘못된 접근"));
+		}
 	}
 
 	@GetMapping("/add")
@@ -58,6 +63,19 @@ public class VehicleController {
 
 		vehicleService.create(form);
 		return String.format("redirect:/maintenance/vehicle/%d", form.getAptHouse().getHouse().getId());
+	}
 
+	@GetMapping("/delete/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public String delete(@PathVariable("id") Long id) {
+		Vehicle vehicle = vehicleService.findByVehicleId(id).get();
+		Long UserId = rq.getAptAccount().getId();
+
+		if (vehicle.getUser().getId().equals(UserId)) {
+			vehicleService.deleteVehicleById(id);
+			return rq.redirectWithMsg("/maintenance/vehicle", "삭제되었습니다.");
+		} else {
+			return rq.historyBack(RsData.of("F-1", "본인만 삭제할 수 있습니다."));
+		}
 	}
 }

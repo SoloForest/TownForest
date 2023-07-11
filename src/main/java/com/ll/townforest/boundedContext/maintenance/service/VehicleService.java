@@ -40,4 +40,17 @@ public class VehicleService {
 		Optional<AptAccountHouse> aptAccountHouseOptional = aptAccountHouseRepository.findByUserId(id);
 		return aptAccountHouseOptional.orElse(null);
 	}
+
+	public boolean accessTokenVehicle(Long userId, Long houseId) {
+		AptAccountHouse ownedAptAccountHouse = findByUserId(userId);
+		return ownedAptAccountHouse != null && houseId.equals(ownedAptAccountHouse.getHouse().getId());
+	}
+
+	public void deleteVehicleById(Long id) {
+		vehicleRepository.deleteById(id);
+	}
+
+	public Optional<Vehicle> findByVehicleId(Long id) {
+		return vehicleRepository.findById(id);
+	}
 }
