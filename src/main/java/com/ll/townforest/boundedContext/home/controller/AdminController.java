@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,7 +55,7 @@ public class AdminController {
 	// 독서실 관리자 페이지 시작
 	@GetMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
-	public String showLibraryHistories(Model model) {
+	public String showLibraryHistories(Model model, @RequestParam(defaultValue = "0") int page) {
 		if (!rq.isAdmin()) {
 			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
@@ -65,19 +64,14 @@ public class AdminController {
 			return rq.historyBack("독서실 관리 권한이 없습니다.");
 		}
 
-		Slice<LibraryHistory> histories = libraryService.findAllHistories(PageRequest.of(0, 25));
+		Page<LibraryHistory> histories = libraryService.findAllHistories(PageRequest.of(page, 25));
 		model.addAttribute("histories", histories);
 		return "admin/library/histories";
 	}
 
-	@PostMapping("/library/histories")
-	@ResponseBody
-	public Slice<LibraryHistory> libraryHistories(@RequestParam int page, @RequestParam int size) {
-		return libraryService.findAllHistories(PageRequest.of(page, size));
-	}
-
 	@PostMapping("/library/cancel")
 	@ResponseBody
+	@PreAuthorize("isAuthenticated()")
 	public String libraryBookingCancel(@RequestParam Long libraryHistoryId) {
 		RsData<AptAccount> canCancelUser = libraryService.canAdminCancel(rq.getAptAccount());
 		if (canCancelUser.isFail()) {

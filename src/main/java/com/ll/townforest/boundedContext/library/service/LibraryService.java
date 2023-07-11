@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -182,7 +183,7 @@ public class LibraryService {
 		return libraryHistoryRepository.findByUserIdOrderByIdDesc(aptAccountId, pageable);
 	}
 
-	public Slice<LibraryHistory> findAllHistories(Pageable pageable) {
+	public Page<LibraryHistory> findAllHistories(Pageable pageable) {
 		return libraryHistoryRepository.findAllByOrderByIdDesc(pageable);
 	}
 
