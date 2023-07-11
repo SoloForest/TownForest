@@ -1,5 +1,7 @@
 package com.ll.townforest.boundedContext.maintenance.form;
 
+import java.time.LocalDateTime;
+
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
 
@@ -15,4 +17,5 @@ public class VehicleForm {
 	private String name;
 	private AptAccount user;
 	private AptAccountHouse aptHouse;
+	private LocalDateTime date = LocalDateTime.now();
 }

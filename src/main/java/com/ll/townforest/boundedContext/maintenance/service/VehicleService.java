@@ -1,5 +1,6 @@
 package com.ll.townforest.boundedContext.maintenance.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ public class VehicleService {
 			.name(form.getName())
 			.vehicleNumber(form.getVehicleNumber())
 			.type(0)
+			.date(LocalDateTime.now())
 			.user(form.getUser())
 			.aptHouse(form.getAptHouse())
 			.build();
