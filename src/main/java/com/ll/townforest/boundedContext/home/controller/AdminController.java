@@ -47,8 +47,8 @@ public class AdminController {
 	@GetMapping("")
 	@PreAuthorize("isAuthenticated()")
 	public String showAdmin() {
-		if (rq.getAptAccount().getAuthority() == 0) {
-			return "redirect:/";
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
 		return "admin/main";
 	}
@@ -57,12 +57,12 @@ public class AdminController {
 	@GetMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
 	public String showLibraryHistories(Model model) {
-		if (rq.getAptAccount().getAuthority() == 0) {
-			return "redirect:/";
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
 
-		if (rq.getAptAccount().getAuthority() == 3) {
-			return "redirect:/admin";
+		if (rq.isGymAdmin()) {
+			return rq.historyBack("독서실 관리 권한이 없습니다.");
 		}
 
 		Slice<LibraryHistory> histories = libraryService.findAllHistories(PageRequest.of(0, 25));
@@ -160,7 +160,7 @@ public class AdminController {
 		@RequestParam(defaultValue = "1") int tab
 	) {
 		if (rq.getAptAccount().getAuthority() != 1) {
-			return "redirect:/admin";
+			return rq.historyBack("차량 관리 권한이 없습니다.");
 		}
 
 		Page<GuestVehicleHistory> vehicles = vehicleService.findGuestByTab(page, tab);
