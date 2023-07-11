@@ -1,0 +1,175 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title>마이페이지</title>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+</head>
+<body>
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-2xl w-full px-8 mt-5">
+        <div class="flex justify-center items-center">
+            <div x-data="{ editing: false, toggleEditing:function() { this.editing = !this.editing; }}"
+                 class='flex max-w-sm w-full justify-center bg-white shadow-md rounded-lg overflow-hidden mx-auto flex flex-col p-5'>
+                <h3 x-text="editing ? '회원정보 수정' : '회원정보'" class="text-center text-2xl font-bold mb-6"></h3>
+                <form id="editForm" th:action method="POST" onsubmit="return false;">
+                    <div class="px-1 py-7">
+                        <label class="font-semibold text-sm text-[#2563EB] pb-1 block">아이디</label>
+                        <input type="text"
+                               th:value="${account.username}"
+                               class="border rounded-lg px-3 py-2 mt-1 mb-7 text-sm w-full" disabled/>
+                        <div x-show="editing">
+                            <label class="font-semibold text-sm text-[#2563EB] pb-1 block">비밀번호</label>
+                            <div class="relative mb-7">
+                                <div x-data="{ show: false }"
+                                     class="relative input-component flex items-center mt-1">
+                                    <input :type=" show ? 'text': 'password' "
+                                           id="password"
+                                           name="password"
+                                           maxlength="15"
+                                           class="border rounded-lg px-3 py-2 text-sm w-full"/>
+                                    <button type="button"
+                                            class="absolute right-2 bg-transparent hover:text-blue-600"
+                                            @click="show = !show">
+                                        <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                                        </svg>
+
+                                        <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p id="password_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
+                            </div>
+                        </div>
+                        <label class="font-semibold text-sm text-[#2563EB] pb-1 block">이름</label>
+                        <input type="text"
+                               th:value="${account.fullName}"
+                               class="border rounded-lg px-3 py-2 mt-1 mb-7 text-sm w-full" disabled/>
+                        <label class="font-semibold text-sm text-[#2563EB] pb-1 block">이메일</label>
+                        <div class="relative mb-7">
+                            <input type="text"
+                                   id="email"
+                                   name="email"
+                                   th:value="${account.email}" :disabled="!editing"
+                                   class="border rounded-lg px-3 py-2 mt-1 text-sm w-full"/>
+                            <p id="email_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
+                        </div>
+                        <label class="font-semibold text-sm text-[#2563EB] pb-1 block">휴대전화번호</label>
+                        <div class="relative mb-7">
+                            <input type="text"
+                                   id="phoneNumber"
+                                   name="phoneNumber"
+                                   maxlength="11"
+                                   th:value="${account.phoneNumber}" :disabled="!editing"
+                                   class="border rounded-lg px-3 py-2 mt-1 text-sm w-full"/>
+                            <p id="phoneNumber_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
+                        </div>
+
+                        <button type="button" id="toggleClick"
+                                x-show="!editing"
+                                data-modal-toggle="confirmPassword-modal"
+                                class="transition duration-200 bg-[#4b6bfb] hover:bg-primary-focus focus:bg-primary focus:shadow-sm focus:ring-4 focus:ring-primary-focus focus:ring-opacity-50 text-primary-content w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
+                            <span class="inline-block mr-2">기본정보 수정</span>
+                        </button>
+
+                        <button type="button"
+                                x-show="editing"
+                                @click="EditForm_submit();"
+                                class="transition duration-200 bg-[#4b6bfb] hover:bg-primary-focus focus:bg-primary focus:shadow-sm focus:ring-4 focus:ring-primary-focus focus:ring-opacity-50 text-primary-content w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
+                            <span class="inline-block mr-2">저장하기</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="flex justify-end">
+                    <a class="link mr-2 text-xs text-gray-400" href="javascript:"
+                       onclick="$(this).next().submit();">회원탈퇴</a>
+                    <form class="!hidden" method="POST"></form>
+                </div>
+
+                <!-- Main modal -->
+                <div id="confirmPassword-modal" data-modal-show="false" aria-hidden="true"
+                     class="hidden overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 flex justify-center items-center min-h-screen">
+                    <div class="relative w-full max-w-xl px-4 h-full md:h-auto">
+                        <!-- Modal content -->
+                        <div class="bg-white rounded-lg shadow relative dark:bg-gray-700">
+                            <!-- Modal header -->
+                            <div class="flex items-center justify-between p-3 border-b rounded-t dark:border-gray-600">
+                                <h3 class="text-gray-900 text-xl lg:text-2xl font-semibold dark:text-white">
+                                    비밀번호 확인
+                                </h3>
+                                <button type="button" id="modalClick"
+                                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                        data-modal-toggle="confirmPassword-modal">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                              clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="p-7 space-y-6 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500 text-base text-center leading-relaxed dark:text-gray-400">
+                                    본인 확인이 필요합니다.<br>
+                                    비밀번호를 입력해주세요.
+                                </p>
+                                <div class="relative mb-9">
+                                    <div x-data="{ show: false }"
+                                         class="relative input-component flex items-center mt-1">
+                                        <input :type=" show ? 'text': 'password' "
+                                               id="confirmPassword"
+                                               name="confirmPassword"
+                                               maxlength="15"
+                                               class="border rounded-lg px-3 py-2 text-sm w-full"/>
+                                        <button type="button"
+                                                class="absolute right-2 bg-transparent hover:text-blue-600"
+                                                @click="show = !show">
+                                            <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor"
+                                                 viewBox="0 0 24 24"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                                            </svg>
+
+                                            <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor"
+                                                 viewBox="0 0 24 24"
+                                                 xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <p id="confirmPassword_check"
+                                       class="absolute mt-1 mb-1 ml-2 text-primary text-center text-sm"></p>
+                                </div>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="flex space-x-2 items-center justify-center p-3 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                <button id="confirm" class="btn btn-primary">
+                                    확인
+                                </button>
+                                <button id="editClick" class="hidden" x-on:click="toggleEditing();"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/editForm_validation.js"></script>
+</main>
+</body>
+</html>
