@@ -108,7 +108,7 @@ public class NoticeController {
 	@GetMapping("/modify/{id}")
 	public String showModifyNotice(@PathVariable("id") Long id, NoticeForm noticeForm) {
 		if (!rq.isAdmin())
-			return rq.historyBack("관리자만 작성할 수 있습니다.");
+			return rq.historyBack("관리자만 수정할 수 있습니다.");
 
 		Notice notice = noticeService.getNoticeById(id);
 
@@ -129,8 +129,8 @@ public class NoticeController {
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/modify/{id}")
 	public String modifyNotice(@Valid NoticeForm noticeForm, @PathVariable Long id) {
-		if (!rq.isGymAdmin())
-			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+		if (!rq.isAdmin())
+			return rq.historyBack("관리자만 수정할 수 있습니다.");
 
 		Notice notice = noticeService.getNoticeById(id);
 
@@ -150,8 +150,8 @@ public class NoticeController {
 	@PreAuthorize("isAuthenticated()")
 	@DeleteMapping("/{id}")
 	public String deleteNotice(@PathVariable Long id) {
-		if (!rq.isGymAdmin())
-			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+		if (!rq.isAdmin())
+			return rq.historyBack("관리자만 삭제 가능합니다");
 
 		Notice notice = noticeService.getNoticeById(id);
 
