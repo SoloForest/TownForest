@@ -1,5 +1,6 @@
 package com.ll.townforest.boundedContext.account.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +17,27 @@ import com.ll.townforest.boundedContext.account.dto.AccountDTO;
 import com.ll.townforest.boundedContext.account.entity.Account;
 import com.ll.townforest.boundedContext.account.repository.AccountRepository;
 import com.ll.townforest.boundedContext.apt.DTO.EditForm;
+import com.ll.townforest.boundedContext.apt.entity.AptAccount;
+import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
+import com.ll.townforest.boundedContext.apt.repository.AptAccountHouseRepository;
+import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
+import com.ll.townforest.boundedContext.gym.entity.GymMembership;
+import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AccountService {
-	private final AccountRepository accountRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final AuthenticationManager authenticationManager;
+	private final AccountRepository accountRepository;
+	private final AptAccountRepository aptAccountRepository;
+	private final AptAccountHouseRepository aptAccountHouseRepository;
+	private final GymMembershipRepository gymMembershipRepository;
 
 	public Optional<Account> findByUsername(String username) {
 		return accountRepository.findByUsername(username);
@@ -99,5 +112,33 @@ public class AccountService {
 
 	public boolean confirmPassword(Account account, String password) {
 		return passwordEncoder.matches(password, account.getPassword());
+	}
+
+	@Transactional
+	public RsData<Account> withdraw(Account account, HttpServletRequest request, HttpServletResponse response) {
+		Optional<AptAccount> aptAccount = aptAccountRepository.findByAccount(account);
+		if (aptAccount.isPresent()) {
+			// 회원에게 헬스장 이용권의 상태가 이용 대기중일 시 탈퇴 불가
+			List<GymMembership> gymMembershipList = gymMembershipRepository.findByUserAndStatus(aptAccount.get(), 0);
+			if (gymMembershipList.size() != 0)
+				return RsData.of("F-1", "죄송합니다.<br>아직 유효한 헬스장 이용권이 남아있어 계정 탈퇴를 진행할 수 없습니다.");
+
+			Optional<AptAccountHouse> optionalAptAccountHouse = aptAccountHouseRepository.findByUser(aptAccount.get());
+			if (optionalAptAccountHouse.isPresent()) {
+				AptAccountHouse aptAccountHouse = optionalAptAccountHouse.get().toBuilder()
+					.status(true)
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse);
+			}
+		}
+
+		accountRepository.delete(account);
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+		}
+
+		return RsData.of("S-1", "정상적으로 회원 탈퇴가 처리되었습니다.<br>그동안 저희 서비스를 이용해주셔서 감사합니다.");
 	}
 }

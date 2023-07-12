@@ -4,14 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 
 public interface GymMembershipRepository extends JpaRepository<GymMembership, Long> {
@@ -20,6 +19,7 @@ public interface GymMembershipRepository extends JpaRepository<GymMembership, Lo
 	List<GymMembership> findAllByEndDateAndStatusNot(LocalDate endDate, int status);
 
 	List<GymMembership> findAllByStartDateAndStatus(LocalDate today, int status);
+
 	// 관리자 화면에서 인원수를 나타내기 위한 리스트
 	List<GymMembership> findByGymId(Long gymId);
 
@@ -45,4 +45,6 @@ public interface GymMembershipRepository extends JpaRepository<GymMembership, Lo
 		+ "where "
 		+ "a.fullName like %:kw% ")
 	Page<GymMembership> findAllByFullName(@Param("kw") String kw, Pageable pageable);
+
+	List<GymMembership> findByUserAndStatus(AptAccount user, int status);
 }
