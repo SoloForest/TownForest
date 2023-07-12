@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
-import com.ll.townforest.boundedContext.account.entity.Account;
 import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.service.AptAccountService;
@@ -466,8 +465,8 @@ public class GymService {
 	}
 
 	@Transactional
-	public void whenAccountWithdraw(Account account) {
-		List<GymMembership> gymMembershipList = gymMembershipRepository.findByAccount(account);
+	public void whenAccountWithdraw(AptAccount user) {
+		List<GymMembership> gymMembershipList = gymMembershipRepository.findAllByUserId(user.getId());
 
 		gymMembershipRepository.deleteAll(gymMembershipList);
 	}

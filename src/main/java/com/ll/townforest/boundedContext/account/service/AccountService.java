@@ -134,12 +134,13 @@ public class AccountService {
 					.build();
 				aptAccountHouseRepository.save(aptAccountHouse);
 			}
+
+			// 계정 탈퇴 시 이벤트 발생 -> 이용권 삭제 처리를 위함
+			// AptAccount가 있어야 Gym 이용이 가능하니, 없을땐 이벤트 발생x
+			publisher.publishEvent(new EventAccountWithdraw(this, aptAccount.get()));
 		}
 
 		accountRepository.delete(account);
-
-		// 계정 탈퇴 시 이벤트 발생 -> 이용권 삭제 처리
-		publisher.publishEvent(new EventAccountWithdraw(this, account));
 
 		// 데이터 삭제 후 로그아웃
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

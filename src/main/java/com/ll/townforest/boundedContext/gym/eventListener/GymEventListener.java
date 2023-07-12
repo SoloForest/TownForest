@@ -17,6 +17,6 @@ public class GymEventListener {
 
 	@EventListener
 	public void listen(EventAccountWithdraw event) {
-		gymService.whenAccountWithdraw(event.getAccount());
+		gymService.whenAccountWithdraw(event.getAptAccount());
 	}
 }

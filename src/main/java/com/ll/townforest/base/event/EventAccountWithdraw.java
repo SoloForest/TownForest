@@ -2,16 +2,16 @@ package com.ll.townforest.base.event;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.ll.townforest.boundedContext.account.entity.Account;
+import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 
 import lombok.Getter;
 
 @Getter
 public class EventAccountWithdraw extends ApplicationEvent {
-	private final Account account;
+	private final AptAccount aptAccount;
 
-	public EventAccountWithdraw(Object source, Account account) {
+	public EventAccountWithdraw(Object source, AptAccount aptAccount) {
 		super(source);
-		this.account = account;
+		this.aptAccount = aptAccount;
 	}
 }
