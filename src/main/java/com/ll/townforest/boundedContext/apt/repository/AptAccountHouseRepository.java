@@ -14,11 +14,11 @@ public interface AptAccountHouseRepository extends JpaRepository<AptAccountHouse
 
 	List<AptAccountHouse> findAllByHouseId(Long houseId);
 
-	List<AptAccountHouse> findByUser_StatusTrueOrderByUserIdDesc();
+	List<AptAccountHouse> findByUser_StatusTrueAndStatusFalseOrderByUserIdDesc();
 
-	List<AptAccountHouse> findByUser_StatusFalseOrderByUserIdDesc();
+	List<AptAccountHouse> findByUser_StatusFalseAndStatusFalseOrderByUserIdDesc();
 
-	List<AptAccountHouse> findAllByOrderByIdDesc();
+	List<AptAccountHouse> findAllByStatusFalseOrderByIdDesc();
 
 	Optional<AptAccountHouse> findByUser(AptAccount aptAccount);
 

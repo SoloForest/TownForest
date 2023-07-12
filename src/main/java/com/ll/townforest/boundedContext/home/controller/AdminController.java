@@ -171,7 +171,7 @@ public class AdminController {
 			return "redirect:/admin";
 		}
 
-		List<AptAccountHouse> aptAccountHouseList = aptAccountHouseService.findAptAccountHouse(sortCode);
+		List<AptAccountHouse> aptAccountHouseList = aptAccountHouseService.findAptAccountHouseBySortCode(sortCode);
 
 		model.addAttribute("aptAccountHouseList", aptAccountHouseList);
 		model.addAttribute("sortCode", sortCode);
