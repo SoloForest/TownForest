@@ -35,8 +35,6 @@
             <div class="table-container">
                 <table class="table table-sm">
                     <!-- head -->
-                    <thead>
-                    </thead>
                     <tbody>
                     <tr class="text-center" th:each="notice : ${noticeList}"
                         th:onclick="'location.href=\'/notice/' + ${notice.id} + '\''">
