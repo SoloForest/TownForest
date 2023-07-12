@@ -49,7 +49,8 @@
     </div>
     <!-- 버튼메뉴 -->
     <div class="flex justify-center flex-wrap gap-3">
-        <button id="management" onclick="javascript: window.location.href='/admin/management';"
+        <button id="management"
+                th:onclick="${@rq.isAdmin()} ? 'javascript: window.location.href=\'/admin/management\';' : 'authority_modal.showModal()'"
                 class="btn btn-outline btn-primary">
             회원 관리
         </button>
@@ -86,6 +87,14 @@
                 style="visibility:hidden">
         </button>
     </div>
+    <dialog id="authority_modal" class="modal p-5">
+        <form method="dialog" class="modal-box">
+            <p class="font-semibold">접근 권한이 없습니다.</p>
+            <div class="modal-action">
+                <button class="btn btn-primary btn-sm text-sm">확인</button>
+            </div>
+        </form>
+    </dialog>
 </main>
 </body>
 </html>
