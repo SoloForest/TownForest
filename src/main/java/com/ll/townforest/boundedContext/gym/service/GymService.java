@@ -13,8 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.base.rq.Rq;
+import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.service.AptAccountService;
@@ -27,6 +27,8 @@ import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
 import com.ll.townforest.boundedContext.home.dto.SearchDTO;
+import com.ll.townforest.boundedContext.home.dto.TicketForm;
+import com.ll.townforest.standard.util.Ut;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,16 +46,16 @@ public class GymService {
 
 	private final Rq rq;
 
-	public GymTicket getTicket(Integer ticketType) {
-		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
+	public GymTicket getTicket(Long ticketId) {
+		GymTicket gymTicket = gymTicketRepository.findById(ticketId).orElse(null);
 
 		return gymTicket;
 	}
 
 	@Transactional
-	public void create(AptAccount user, LocalDate startDate, Integer ticketType, String method) {
+	public void create(AptAccount user, LocalDate startDate, Long ticketId, String method) {
 
-		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
+		GymTicket gymTicket = gymTicketRepository.findById(ticketId).orElse(null);
 		if (gymTicket == null) {
 			throw new RuntimeException("존재하지 않는 이용권입니다. 다시 시도해주세요");
 		}
@@ -76,6 +78,7 @@ public class GymService {
 			.endDate(endDate)
 			.user(user)
 			.status(status)
+			.paymentDate(LocalDateTime.now())
 			.contact(user.getAccount().getPhoneNumString())
 			.address(userHasAddress != null ?
 				aptAccountService.makeAddressToString(user).getData() : "알수없음")
@@ -92,6 +95,7 @@ public class GymService {
 			.endDate(endDate)
 			.status(0)
 			.paymentMethod(method)
+			.paymentDate(LocalDateTime.now())
 			.user(user)
 			.contact(user.getAccount().getPhoneNumString() != null ? user.getAccount().getPhoneNumString() : "알수없음")
 			.address(userHasAddress != null ?
@@ -104,7 +108,7 @@ public class GymService {
 
 	public List<GymTicket> getGymTickets(Long gymId) {
 
-		return gymTicketRepository.findAllByGymId(gymId);
+		return gymTicketRepository.findAllByGymIdOrderByPrice(gymId);
 
 	}
 
@@ -118,8 +122,8 @@ public class GymService {
 	}
 
 	@Transactional
-	public void update(AptAccount user, LocalDate startDate, LocalDate endDate, int ticketType, String method) {
-		GymTicket gymTicket = gymTicketRepository.findByType(ticketType).orElse(null);
+	public void update(AptAccount user, LocalDate startDate, LocalDate endDate, Long ticketId, String method) {
+		GymTicket gymTicket = gymTicketRepository.findById(ticketId).orElse(null);
 
 		if (gymTicket == null) {
 			throw new RuntimeException("존재하지 않는 이용권입니다. 다시 시도해주세요");
@@ -284,7 +288,7 @@ public class GymService {
 
 		gymMembershipRepository.saveAll(updatedList);
 	}
-  
+
 	public List<GymMembership> getMemberList(AptAccount user) {
 		Apt apt = user.getApt();
 		Gym gym = gymRepository.findByAptId(apt.getId()).get();
@@ -317,4 +321,110 @@ public class GymService {
 		return result;
 	}
 
+	public Page<GymHistory> getAllHistories(int page, SearchDTO searchDTO) {
+		AptAccount user = rq.getAptAccount();
+		Apt apt = user.getApt();
+		Gym gym = gymRepository.findByAptId(apt.getId()).get();
+		if (gym == null)
+			new RuntimeException("잘못된 접근입니다. 회원님의 아파트에는 gym이 없습니다.");
+
+		Pageable pageable = PageRequest.of(page, 5);
+
+		// case 6 - 결제일자 필터 x, 검색어x : 가장 기본 검색이기에 먼저 값을 가져옴
+		Page<GymHistory> result = gymHistoryRepository.findAllByGymId(gym.getId(), pageable);
+
+		// 결제일 선택 안했다면 null로 바꾸기
+		String yearMonth = searchDTO.getYearMonth();
+		if (yearMonth != null) {
+			if (yearMonth.isBlank()) {
+				yearMonth = null;
+			}
+		}
+		// case 1, 2, 3 - 결제일 필터
+		if (yearMonth != null) {
+			// 결제일 필터가 있다면 해당 달에 해당하는 날짜를 구하기 위함
+			int monthEndDay = Ut.date.getEndDayOf(yearMonth);
+			String fromDateStr = yearMonth + "-01 00:00:00.000000";
+			String toDateStr = yearMonth + "-%02d 23:59:59.999999".formatted(monthEndDay);
+			LocalDateTime fromDate = Ut.date.parse(fromDateStr);
+			LocalDateTime toDate = Ut.date.parse(toDateStr);
+
+			// case 1, 2 - 결제일 필터와 검색어가 있을 경우
+			if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
+				// case 1 - 이름 검색
+				if (searchDTO.getSearchType().equals("name")) {
+					result = gymHistoryRepository.findAllByFullNameAndPaymentDate(searchDTO.getSearchQuery(), fromDate,
+						toDate, pageable);
+				}
+				// case 2 - 핸드폰 번호 검색
+				if (searchDTO.getSearchType().equals("phone")) {
+					result = gymHistoryRepository.findAllByPhoneNumberAndPaymentDate(searchDTO.getSearchQuery(),
+						fromDate, toDate, pageable);
+				}
+			}
+			// case 3 - 결제일 필터가 있으나 검색을 하지 않은 경우
+			// gymId를 JQuery가 아니기에 넘겨줌
+			else {
+				result = gymHistoryRepository.findAllByGymIdAndPaymentDateBetweenOrderByIdAsc(gym.getId(), fromDate,
+					toDate, pageable);
+			}
+		}
+		// case 4, 5 -결제일 필터가 없다
+		else {
+			// 검색어가 없다 -> 전체 리스트 반환 case 6
+			// 검색어가 있다 -> 검색한 페이지 반환
+			if (searchDTO.getSearchQuery() != null && searchDTO.getSearchQuery().trim().length() != 0) {
+				// 이름 아니면 연락처로 검색 가능
+				// 해당 쿼리에 gym이 account가 속한 gym과 동일한지 검사하므로 gym을 넘겨주지 않음
+				if (searchDTO.getSearchType().equals("name")) {
+					result = gymHistoryRepository.findAllByFullName(searchDTO.getSearchQuery(), pageable);
+				}
+				if (searchDTO.getSearchType().equals("phone")) {
+					result = gymHistoryRepository.findAllByPhoneNumber(searchDTO.getSearchQuery(), pageable);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	@Transactional
+	public RsData createTicket(AptAccount user, TicketForm ticketForm) {
+
+		GymTicket gymTicket = GymTicket.builder()
+			.days(ticketForm.getDays())
+			.content(ticketForm.getContent())
+			.price(ticketForm.getPrice())
+			.name(ticketForm.getName())
+			.apt(user.getApt())
+			.gym(gymRepository.findById(1L).orElse(null))
+			.build();
+
+		gymTicketRepository.save(gymTicket);
+
+		return RsData.of("S-1", "이용권 생성 성공");
+	}
+
+	@Transactional
+	public RsData modifyTicket(GymTicket gymTicket, TicketForm ticketForm) {
+
+		GymTicket modifyTicket = gymTicket.toBuilder()
+			.days(ticketForm.getDays())
+			.content(ticketForm.getContent())
+			.name(ticketForm.getName())
+			.price(ticketForm.getPrice())
+			.build();
+
+		gymTicketRepository.save(modifyTicket);
+
+		return RsData.of("S-1", "이용권 정보 수정 성공");
+	}
+
+	@Transactional
+	public RsData deleteTicket(GymTicket gymTicket) {
+
+		gymTicketRepository.delete(gymTicket);
+
+		return RsData.of("S-1", "이용권 삭제 성공");
+	}
 }

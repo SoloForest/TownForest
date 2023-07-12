@@ -26,13 +26,13 @@
             </div>
             <div class="form-control flex gap-2 mt-2">
                 <label th:each="ticket : ${gymTicketList}" class="flex items-center gap-2">
-                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.type}"
-                           name="ticketType"/>
+                    <input type="checkbox" class="checkbox checkbox-primary" th:value="${ticket.id}"
+                           name="ticketId"/>
                     <span class="label-text"
                           th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
                           th:value="${ticket.price}">
                         </span>
-                    <div class="font-bold" th:if="${ticket.content != null}"
+                    <div class="font-bold" th:if="${!#strings.isEmpty(ticket.content)}"
                          th:text="${'(' + ticket.content + ')'}"></div>
                 </label>
             </div>
@@ -153,7 +153,7 @@
                 return;
             }
 
-            var type = checkedCheckbox.value;
+            var ticketId = checkedCheckbox.value;
             // 가격
             var price = checkedCheckbox.nextElementSibling.getAttribute('value');
 
@@ -176,7 +176,7 @@
             let jsons = {
                 "card": {
                     "amount": price,
-                    "orderId": "gym" + "-type-" + type + "-" + (Math.random() + "").substring(2) +"_"+formattedDate,
+                    "orderId": "gym" + "-ticketId-" + ticketId + "-" + (Math.random() + "").substring(2) +"_"+formattedDate,
                     "orderName": parsedText + "-" + "시작일-" + formattedDate,
                     "successUrl": successUrl,
                     "method": "card",

@@ -1,0 +1,57 @@
+<html layout:decorate="~{home/layout.html}">
+
+<head>
+    <title>이용권 관리</title>
+</head>
+
+<body>
+
+<main layout:fragment="main" class="flex items-center justify-center">
+    <div class="px-4 flex flex-col">
+        <div class="flex gap-2 items-center justify-center">
+            <i class="fa-solid fa-ticket" style="color: #91c0fd;"></i>
+            <h2 class="card-title">이용권 관리</h2>
+        </div>
+        <th:block th:if="${#lists.size(gymTicketList) != 0}">
+            <div class="card-body bg-base-100 shadow-xl m-2 mt-4">
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+                    <h2 class="font-bold">이용권 정보</h2>
+                </div>
+                <div class="form-control flex gap-2 mt-2" th:each="ticket : ${gymTicketList}">
+                    <label class="flex items-center gap-2">
+                    <span class="label-text"
+                          th:text="|${ticket.name} - ${#numbers.formatInteger(ticket.price, 3, 'COMMA') + '원'}|"
+                          th:value="${ticket.price}">
+                        </span>
+                        <div class="font-bold" th:if="${!#strings.isEmpty(ticket.content)}"
+                             th:text="${'(' + ticket.content + ')'}"></div>
+                        <a th:href="@{|/admin/gym/ticket/modify/${ticket.id}|}" class="btn btn-sm btn-primary"
+                           th:text="수정"></a>
+                        <a onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();"
+                           class="btn btn-sm btn-primary" th:text="삭제"></a>
+                        <form hidden th:action="@{|/admin/gym/ticket/${ticket.id}|}" method="POST">
+                            <input type="hidden" name="_method" value="delete">
+                        </form>
+                    </label>
+                </div>
+            </div>
+        </th:block>
+        <th:block th:if="${#lists.size(gymTicketList) == 0}">
+            <div class="card-body bg-base-100 shadow-xl m-2 mt-4">
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+                    <h2 class="font-bold">이용권 정보</h2>
+                </div>
+                <div>이용권이 없습니다. 등록해주세요</div>
+            </div>
+        </th:block>
+        <div class="flex justify-end">
+            <a th:href="@{/admin/gym/ticket/create}"
+               class="btn btn-sm btn-primary">이용권생성</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
+

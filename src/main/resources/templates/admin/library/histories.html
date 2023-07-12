@@ -15,10 +15,22 @@
         <div class="card-body p-3">
             <h2 class="card-title">이용 현황</h2>
 
-            <P th:if="${histories.numberOfElements} == 0" class="text-center my-5">
+            <P id="noHistory" class="text-center my-5 hidden">
                 독서실 이용 히스토리가 없습니다.
             </P>
-            <div th:if="${histories.numberOfElements} != 0">
+            <div id="hasHistory" class="hidden">
+                <div class="flex justify-center items-center gap-3">
+                    <span>날짜 검색</span>
+                    <div class="join">
+                        <input id="searchDate" type="date" class="join-item px-1 rounded"
+                               style="border: 1px solid #dfdfdf;"/>
+                        <div class="indicator">
+                            <button onclick="javascript:loadHistories(0);" class="btn join-item p-3 rounded">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="table text-center">
                         <!-- head -->
@@ -35,54 +47,110 @@
 
                         <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
                         <tbody id="contentList">
-                        <!-- row 1 -->
-                        <tr th:each="history : ${histories}">
-                            <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd HH:mm:ss')}"></td>
-                            <td th:text="${history.user.account.fullName}" style="min-width: 86px;"></td>
-                            <td th:text="${history.addressToString}"></td>
-                            <td th:text="${history.seat.seatNumber}"></td>
-                            <td th:text="${history.statusTypeToString}" style="min-width:80px; padding: 12px 0;"></td>
-                            <td th:if="${history.statusType} == 0" style="min-width:100px; padding: 12px 0;">
-                                <button th:onclick="submitAdminCancel([[${history.id}]])"
-                                        class="btn btn-info btn-sm text-white cancel-button">
-                                    취소하기
-                                </button>
-                            </td>
-                        </tr>
+
                         </tbody>
 
                     </table>
                 </div>
-                <!-- 남은 리스트가 없다면 더보기 버튼 보이지 않도록 변경하기 -->
-                <button id="more" class="btn btn-info btn-outline btn-sm w-full"
-                        th:if="${histories.last} == false"
-                        onclick="event.preventDefault(); loadHistories()">
-                    더보기
-                </button>
+
+                <!-- 넘버링 페이지 -->
+                <div class="btn-group flex justify-center mt-7">
+                    <div id="first" class="btn" onclick="loadHistories(0)">
+                        &laquo;
+                    </div>
+                    <div id="prev" class="btn" onclick="loadHistories(pageNumber - 1)">
+                        이전
+                    </div>
+                    <div id="paging-nav">
+                    </div>
+                    <div id="next" class="btn" onclick="loadHistories(pageNumber + 1)">
+                        다음
+                    </div>
+                    <div id="last" class="btn" onclick="loadHistories(totalPages - 1)">
+                        &raquo;
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <script>
-        const numRows = 25; // 한 번에 가져오고자 하는 로우의 개수
-        let currPage = 0; // 현재 페이지 카운터
+        let pageNumber = 0;
+        let totalPages = 0;
 
-        function loadHistories() {
+        function setPagingNav(data) {
+            pageNumber = data.number;
+            totalPages = data.totalPages;
+
+            if (pageNumber == 0) {
+                $("#first").addClass('btn-disabled');
+            } else {
+                $("#first").removeClass('btn-disabled');
+            }
+
+            if (pageNumber <= 0) {
+                $("#prev").addClass('btn-disabled');
+            } else {
+                $("#prev").removeClass('btn-disabled');
+            }
+
+            if (pageNumber + 1 >= totalPages) {
+                $("#next").addClass('btn-disabled');
+            } else {
+                $("#next").removeClass('btn-disabled');
+            }
+
+            if (pageNumber == totalPages - 1) {
+                $("#last").addClass('btn-disabled');
+            } else {
+                $("#last").removeClass('btn-disabled');
+            }
+
+            let pagingNav = '';
+
+            for (let page = 0; page < totalPages; page++) {
+                if (page < pageNumber - 1 || page > pageNumber + 2) {
+                    continue;
+                }
+                if (pageNumber === page) {
+                    pagingNav += `<div class='btn btn-active' onClick='loadHistories(${page})'>${page + 1}</div>`;
+                } else {
+                    pagingNav += `<div class='btn' onClick='loadHistories(${page})'>${page + 1}</div>`;
+                }
+            }
+            $('#paging-nav').html(pagingNav);
+        }
+
+        function loadHistories(currPage) {
             let header = $("meta[name='_csrf_header']").attr('content');
             let token = $("meta[name='_csrf']").attr('content');
-            currPage++; // 페이지 카운터 증가
+            let searchDate = $("#searchDate").val();
+            let url = '/admin/library/histories';
+
+            if (searchDate.trim().length === 0) {
+                url = '/admin/library/histories/all';
+            }
 
             $.ajax({
-                url: '/admin/library/histories',
+                url: url,
                 type: 'POST',
-                data: {
-                    page: currPage,
-                    size: numRows
-                },
+                data: Object.assign(
+                    {page: currPage},
+                    searchDate.trim().length !== 0 ? {searchDate: searchDate} : {}
+                ),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(header, token);
                 },
                 success: function (data) {
                     // 결과가 성공적으로 수신되면 테이블에 로우 추가
+                    if (data.numberOfElements === 0) {
+                        $('#noHistory').removeClass('hidden');
+                        $('#hasHistory').addClass('hidden');
+                    } else {
+                        $('#noHistory').addClass('hidden');
+                        $('#hasHistory').removeClass('hidden');
+                    }
+
+                    let contentList = '';
                     $.each(data.content, function (index, history) {
                         let newRow = `<tr>
                             <td>${dateFormat(history.date)}</td>
@@ -99,12 +167,11 @@
                             </td>`;
                         }
                         newRow += `</tr>`;
-
-                        $('#contentList').append(newRow);
+                        contentList += newRow;
                     });
-                    if (data.last) {
-                        $('#more').addClass("hidden");
-                    }
+                    $('#contentList').html(contentList);
+                    setPagingNav(data);
+                    $('html').scrollTop(0);
                 },
                 error: function (err) {
                     console.log("Error fetching data:", err);
@@ -134,6 +201,8 @@
                 }
             });
         }
+
+        loadHistories(0);
     </script>
 </main>
 </body>
