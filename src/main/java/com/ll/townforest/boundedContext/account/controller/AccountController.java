@@ -66,7 +66,7 @@ public class AccountController {
 		return rq.redirectWithMsg("/account/edit", accountRsData);
 	}
 
-	@GetMapping("/confirmPwd")
+	@PostMapping("/confirmPwd")
 	public @ResponseBody boolean confirmPassword(@RequestParam String password) {
 		return accountService.confirmPassword(rq.getAccount(), password);
 	}

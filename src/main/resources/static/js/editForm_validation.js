@@ -99,7 +99,7 @@ $("#confirm").on("click", function () {
         beforeSend: function (xhr) {
             xhr.setRequestHeader(header, token);
         },
-        type: 'GET',
+        type: 'POST',
         data: {'password': confirmPassword},
         success: function (data) {
             if (data) {
