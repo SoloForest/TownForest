@@ -52,7 +52,7 @@
                         <p th:if="${gymMembership.status!=2}">종료일 : </p>
                         <p th:if="${gymMembership.status!=2}"
                            th:text="${#temporals.format(gymMembership.endDate, 'yy-MM-dd EEEEE요일')}"></p>
-                        <p th:if="${gymMembership.status!=2}" class="font-bold"
+                        <p th:if="${gymMembership.status!=2 and gymMembership.status!=0}" class="font-bold"
                            th:text="|${'(D-' + afterDays + ')'}|"></p>
                         <p th:if="${gymMembership.status==2}">일시정지일 : </p>
                         <p th:if="${gymMembership.status==2}"

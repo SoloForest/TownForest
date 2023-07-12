@@ -42,7 +42,7 @@ public class GymServiceTest {
 
 		GymMembership gymMembership = gymService.getMembershipByUser(aptAccount);
 
-		gymService.update(aptAccount, LocalDate.now(), LocalDate.now(), 1, "카드");
+		gymService.update(aptAccount, LocalDate.now(), LocalDate.now(), 1L, "카드");
 
 		// 기존 이용권 연장 -> 상태 변경 (1 -> 3)
 		assertThat(gymMembership.getStatus()).isEqualTo(3);

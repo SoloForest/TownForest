@@ -1,0 +1,97 @@
+<html layout:decorate="~{home/layout.html}">
+
+<head>
+    <title th:if="${ticketForm.price == null}">이용권 등록</title>
+    <title th:if="${ticketForm.price != null}">이용권 수정</title>
+</head>
+
+<body>
+
+<main layout:fragment="main" class="flex items-center justify-center">
+    <div class="px-4 flex flex-col">
+        <div class="flex gap-2 items-center justify-center">
+            <i class="fa-solid fa-ticket" style="color: #91c0fd;"></i>
+            <h2 class="card-title" th:if="${ticketForm.price == null}">이용권 등록</h2>
+            <h2 class="card-title" th:if="${ticketForm.price != null}">이용권 수정</h2>
+        </div>
+        <form th:action method="POST" th:object="${ticketForm}" onsubmit="TicketForm__submit(this); return false;">
+            <div class="card-body bg-base-100 shadow-xl m-2 mt-4">
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-calendar-days" style="color: #91c0fd;"></i>
+                    <h2 class="font-bold">이용권 정보</h2>
+                </div>
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2 items-center">
+                        <p>이름</p>
+                        <input type="text" placeholder="이용권 이름 ex)30일권"
+                               class="input input-bordered input-info" th:field="*{name}"/>
+                    </div>
+                </div>
+
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2 items-center">
+                        <p>일수</p>
+                        <input type="text" placeholder="숫자만 입력 ex)30"
+                               class="input input-bordered input-info" th:field="*{days}"/>
+                    </div>
+                </div>
+
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2 items-center">
+                        <p>금액</p>
+                        <input type="text" placeholder="숫자만 입력 ex)30000"
+                               class="input input-bordered input-info" th:field="*{price}"/>
+                    </div>
+                </div>
+                <div class="flex wrap items-center gap-2">
+                    <i class="fa-regular fa-circle-check" style="color: #91c0fd;"></i>
+                    <div class="flex gap-2 items-center">
+                        <p>할인정보</p>
+                        <input type="text" placeholder="ex) 10퍼센트 할인 없으면 공란"
+                               class="input input-bordered input-info" th:field="*{content}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button class="btn btn-primary" th:if="${ticketForm.price == null}">이용권 등록</button>
+                <button class="btn btn-primary" th:if="${ticketForm.price != null}">이용권 수정</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function TicketForm__submit(form) {
+            form.name.value = form.name.value.trim(); // 입력란의 입력값에 있을지 모르는 좌우공백제거
+            form.days.value = form.days.value.trim().replace(/\D+/g, ''); // 숫자만 남도록 수정
+            form.price.value = form.price.value.trim().replace(/\D+/g, ''); // 숫자만 남도록 수정
+            form.content.value = form.content.value.trim(); // 입력란의 입력값에 있을지 모르는 좌우공백제거
+
+            if (form.name.value.length === 0) {
+                toastWarning('이용권 이름을 입력해주세요');
+                form.name.focus();
+                return;
+            }
+
+            if (form.days.value.length === 0) {
+                toastWarning('며칠권인지 입력해주세요');
+                form.days.focus();
+                return;
+            }
+
+            if (form.price.value.length === 0) {
+                toastWarning('금액을 입력해주세요');
+                form.days.focus();
+                return;
+            }
+
+            form.submit(); // 폼 발송
+        }
+    </script>
+
+</main>
+</body>
+</html>
+
