@@ -24,22 +24,18 @@
 <main layout:fragment="main">
     <!-- 공지사항 -->
     <div class="m-3" style="border: 1px solid #707070; border-radius: 15px;">
-        <div class="flex items-center w-full justify-between">
+        <div class="px-4 flex items-center w-full justify-between">
             <div class="flex items-center ml-3">
                 <i class="fa-solid fa-bullhorn text-[1rem]" style="color: #91c0fd;"></i>
                 <h2>공지사항</h2>
             </div>
-            <a class="link link-hover" href="/notice">더보기 ></a>
+            <a class="link link-hover font-bold text-xs" href="/notice">더 보기 ></a>
         </div>
-        <div class="overflow-x-auto mt-4">
+        <div class="overflow-x-auto">
             <div class="table-container">
                 <table class="table table-sm">
                     <!-- head -->
                     <thead>
-                    <tr class="text-center">
-                        <th>제목</th>
-                        <th>작성일</th>
-                    </tr>
                     </thead>
                     <tbody>
                     <tr class="text-center" th:each="notice : ${noticeList}"
