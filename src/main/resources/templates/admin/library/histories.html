@@ -15,10 +15,10 @@
         <div class="card-body p-3">
             <h2 class="card-title">이용 현황</h2>
 
-            <P th:if="${histories.numberOfElements} == 0" class="text-center my-5">
+            <P id="noHistory" class="text-center my-5 hidden">
                 독서실 이용 히스토리가 없습니다.
             </P>
-            <div th:if="${histories.numberOfElements} != 0">
+            <div id="hasHistory" class="hidden">
                 <div class="flex justify-center items-center gap-3">
                     <span><i class="fa-regular fa-calendar"></i> 날짜 검색</span>
                     <input id="searchDate" type="date" class="px-3 rounded"
@@ -138,7 +138,14 @@
                 },
                 success: function (data) {
                     // 결과가 성공적으로 수신되면 테이블에 로우 추가
-                    console.log(data);
+                    if (data.numberOfElements === 0) {
+                        $('#noHistory').removeClass('hidden');
+                        $('#hasHistory').addClass('hidden');
+                    } else {
+                        $('#noHistory').addClass('hidden');
+                        $('#hasHistory').removeClass('hidden');
+                    }
+
                     let contentList = '';
                     $.each(data.content, function (index, history) {
                         let newRow = `<tr>

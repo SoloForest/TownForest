@@ -57,9 +57,7 @@ public class AdminController {
 	// 독서실 관리자 페이지 시작
 	@GetMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
-	public String showLibraryHistories(
-		Model model,
-		@RequestParam(defaultValue = "0") int page) {
+	public String showLibraryHistories() {
 		if (!rq.isAdmin()) {
 			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
@@ -68,8 +66,6 @@ public class AdminController {
 			return rq.historyBack("독서실 관리 권한이 없습니다.");
 		}
 
-		Page<LibraryHistory> histories = libraryService.findAllHistories(PageRequest.of(page, 25));
-		model.addAttribute("histories", histories);
 		return "admin/library/histories";
 	}
 
