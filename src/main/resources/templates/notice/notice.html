@@ -23,12 +23,10 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr class="text-center" th:each="notice, loop : ${paging}">
+                        <tr class="text-center" th:each="notice, loop : ${paging}" th:onclick="'location.href=\'/notice/' + ${notice.id} + '\''">
                             <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
-                            <td th:text="${(paging.number * paging.size) + loop.index +1}">
-                            <td>
-                                <a th:href="@{|/notice/${notice.id}|}" th:text="${notice.title}" style="min-width:50px; padding: 5px 0;" ></a>
-                            </td>
+                            <td th:text="${(paging.number * paging.size) + loop.index +1}"></td>
+                            <td th:text="${notice.title}" style="min-width:50px; padding: 5px 0;"></td>
                             <td th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"
                                 style="min-width:40px; padding: 12px 0;"></td>
                             <td th:if="${notice.writer.authority==1}">아파트관리자</td>
