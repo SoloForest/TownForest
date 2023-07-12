@@ -3,6 +3,7 @@ package com.ll.townforest.boundedContext.account.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ll.townforest.base.event.EventAccountWithdraw;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.account.dto.AccountDTO;
 import com.ll.townforest.boundedContext.account.entity.Account;
@@ -38,6 +40,8 @@ public class AccountService {
 	private final AptAccountRepository aptAccountRepository;
 	private final AptAccountHouseRepository aptAccountHouseRepository;
 	private final GymMembershipRepository gymMembershipRepository;
+
+	private final ApplicationEventPublisher publisher;
 
 	public Optional<Account> findByUsername(String username) {
 		return accountRepository.findByUsername(username);
@@ -133,6 +137,9 @@ public class AccountService {
 		}
 
 		accountRepository.delete(account);
+
+		// 계정 탈퇴 시 이벤트 발생 -> 이용권 삭제 처리
+		publisher.publishEvent(new EventAccountWithdraw(this, account));
 
 		// 데이터 삭제 후 로그아웃
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

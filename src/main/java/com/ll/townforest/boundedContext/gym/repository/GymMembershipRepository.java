@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.ll.townforest.boundedContext.account.entity.Account;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 
@@ -47,4 +48,6 @@ public interface GymMembershipRepository extends JpaRepository<GymMembership, Lo
 	Page<GymMembership> findAllByFullName(@Param("kw") String kw, Pageable pageable);
 
 	List<GymMembership> findByUserAndStatus(AptAccount user, int status);
+
+	List<GymMembership> findByAccount(Account account);
 }

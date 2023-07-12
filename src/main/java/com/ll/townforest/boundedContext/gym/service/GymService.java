@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
+import com.ll.townforest.boundedContext.account.entity.Account;
 import com.ll.townforest.boundedContext.apt.entity.Apt;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.service.AptAccountService;
@@ -462,5 +463,12 @@ public class GymService {
 		gymTicketRepository.delete(gymTicket);
 
 		return RsData.of("S-1", "이용권 삭제 성공");
+	}
+
+	@Transactional
+	public void whenAccountWithdraw(Account account) {
+		List<GymMembership> gymMembershipList = gymMembershipRepository.findByAccount(account);
+
+		gymMembershipRepository.deleteAll(gymMembershipList);
 	}
 }
