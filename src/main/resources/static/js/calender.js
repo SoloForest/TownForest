@@ -65,6 +65,7 @@ function choiceDate(newDIV) {
     let newMonth = document.getElementById("calMonth").innerHTML;
     let newDay = `${newYear}-${newMonth}-${newDIV.innerHTML}T00:00:00`;
     document.getElementById("selectedDate").value = newDay; // hidden input에 선택한 날짜 넣기
+    $('#selectedDate').trigger('change'); // onchange 트리거를 발생시킨다
 }
 
 // 이전달 버튼 클릭

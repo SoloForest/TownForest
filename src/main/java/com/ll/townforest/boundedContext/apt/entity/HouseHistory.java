@@ -2,7 +2,6 @@ package com.ll.townforest.boundedContext.apt.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -25,26 +24,33 @@ import lombok.ToString;
 @Builder(toBuilder = true)
 @ToString
 @EntityListeners(AuditingEntityListener.class)
-public class House {
+public class HouseHistory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false)
-	private Integer dong;
-	@Column(nullable = false)
-	private Integer ho;
-	@CreatedDate
-	private LocalDateTime date;
-	/*
-	 * 0: 일반 가정집 (default)
-	 * 1: 게스트 하우스
-	 * */
-	@Builder.Default
-	private int type = 0;
 	@ManyToOne
-	private Apt apt;
+	private House house;
+	@Column(nullable = false)
+	private String houseAddress;
+	@ManyToOne
+	private AptAccount user;
+	@Column(nullable = false)
+	private String fullName;
+	@Column(nullable = false)
+	private String userAddress;
+	private LocalDateTime selectedDate;
+	/*
+	 * 0: 신청
+	 * 1: 승인
+	 * 2: 반려
+	 * */
+	private int status;
 
-	public String getAddress() {
-		return "%s동 %s호".formatted(this.dong, this.ho);
+	public String getStatusStr() {
+		return switch (this.status) {
+			case 1 -> "승인";
+			case 2 -> "반려";
+			default -> "신청";
+		};
 	}
 }
