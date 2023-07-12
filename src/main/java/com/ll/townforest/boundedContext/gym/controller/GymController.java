@@ -177,7 +177,7 @@ public class GymController {
 
 		// 아파트 여러개라면 현재 로그인한 사용자가 속한 Gym ID를 넘긴다.
 		// 현재 하나이기에 1로 하드코딩
-		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
+		List<GymTicket> gymTicketList = gymService.getGymTicketList(1L);
 
 		model.addAttribute("gymTicketList", gymTicketList);
 
