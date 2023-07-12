@@ -72,11 +72,13 @@ public class AccountController {
 		return rq.redirectWithMsg("/account/edit", accountRsData);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/confirmPwd")
 	public @ResponseBody boolean confirmPassword(@RequestParam String password) {
 		return accountService.confirmPassword(rq.getAccount(), password);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/withdraw")
 	public String withdraw(HttpServletRequest request, HttpServletResponse response) {
 		RsData<Account> accountRsData = accountService.withdraw(rq.getAccount(), request, response);
