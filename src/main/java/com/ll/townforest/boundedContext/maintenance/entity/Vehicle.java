@@ -38,4 +38,13 @@ public class Vehicle {
 	private LocalDateTime date; // 방문일
 	@ManyToOne
 	private AptAccountHouse aptHouse;
+
+	public Vehicle(Vehicle vehicle) {
+		this.id = vehicle.id;
+		this.user = vehicle.user;
+		this.vehicleNumber = vehicle.vehicleNumber;
+		this.name = vehicle.name;
+		this.type = vehicle.type;
+		this.date = vehicle.date;
+	}
 }

@@ -2,6 +2,7 @@ package com.ll.townforest.boundedContext.apt.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -20,7 +21,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class AptAccountHouse {
@@ -29,7 +30,7 @@ public class AptAccountHouse {
 	private Long id;
 	@Column(nullable = false)
 	private String relationship;
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
 	private AptAccount user;
 	@ManyToOne
 	private House house;

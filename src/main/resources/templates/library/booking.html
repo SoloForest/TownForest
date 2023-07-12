@@ -34,7 +34,7 @@
         <div class="card-body p-3">
             <h2 class="card-title">독서실 자리 예약</h2>
             <p class="text-center my-2">
-                <b id="usingSeatNum" th:text="${#numbers.formatInteger(isUsing.seat.seatNumber,3)}"></b>번 좌석을 이용중입니다.
+                <b id="usingSeatNum" th:text="${#numbers.formatInteger(isUsing.seat.seatNumber,3)}"></b>번 자리를 이용중입니다.
             </p>
             <div class="card-actions justify-end">
                 <button class="btn btn-info btn-sm text-white"
@@ -52,28 +52,30 @@
             <P th:if="${histories.numberOfElements} == 0" class="text-center my-5">
                 독서실 이용 내역이 없습니다.
             </P>
-            <div class="overflow-x-auto" th:if="${histories.numberOfElements} != 0">
-                <table class="table text-center">
-                    <!-- head -->
-                    <thead>
-                    <tr>
-                        <th>Date.</th>
-                        <th>Seat No.</th>
-                        <th>Status.</th>
-                    </tr>
-                    </thead>
+            <div th:if="${histories.numberOfElements} != 0">
+                <div class="overflow-x-auto">
+                    <table class="table text-center">
+                        <!-- head -->
+                        <thead>
+                        <tr>
+                            <th>Date.</th>
+                            <th>Seat No.</th>
+                            <th>Status.</th>
+                        </tr>
+                        </thead>
 
-                    <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
-                    <tbody id="contentList">
-                    <!-- row 1 -->
-                    <tr th:each="history : ${histories}">
-                        <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd HH:mm:ss')}"></td>
-                        <td th:text="${history.seat.seatNumber}"></td>
-                        <td th:text="${history.getStatusTypeToString()}"></td>
-                    </tr>
-                    </tbody>
+                        <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
+                        <tbody id="contentList">
+                        <!-- row 1 -->
+                        <tr th:each="history : ${histories}">
+                            <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd HH:mm:ss')}"></td>
+                            <td th:text="${history.seat.seatNumber}"></td>
+                            <td th:text="${history.statusTypeToString}" style="min-width:80px; padding: 12px 0;"></td>
+                        </tr>
+                        </tbody>
 
-                </table>
+                    </table>
+                </div>
                 <!-- 남은 리스트가 없다면 더보기 버튼 보이지 않도록 변경하기 -->
                 <button id="more" class="btn btn-info btn-outline btn-sm w-full"
                         th:if="${histories.last} == false"
@@ -108,7 +110,7 @@
                         let newRow = `<tr>
                         <td>${dateFormat(history.date)}</td>
                         <td>${history.seat.seatNumber}</td>
-                        <td>${history.statusTypeToString}</td>
+                        <td style="min-width:80px; padding: 12px 0;">${history.statusTypeToString}</td>
                       </tr>`;
                         $('#contentList').append(newRow);
                     });

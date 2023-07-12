@@ -1,5 +1,7 @@
 package com.ll.townforest.base.initData;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +23,14 @@ import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
 import com.ll.townforest.boundedContext.apt.repository.HouseRepository;
 import com.ll.townforest.boundedContext.gym.entity.Gym;
+import com.ll.townforest.boundedContext.gym.entity.GymHistory;
+import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
+import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
+import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymTicketRepository;
+import com.ll.townforest.boundedContext.gym.service.GymService;
 import com.ll.townforest.boundedContext.library.entity.Library;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
@@ -43,7 +50,10 @@ public class NotProd {
 		LibraryRepository libraryRepository,
 		SeatRepository seatRepository,
 		GymRepository gymRepository,
-		GymTicketRepository gymTicketRepository
+		GymTicketRepository gymTicketRepository,
+		GymService gymService,
+		GymHistoryRepository gymHistoryRepository,
+		GymMembershipRepository gymMembershipRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -134,6 +144,7 @@ public class NotProd {
 							House houseTemp = House.builder()
 								.dong(100 + i)
 								.ho((j * 100) + k)
+								.apt(apt1)
 								.build();
 							houseList1.add(houseTemp);
 						}
@@ -149,6 +160,7 @@ public class NotProd {
 							House houseTemp = House.builder()
 								.dong(100 + i)
 								.ho((j * 100) + k)
+								.apt(apt1)
 								.build();
 							houseList2.add(houseTemp);
 						}
@@ -164,6 +176,7 @@ public class NotProd {
 							House houseTemp = House.builder()
 								.dong(100 + i)
 								.ho((j * 100) + k)
+								.apt(apt1)
 								.build();
 							houseList3.add(houseTemp);
 						}
@@ -229,11 +242,32 @@ public class NotProd {
 
 				//주민과 주거지 연결
 				AptAccountHouse aptAccountHouse1 = AptAccountHouse.builder()
-					.relationship("세대주")
+					.relationship("본인")
 					.user(aptAccount4)
-					.house(houseRepository.findByDongAndHo(103, 2101))
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 101, 101).get())
 					.build();
 				aptAccountHouseRepository.save(aptAccountHouse1);
+
+				AptAccountHouse aptAccountHouse2 = AptAccountHouse.builder()
+					.relationship("본인")
+					.user(aptAccount5)
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 101, 303).get())
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse2);
+
+				AptAccountHouse aptAccountHouse3 = AptAccountHouse.builder()
+					.relationship("본인")
+					.user(aptAccount6)
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 102, 702).get())
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse3);
+
+				AptAccountHouse aptAccountHouse4 = AptAccountHouse.builder()
+					.relationship("본인")
+					.user(aptAccount7)
+					.house(houseRepository.findByAptAndDongAndHo(apt1, 103, 2101).get())
+					.build();
+				aptAccountHouseRepository.save(aptAccountHouse4);
 
 				// 독서실 생성
 				Library library1 = Library.builder()
@@ -302,6 +336,95 @@ public class NotProd {
 					.name("90일권")
 					.build();
 				gymTicketRepository.save(gymTicket4);
+
+				gymService.create(aptAccount4, LocalDate.now(), 3, "카드");
+
+				Account tmp1111 = Account.builder()
+					.username("test" + 0)
+					.password(passwordEncoder.encode("1234"))
+					.fullName("test" + 0)
+					.email("test" + 0 + "@test.com")
+					.phoneNumber("010123456" + 00)
+					.build();
+
+				accountRepository.save(tmp1111);
+
+				AptAccount tmp222 = AptAccount.builder()
+					.account(tmp1111)
+					.apt(apt1)
+					.status(true)
+					.build();
+
+				aptAccountRepository.save(tmp222);
+
+				gymService.create(tmp222, LocalDate.now(), 3, "카드");
+
+				List<GymHistory> gymHistoryList = new ArrayList<>();
+
+				for (int i = 0; i < 50; i++) {
+					GymHistory tmp = GymHistory.builder()
+						.user(aptAccount4)
+						.gym(gym1)
+						.apt(apt1)
+						.startDate(LocalDate.now())
+						.endDate(LocalDate.now())
+						.paymentDate(LocalDateTime.now())
+						.price(1000)
+						.paymentMethod("카드")
+						.status(0)
+						.build();
+					gymHistoryList.add(tmp);
+				}
+
+				gymHistoryRepository.saveAll(gymHistoryList);
+
+				List<Account> tmpList = new ArrayList<>();
+				List<AptAccount> tmpAptAccountList = new ArrayList<>();
+
+				for (int i = 1; i < 50; i++) {
+					String tmpNum = "" + i;
+					if (i < 10)
+						tmpNum = "0" + tmpNum;
+
+					Account tmp = Account.builder()
+						.username("test" + i)
+						.password(passwordEncoder.encode("1234"))
+						.fullName("test" + i)
+						.email("test" + i + "@test.com")
+						.phoneNumber("010123456" + tmpNum)
+						.build();
+
+					tmpList.add(tmp);
+				}
+
+				accountRepository.saveAll(tmpList);
+
+				for (Account account : tmpList) {
+					AptAccount tmp2 = AptAccount.builder()
+						.account(account)
+						.apt(apt1)
+						.build();
+					tmpAptAccountList.add(tmp2);
+				}
+
+				aptAccountRepository.saveAll(tmpAptAccountList);
+
+				List<GymMembership> gymTicketList22 = new ArrayList<>();
+
+				for (AptAccount aptAccount : tmpAptAccountList) {
+					GymMembership membership = GymMembership.builder()
+						.user(aptAccount)
+						.gym(gym1)
+						.apt(apt1)
+						.startDate(LocalDate.now())
+						.endDate(LocalDate.now())
+						.paymentDate(LocalDateTime.now())
+						.status(1)
+						.build();
+					gymTicketList22.add(membership);
+				}
+
+				gymMembershipRepository.saveAll(gymTicketList22);
 			}
 		};
 	}

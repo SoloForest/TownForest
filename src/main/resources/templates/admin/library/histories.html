@@ -1,0 +1,140 @@
+<html layout:decorate="~{home/layout.html}">
+<head>
+    <title>독서실 이용 현황</title>
+    <script src="/js/dateUtil.js"></script>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+</head>
+<body>
+<!-- main -->
+<main layout:fragment="main" class="flex flex-col">
+    <!-- 자리 배치 표 -->
+    <img src="/librarySeat.png" alt="자리 배치 표" class="mx-[5%]">
+    <!-- card ui, 모든 독서실 히스토리 출력 -->
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+        <div class="card-body p-3">
+            <h2 class="card-title">이용 현황</h2>
+
+            <P th:if="${histories.numberOfElements} == 0" class="text-center my-5">
+                독서실 이용 히스토리가 없습니다.
+            </P>
+            <div th:if="${histories.numberOfElements} != 0">
+                <div class="overflow-x-auto">
+                    <table class="table text-center">
+                        <!-- head -->
+                        <thead>
+                        <tr>
+                            <th>Date.</th>
+                            <th>User.</th>
+                            <th>Address.</th>
+                            <th>Seat No.</th>
+                            <th>Status.</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+
+                        <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
+                        <tbody id="contentList">
+                        <!-- row 1 -->
+                        <tr th:each="history : ${histories}">
+                            <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd HH:mm:ss')}"></td>
+                            <td th:text="${history.user.account.fullName}" style="min-width: 86px;"></td>
+                            <td th:text="${history.addressToString}"></td>
+                            <td th:text="${history.seat.seatNumber}"></td>
+                            <td th:text="${history.statusTypeToString}" style="min-width:80px; padding: 12px 0;"></td>
+                            <td th:if="${history.statusType} == 0" style="min-width:100px; padding: 12px 0;">
+                                <button th:onclick="submitAdminCancel([[${history.id}]])"
+                                        class="btn btn-info btn-sm text-white cancel-button">
+                                    취소하기
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <!-- 남은 리스트가 없다면 더보기 버튼 보이지 않도록 변경하기 -->
+                <button id="more" class="btn btn-info btn-outline btn-sm w-full"
+                        th:if="${histories.last} == false"
+                        onclick="event.preventDefault(); loadHistories()">
+                    더보기
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const numRows = 25; // 한 번에 가져오고자 하는 로우의 개수
+        let currPage = 0; // 현재 페이지 카운터
+
+        function loadHistories() {
+            let header = $("meta[name='_csrf_header']").attr('content');
+            let token = $("meta[name='_csrf']").attr('content');
+            currPage++; // 페이지 카운터 증가
+
+            $.ajax({
+                url: '/admin/library/histories',
+                type: 'POST',
+                data: {
+                    page: currPage,
+                    size: numRows
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (data) {
+                    // 결과가 성공적으로 수신되면 테이블에 로우 추가
+                    $.each(data.content, function (index, history) {
+                        let newRow = `<tr>
+                            <td>${dateFormat(history.date)}</td>
+                            <td style="min-width: 86px;">${history.user.account.fullName}</td>
+                            <td>${history.addressToString}</td>
+                            <td>${history.seat.seatNumber}</td>
+                            <td style="min-width:80px; padding: 12px 0;">${history.statusTypeToString}</td>`;
+                        if (history.statusType === 0) {
+                            newRow += `<td style="min-width:100px; padding: 12px 0;">
+                                <button onclick="submitAdminCancel(${history.id})"
+                                        class="btn btn-info btn-sm text-white cancel-button">
+                                    취소하기
+                                </button>
+                            </td>`;
+                        }
+                        newRow += `</tr>`;
+
+                        $('#contentList').append(newRow);
+                    });
+                    if (data.last) {
+                        $('#more').addClass("hidden");
+                    }
+                },
+                error: function (err) {
+                    console.log("Error fetching data:", err);
+                }
+            });
+        }
+
+        function submitAdminCancel(historyId) {
+            let header = $("meta[name='_csrf_header']").attr('content');
+            let token = $("meta[name='_csrf']").attr('content');
+
+            $.ajax({
+                url: '/admin/library/cancel',
+                type: 'POST',
+                data: {
+                    libraryHistoryId: historyId * 1
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (result) {
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (err) {
+                    console.log("Error fetching data:", err);
+                }
+            });
+        }
+    </script>
+</main>
+</body>
+</html>

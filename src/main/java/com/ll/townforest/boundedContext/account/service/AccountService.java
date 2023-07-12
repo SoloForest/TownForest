@@ -2,6 +2,10 @@ package com.ll.townforest.boundedContext.account.service;
 
 import java.util.Optional;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +14,7 @@ import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.account.dto.AccountDTO;
 import com.ll.townforest.boundedContext.account.entity.Account;
 import com.ll.townforest.boundedContext.account.repository.AccountRepository;
+import com.ll.townforest.boundedContext.apt.DTO.EditForm;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class AccountService {
 	private final AccountRepository accountRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final AuthenticationManager authenticationManager;
 
 	public Optional<Account> findByUsername(String username) {
 		return accountRepository.findByUsername(username);
@@ -59,5 +65,39 @@ public class AccountService {
 		accountRepository.save(account);
 
 		return RsData.of("S-1", "회원 가입이 완료되었습니다.", account);
+	}
+
+	@Transactional
+	public RsData<Account> edit(Account account, EditForm editForm) {
+
+		if (findByEmail(editForm.getEmail()).isPresent() && !findByEmail(editForm.getEmail()).get().equals(account)) {
+			return RsData.of("F-1", "사용할 수 없는 이메일입니다.<br>다른 이메일을 입력해 주세요.");
+		}
+
+		if (findByPhoneNumber(editForm.getPhoneNumber()).isPresent() && !findByPhoneNumber(
+			editForm.getPhoneNumber()).get().equals(account)) {
+			return RsData.of("F-2", "사용할 수 없는 휴대전화번호입니다.<br>다른 휴대전화번호를 입력해 주세요.");
+		}
+
+		String password = passwordEncoder.encode(editForm.getPassword());
+
+		Account editAccount = account.toBuilder()
+			.password(password)
+			.email(editForm.getEmail())
+			.phoneNumber(editForm.getPhoneNumber())
+			.build();
+
+		accountRepository.save(editAccount);
+
+		Authentication authentication = authenticationManager.authenticate(
+			new UsernamePasswordAuthenticationToken(account.getUsername(), editForm.getPassword())
+		);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		return RsData.of("S-1", "회원 정보를 수정하였습니다.");
+	}
+
+	public boolean confirmPassword(Account account, String password) {
+		return passwordEncoder.matches(password, account.getPassword());
 	}
 }

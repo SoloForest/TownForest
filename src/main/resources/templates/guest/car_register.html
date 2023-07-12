@@ -1,15 +1,18 @@
 <html layout:decorate="~{home/layout.html}">
 <head>
-    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">방문차량 등록</title>
+    <title>방문차량 등록</title>
     <link rel="stylesheet" href="/css/calender.css">
+    <script src="/js/dateUtil.js"></script>
     <script src="/js/calender.js"></script>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_csrf" th:content="${_csrf.token}">
 </head>
 <body>
 <main layout:fragment="main" class="flex flex-col justify-center">
     <div class="card bg-base-100 shadow-xl m-[5%]">
         <div class="card-body">
             <h2 class="card-title">방문차량 등록</h2>
-            <form>
+            <form th:action method="post" onsubmit="submitGuestVehicle(this); return false;">
                 <!-- 캘린더 날짜 선택 -->
                 <div class="flex justify-center">
                     <table class="Calendar">
@@ -37,23 +40,134 @@
                         </tbody>
                     </table>
                 </div>
-                <input id="selectedDate" class="hidden"/>
+                <input type="datetime-local" id="selectedDate" name="selectedDate" class="hidden"/>
+
+                <!-- 신청자 이름 입력 -->
+                <div class="form-control w-full my-3">
+                    <label class="label">
+                        <span class="label-text">신청자 이름</span>
+                    </label>
+                    <input type="text" placeholder="홍길동"
+                           id="name" name="name"
+                           class="input input-bordered input-sm w-full"/>
+                </div>
 
                 <!-- 차량 번호 입력 -->
                 <div class="form-control w-full my-3">
                     <label class="label">
                         <span class="label-text">차량번호</span>
                     </label>
-                    <input type="text" placeholder="123가 4567" class="input input-bordered w-full max-w-xs"/>
+                    <input type="text" placeholder="123가 4567"
+                           id="vehicleNumber" name="vehicleNumber"
+                           class="input input-bordered input-sm w-full"/>
                 </div>
 
                 <!-- 등록 버튼 -->
-                <div class="card-actions">
+                <div class="card-actions mt-6">
                     <button class="btn btn-info btn-sm btn-outline w-full">등록하기</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- 등록 내역 -->
+    <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
+        <div class="card-body p-3">
+            <h2 class="card-title">등록 내역</h2>
+
+            <P th:if="${histories.numberOfElements} == 0" class="text-center my-5">
+                방문차량 등록 내역이 없습니다.
+            </P>
+            <div th:if="${histories.numberOfElements} != 0">
+                <div class="overflow-x-auto">
+                    <table class="table text-center">
+                        <!-- head -->
+                        <thead>
+                        <tr>
+                            <th>Date.</th>
+                            <th>Vehicle No.</th>
+                        </tr>
+                        </thead>
+
+                        <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
+                        <tbody id="contentList">
+                        <!-- row 1 -->
+                        <tr th:each="history : ${histories}">
+                            <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd')}"></td>
+                            <td th:text="${history.vehicleNumber}"></td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <!-- 남은 리스트가 없다면 더보기 버튼 보이지 않도록 변경하기 -->
+                <button id="more" class="btn btn-info btn-outline btn-sm w-full"
+                        th:if="${histories.last} == false"
+                        onclick="event.preventDefault(); loadHistories()">
+                    더보기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const numRows = 5; // 한 번에 가져오고자 하는 로우의 개수
+        let currPage = 0; // 현재 페이지 카운터
+
+        function loadHistories() {
+            let header = $("meta[name='_csrf_header']").attr('content');
+            let token = $("meta[name='_csrf']").attr('content');
+            currPage++; // 페이지 카운터 증가
+
+            $.ajax({
+                url: '/guest/histories',
+                type: 'POST',
+                data: {
+                    page: currPage,
+                    size: numRows
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (data) {
+                    // 결과가 성공적으로 수신되면 테이블에 로우 추가
+                    $.each(data.content, function (index, history) {
+                        let newRow = `<tr>
+                        <td>${dateFormatWithoutTime(history.date)}</td>
+                        <td>${history.vehicleNumber}</td>
+                      </tr>`;
+                        $('#contentList').append(newRow);
+                    });
+                    if (data.last) {
+                        $('#more').addClass("hidden");
+                    }
+                },
+                error: function (err) {
+                    console.log("Error fetching data:", err);
+                }
+            });
+        }
+
+        function submitGuestVehicle(form) {
+
+            if (form.selectedDate.value.trim().length === 0) {
+                toastWarning("방문 날짜를 선택해주세요");
+                return;
+            }
+
+            if (form.name.value.trim().length === 0) {
+                toastWarning("신청자 이름을 입력해주세요.");
+                return;
+            }
+
+            if (form.vehicleNumber.value.trim().length === 0) {
+                toastWarning("차량 번호를 입력해주세요.");
+                return;
+            }
+
+            form.submit();
+        }
+    </script>
 </main>
 </body>
 </html>
