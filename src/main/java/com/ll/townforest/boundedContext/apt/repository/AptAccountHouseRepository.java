@@ -12,6 +12,8 @@ import com.ll.townforest.boundedContext.apt.entity.House;
 public interface AptAccountHouseRepository extends JpaRepository<AptAccountHouse, Long> {
 	Optional<AptAccountHouse> findByUserId(Long id);
 
+	List<AptAccountHouse> findAllByHouseId(Long houseId);
+
 	List<AptAccountHouse> findByUser_StatusTrueOrderByUserIdDesc();
 
 	List<AptAccountHouse> findByUser_StatusFalseOrderByUserIdDesc();

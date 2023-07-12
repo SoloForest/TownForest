@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ll.townforest.boundedContext.apt.entity.Apt;
@@ -43,7 +42,7 @@ public class GymMembership {
 	private String contact;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	@CreatedDate
+
 	private LocalDateTime paymentDate;
 	/*
 	상태
@@ -61,8 +60,8 @@ public class GymMembership {
 	private Integer remainingDay;
 	// 재시작일
 	private LocalDate restartDate;
-	
-  // 이용권 총 며칠 남았는지
+
+	// 이용권 총 며칠 남았는지
 	// 남은 일자 구하기
 	public long getRemainingDays() {
 		switch (this.status) {

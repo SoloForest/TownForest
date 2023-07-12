@@ -1,10 +1,12 @@
 package com.ll.townforest.boundedContext.library.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -182,8 +184,15 @@ public class LibraryService {
 		return libraryHistoryRepository.findByUserIdOrderByIdDesc(aptAccountId, pageable);
 	}
 
-	public Slice<LibraryHistory> findAllHistories(Pageable pageable) {
+	public Page<LibraryHistory> findAllHistories(Pageable pageable) {
 		return libraryHistoryRepository.findAllByOrderByIdDesc(pageable);
+	}
+
+	public Page<LibraryHistory> findAllHistoriesByDate(LocalDate searchDate, Pageable pageable) {
+		LocalDateTime startOfDay = searchDate.atStartOfDay();
+		LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+
+		return libraryHistoryRepository.findByDateBetweenOrderByIdDesc(startOfDay, endOfDay, pageable);
 	}
 
 	public RsData<AptAccount> canAdminCancel(AptAccount user) {

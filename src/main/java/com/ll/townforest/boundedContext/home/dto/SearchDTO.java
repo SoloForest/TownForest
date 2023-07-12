@@ -12,4 +12,6 @@ import lombok.ToString;
 public class SearchDTO {
 	private String searchType;
 	private String searchQuery;
+
+	private String yearMonth;
 }
