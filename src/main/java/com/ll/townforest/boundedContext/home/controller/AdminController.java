@@ -1,11 +1,12 @@
 package com.ll.townforest.boundedContext.home.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,8 +58,8 @@ public class AdminController {
 	@GetMapping("")
 	@PreAuthorize("isAuthenticated()")
 	public String showAdmin(Model model) {
-		if (rq.getAptAccount().getAuthority() == 0) {
-			return "redirect:/";
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
 
 		// 여기까지 온거면 관리자
@@ -73,28 +74,37 @@ public class AdminController {
 	// 독서실 관리자 페이지 시작
 	@GetMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
-	public String showLibraryHistories(Model model) {
-		if (rq.getAptAccount().getAuthority() == 0) {
-			return "redirect:/";
+	public String showLibraryHistories() {
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
 
-		if (rq.getAptAccount().getAuthority() == 3) {
-			return "redirect:/admin";
+		if (rq.isGymAdmin()) {
+			return rq.historyBack("독서실 관리 권한이 없습니다.");
 		}
 
-		Slice<LibraryHistory> histories = libraryService.findAllHistories(PageRequest.of(0, 25));
-		model.addAttribute("histories", histories);
 		return "admin/library/histories";
 	}
 
 	@PostMapping("/library/histories")
+	@PreAuthorize("isAuthenticated()")
 	@ResponseBody
-	public Slice<LibraryHistory> libraryHistories(@RequestParam int page, @RequestParam int size) {
-		return libraryService.findAllHistories(PageRequest.of(page, size));
+	public Page<LibraryHistory> histories(@RequestParam int page,
+		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate searchDate) {
+		return libraryService.findAllHistoriesByDate(searchDate, PageRequest.of(page, 25));
+	}
+
+	@PostMapping("/library/histories/all")
+	@PreAuthorize("isAuthenticated()")
+	@ResponseBody
+	public Page<LibraryHistory> histories(@RequestParam int page) {
+
+		return libraryService.findAllHistories(PageRequest.of(page, 25));
 	}
 
 	@PostMapping("/library/cancel")
 	@ResponseBody
+	@PreAuthorize("isAuthenticated()")
 	public String libraryBookingCancel(@RequestParam Long libraryHistoryId) {
 		RsData<AptAccount> canCancelUser = libraryService.canAdminCancel(rq.getAptAccount());
 		if (canCancelUser.isFail()) {
@@ -284,7 +294,7 @@ public class AdminController {
 		@RequestParam(defaultValue = "1") int tab
 	) {
 		if (rq.getAptAccount().getAuthority() != 1) {
-			return "redirect:/admin";
+			return rq.historyBack("차량 관리 권한이 없습니다.");
 		}
 
 		Page<GuestVehicleHistory> vehicles = vehicleService.findGuestByTab(page, tab);
