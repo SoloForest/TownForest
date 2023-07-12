@@ -2,7 +2,6 @@ package com.ll.townforest.boundedContext.account.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,10 +50,7 @@ public class AccountController {
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/edit")
-	public String showEdit(Model model) {
-		Account account = rq.getAccount();
-		model.addAttribute("account", account);
-
+	public String showEdit() {
 		return "account/edit";
 	}
 
