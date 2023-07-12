@@ -24,34 +24,33 @@
 <main layout:fragment="main">
     <!-- 공지사항 -->
     <div class="m-3" style="border: 1px solid #707070; border-radius: 15px;">
-        <h2>공지사항</h2>
-        <div class="overflow-x-auto">
-            <table class="table">
-                <!-- head -->
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Name</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- row 1 -->
-                <tr>
-                    <th>1</th>
-                    <td>Cy Ganderton</td>
-                </tr>
-                <!-- row 2 -->
-                <tr class="hover">
-                    <th>2</th>
-                    <td>Hart Hagerty</td>
-                </tr>
-                <!-- row 3 -->
-                <tr>
-                    <th>3</th>
-                    <td>Brice Swyre</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="flex items-center w-full justify-between">
+            <div class="flex items-center ml-3">
+                <i class="fa-solid fa-bullhorn text-[1rem]" style="color: #91c0fd;"></i>
+                <h2>공지사항</h2>
+            </div>
+            <a class="link link-hover" href="/notice">더보기 ></a>
+        </div>
+        <div class="overflow-x-auto mt-4">
+            <div class="table-container">
+                <table class="table table-sm">
+                    <!-- head -->
+                    <thead>
+                    <tr class="text-center">
+                        <th>제목</th>
+                        <th>작성일</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="text-center" th:each="notice : ${noticeList}"
+                        th:onclick="'location.href=\'/notice/' + ${notice.id} + '\''">
+                        <td th:text="${notice.title}" style="min-width:50px; padding: 5px 0;"></td>
+                        <td th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"
+                            style="min-width:40px; padding: 12px 0;"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <!-- 버튼메뉴 -->

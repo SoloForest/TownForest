@@ -35,6 +35,8 @@ import com.ll.townforest.boundedContext.library.entity.Library;
 import com.ll.townforest.boundedContext.library.entity.Seat;
 import com.ll.townforest.boundedContext.library.repository.LibraryRepository;
 import com.ll.townforest.boundedContext.library.repository.SeatRepository;
+import com.ll.townforest.boundedContext.notice.entity.Notice;
+import com.ll.townforest.boundedContext.notice.repository.NoticeRepository;
 
 @Configuration
 @Profile({"dev", "test"})
@@ -53,7 +55,8 @@ public class NotProd {
 		GymTicketRepository gymTicketRepository,
 		GymService gymService,
 		GymHistoryRepository gymHistoryRepository,
-		GymMembershipRepository gymMembershipRepository
+		GymMembershipRepository gymMembershipRepository,
+		NoticeRepository noticeRepository
 	) {
 		return new CommandLineRunner() {
 			@Override
@@ -425,6 +428,20 @@ public class NotProd {
 				}
 
 				gymMembershipRepository.saveAll(gymTicketList22);
+
+				List<Notice> noticeList = new ArrayList<>();
+
+				for (int i = 0; i < 10; i++) {
+					Notice tmp = Notice.builder()
+						.apt(apt1)
+						.title("test" + i)
+						.content("test" + i)
+						.writer(aptAccount3)
+						.build();
+					noticeList.add(tmp);
+				}
+
+				noticeRepository.saveAll(noticeList);
 			}
 		};
 	}
