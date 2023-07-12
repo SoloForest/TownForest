@@ -4,26 +4,21 @@
 </head>
 
 <body>
-<main layout:fragment="main" class="h-screen flex flex-col justify-center items-center">
-    <div class="w-full px-4 flex flex-col">
+<main layout:fragment="main" class="flex flex-col justify-center items-center">
+    <div class="w-full px-4 flex flex-col justify-center">
         <div class="card-body bg-base-100 shadow-xl m-2">
             <h1 class="text-3xl font-semibold ml-2" th:text="${notice.title}"></h1>
             <div class="mb-3 ml-3 flex flex-col">
                 <div class="flex items-center gap-2 justify-end">
-                    <i class="fa-solid fa-pen" style="color: #75a8ff;"></i>
-                    <span class="font-bold">작성자 : </span>
                     <span class="font-bold text-primary" th:if="${notice.writer.authority==1}">아파트관리자</span>
                     <span class="font-bold text-primary" th:if="${notice.writer.authority==2}">독서실관리자</span>
                     <span class="font-bold text-primary" th:if="${notice.writer.authority==3}">헬스장관리자</span>
                 </div>
                 <div class="flex items-center gap-2 justify-end">
-                    <i class="fa-solid fa-pen" style="color: #75a8ff;"></i>
-                    <span class="font-bold">작성일 : </span>
-                    <span th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}"></span>
+                    <span <span th:class="${notice.modifyDate != null} ? 'text-gray-500' : 'text-black'"
+                            th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}"></span>
                 </div>
                 <div class="flex items-center gap-2 justify-end" th:if="${notice.modifyDate !=null}">
-                    <i class="fa-solid fa-pen" style="color: #75a8ff;"></i>
-                    <span class="font-bold">수정일 : </span>
                     <span th:text="${#temporals.format(notice.modifyDate, 'yyyy-MM-dd')}"></span>
                 </div>
             </div>
@@ -34,13 +29,16 @@
             <hr style="border: none; border-top: 1px solid;">
             <div class="flex items-center justify-center mt-4 mb-3 relative">
                 <div class="ml-auto mr-3 flex gap-4" th:if="${@rq.login}">
-                    <a th:href="@{|/notice/modify/${notice.id}|}" class="btn btn-outline btn-primary"
-                       th:if="${@rq.aptAccount.authority == notice.writer.authority}">수정</a>
+                    <a th:href="@{|/notice/modify/${notice.id}|}" class="btn btn-circle btn-outline btn-primary btn-sm"
+                       th:if="${@rq.aptAccount.authority == notice.writer.authority}">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
                     <form th:action="@{|/notice/${notice.id}|}" method="post">
                         <input type="hidden" name="_method" value="delete">
-                        <button class="btn btn-outline btn-error"
+                        <button class="btn btn-circle btn-outline btn-error btn-sm"
                                 th:if="${@rq.aptAccount.authority == notice.writer.authority}"
-                                onclick="return confirm('이 글을 삭제하시겠습니까?');">삭제
+                                onclick="return confirm('이 글을 삭제하시겠습니까?');">
+                            <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </form>
                 </div>
