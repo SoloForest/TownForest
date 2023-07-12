@@ -158,9 +158,12 @@ public class AdminController {
 		return "admin/gym/members";
 	}
 
+	// 아파트 관리자 - 회원 관리 페이지
 	@GetMapping("/management")
 	@PreAuthorize("isAuthenticated()")
-	public String showAptAccountManagement(Model model, @RequestParam(defaultValue = "1") int sortCode) {
+	public String showAptAccountManagement(Model model,
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(defaultValue = "1") int sortCode) {
 		int authority = rq.getAptAccount().getAuthority();
 
 		if (authority == 0) {
@@ -171,9 +174,8 @@ public class AdminController {
 			return "redirect:/admin";
 		}
 
-		List<AptAccountHouse> aptAccountHouseList = aptAccountHouseService.findAptAccountHouse(sortCode);
-
-		model.addAttribute("aptAccountHouseList", aptAccountHouseList);
+		Page<AptAccountHouse> paging = aptAccountHouseService.findAptAccountHouse(page, sortCode);
+		model.addAttribute("paging", paging);
 		model.addAttribute("sortCode", sortCode);
 		return "admin/aptAccount/management";
 	}

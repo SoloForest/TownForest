@@ -1,8 +1,10 @@
 package com.ll.townforest.boundedContext.apt.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +31,13 @@ public class AptAccountHouseService {
 		return aptAccountHouseRepository.findByUser(aptAccount);
 	}
 
-	public List<AptAccountHouse> findAptAccountHouse(int sortCode) {
+	public Page<AptAccountHouse> findAptAccountHouse(int page, int sortCode) {
+		Pageable pageable = PageRequest.of(page, 10);
 
 		return switch (sortCode) {
-			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueOrderByUserIdDesc();
-			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseOrderByUserIdDesc();
-			default -> aptAccountHouseRepository.findAllByOrderByIdDesc();
+			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueOrderByUserIdDesc(pageable);
+			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseOrderByUserIdDesc(pageable);
+			default -> aptAccountHouseRepository.findAllByOrderByIdDesc(pageable);
 		};
 	}
 
