@@ -180,10 +180,7 @@
                     "orderName": parsedText + "-" + "시작일-" + formattedDate,
                     "successUrl": successUrl,
                     "method": "card",
-                    "failUrl": failUrl,
-                    "customerName": [[${user.account.fullName}]],
-                    "useInternationalCardOnly": false,
-                    "flowMode": "DEFAULT"
+                    "failUrl": failUrl
                 }
             }
                 pay("카드", jsons.card);
