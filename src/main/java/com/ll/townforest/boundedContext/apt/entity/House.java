@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class House {
@@ -35,6 +35,12 @@ public class House {
 	private Integer ho;
 	@CreatedDate
 	private LocalDateTime date;
+	/*
+	 * 0: 일반 가정집 (default)
+	 * 1: 게스트 하우스
+	 * */
+	@Builder.Default
+	private int type = 0;
 	@ManyToOne
 	private Apt apt;
 }

@@ -172,7 +172,7 @@ public class NotProd {
 
 				houseRepository.saveAll(houseList2);
 
-				// 아파트 동호수 객체 생성 - 세 번째 1/3
+				// 아파트 동호수 객체 생성 - 세 번째 1/3 - 꼭대기층은 게스트 하우스로 지정
 				for (int i = oneThirdDong * 2 + 1; i <= apt1.getMaxDong(); i++) {
 					for (int j = 1; j <= apt1.getMaxFloor(); j++) {
 						for (int k = 1; k <= apt1.getMaxHo(); k++) {
@@ -181,6 +181,9 @@ public class NotProd {
 								.ho((j * 100) + k)
 								.apt(apt1)
 								.build();
+							if (j == apt1.getMaxFloor()) {
+								houseTemp = houseTemp.toBuilder().type(1).build();
+							}
 							houseList3.add(houseTemp);
 						}
 					}
