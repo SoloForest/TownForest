@@ -23,5 +23,8 @@ public interface LibraryHistoryRepository extends JpaRepository<LibraryHistory, 
 
 	Page<LibraryHistory> findAllByOrderByIdDesc(Pageable pageable);
 
+	Page<LibraryHistory> findByDateBetweenOrderByIdDesc(LocalDateTime startOfDay, LocalDateTime endOfDay,
+		Pageable pageable);
+
 	Optional<LibraryHistory> findTopBySeatIdAndDateBetween(Long id, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

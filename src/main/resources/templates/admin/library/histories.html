@@ -19,6 +19,14 @@
                 독서실 이용 히스토리가 없습니다.
             </P>
             <div th:if="${histories.numberOfElements} != 0">
+                <div class="flex justify-center items-center gap-3">
+                    <span><i class="fa-regular fa-calendar"></i> 날짜 검색</span>
+                    <input id="searchDate" type="date" class="px-3 rounded"
+                           style="border: 1px solid rgb(58, 191, 248);"/>
+                    <button onclick="javascript:loadHistories(0);">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="table text-center">
                         <!-- head -->
@@ -35,48 +43,26 @@
 
                         <!-- 페이지 변수를 받아서 thymeleaf로 작성하기 -->
                         <tbody id="contentList">
-                        <!-- row 1 -->
-                        <tr th:each="history : ${histories}">
-                            <td th:text="${#temporals.format(history.date, 'yyyy.MM.dd HH:mm:ss')}"></td>
-                            <td th:text="${history.user.account.fullName}" style="min-width: 86px;"></td>
-                            <td th:text="${history.addressToString}"></td>
-                            <td th:text="${history.seat.seatNumber}"></td>
-                            <td th:text="${history.statusTypeToString}" style="min-width:80px; padding: 12px 0;"></td>
-                            <td th:if="${history.statusType} == 0" style="min-width:100px; padding: 12px 0;">
-                                <button th:onclick="submitAdminCancel([[${history.id}]])"
-                                        class="btn btn-info btn-sm text-white cancel-button">
-                                    취소하기
-                                </button>
-                            </td>
-                        </tr>
+
                         </tbody>
 
                     </table>
                 </div>
 
                 <!-- 넘버링 페이지 -->
-                <div class="btn-group flex justify-center mt-7" th:if="${!histories.isEmpty()}">
-                    <div class="btn" th:classappend="${histories.number == 0} ? 'btn-disabled' : ''"
-                         th:attr="onclick='window.location.href=\'?page=0&size=25\''">
+                <div class="btn-group flex justify-center mt-7">
+                    <div id="first" class="btn" onclick="loadHistories(0)">
                         &laquo;
                     </div>
-                    <div th:attr="onclick='window.location.href=\'?page=' + (${histories.number - 1}) + '&size=25\''"
-                         class="btn" th:classappend="${!histories.hasPrevious} ? 'btn-disabled' : ''">
+                    <div id="prev" class="btn" onclick="loadHistories(pageNumber - 1)">
                         이전
                     </div>
-                    <div class="btn" th:each="page: ${#numbers.sequence(0, histories.totalPages - 1)}"
-                         th:classappend="${histories.number == page} ? 'btn-active' : ''"
-                         th:if="${page >= histories.number - 1 and page <= histories.number + 2}"
-                         th:attr="onclick='window.location.href=\'?page=' + (${page}) + '&size=25\''"
-                         th:text="${page+1}">
+                    <div id="paging-nav">
                     </div>
-                    <div class="btn" th:classappend="${!histories.hasNext} ? 'btn-disabled' :''"
-                         th:attr="onclick='window.location.href=\'?page=' + (${histories.number + 1}) + '&size=25\''">
+                    <div id="next" class="btn" onclick="loadHistories(pageNumber + 1)">
                         다음
                     </div>
-                    <div th:attr="onclick='window.location.href=\'?page=' + (${histories.totalPages - 1}) + '&size=25\''"
-                         class="btn"
-                         th:classappend="${histories.number == histories.totalPages - 1} ? 'btn-disabled' : ''">
+                    <div id="last" class="btn" onclick="loadHistories(totalPages - 1)">
                         &raquo;
                     </div>
                 </div>
@@ -84,6 +70,104 @@
         </div>
     </div>
     <script>
+        let pageNumber = 0;
+        let totalPages = 0;
+
+        function setPagingNav(data) {
+            pageNumber = data.number;
+            totalPages = data.totalPages;
+
+            if (pageNumber == 0) {
+                $("#first").addClass('btn-disabled');
+            } else {
+                $("#first").removeClass('btn-disabled');
+            }
+
+            if (pageNumber <= 0) {
+                $("#prev").addClass('btn-disabled');
+            } else {
+                $("#prev").removeClass('btn-disabled');
+            }
+
+            if (pageNumber + 1 >= totalPages) {
+                $("#next").addClass('btn-disabled');
+            } else {
+                $("#next").removeClass('btn-disabled');
+            }
+
+            if (pageNumber == totalPages - 1) {
+                $("#last").addClass('btn-disabled');
+            } else {
+                $("#last").removeClass('btn-disabled');
+            }
+
+            let pagingNav = '';
+
+            for (let page = 0; page < totalPages; page++) {
+                if (page < pageNumber - 1 || page > pageNumber + 2) {
+                    continue;
+                }
+                if (pageNumber === page) {
+                    pagingNav += `<div class='btn btn-active' onClick='loadHistories(${page})'>${page + 1}</div>`;
+                } else {
+                    pagingNav += `<div class='btn' onClick='loadHistories(${page})'>${page + 1}</div>`;
+                }
+            }
+            $('#paging-nav').html(pagingNav);
+        }
+
+        function loadHistories(currPage) {
+            let header = $("meta[name='_csrf_header']").attr('content');
+            let token = $("meta[name='_csrf']").attr('content');
+            let searchDate = $("#searchDate").val();
+            let url = '/admin/library/histories';
+
+            if (searchDate.trim().length === 0) {
+                url = '/admin/library/histories/all';
+            }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: Object.assign(
+                    {page: currPage},
+                    searchDate.trim().length !== 0 ? {searchDate: searchDate} : {}
+                ),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (data) {
+                    // 결과가 성공적으로 수신되면 테이블에 로우 추가
+                    console.log(data);
+                    let contentList = '';
+                    $.each(data.content, function (index, history) {
+                        let newRow = `<tr>
+                            <td>${dateFormat(history.date)}</td>
+                            <td style="min-width: 86px;">${history.user.account.fullName}</td>
+                            <td>${history.addressToString}</td>
+                            <td>${history.seat.seatNumber}</td>
+                            <td style="min-width:80px; padding: 12px 0;">${history.statusTypeToString}</td>`;
+                        if (history.statusType === 0) {
+                            newRow += `<td style="min-width:100px; padding: 12px 0;">
+                                <button onclick="submitAdminCancel(${history.id})"
+                                        class="btn btn-info btn-sm text-white cancel-button">
+                                    취소하기
+                                </button>
+                            </td>`;
+                        }
+                        newRow += `</tr>`;
+                        contentList += newRow;
+                    });
+                    $('#contentList').html(contentList);
+                    setPagingNav(data);
+                    $('html').scrollTop(0);
+                },
+                error: function (err) {
+                    console.log("Error fetching data:", err);
+                }
+            });
+        }
+
         function submitAdminCancel(historyId) {
             let header = $("meta[name='_csrf_header']").attr('content');
             let token = $("meta[name='_csrf']").attr('content');
@@ -106,6 +190,8 @@
                 }
             });
         }
+
+        loadHistories(0);
     </script>
 </main>
 </body>

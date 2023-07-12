@@ -1,5 +1,6 @@
 package com.ll.townforest.boundedContext.library.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +186,13 @@ public class LibraryService {
 
 	public Page<LibraryHistory> findAllHistories(Pageable pageable) {
 		return libraryHistoryRepository.findAllByOrderByIdDesc(pageable);
+	}
+
+	public Page<LibraryHistory> findAllHistoriesByDate(LocalDate searchDate, Pageable pageable) {
+		LocalDateTime startOfDay = searchDate.atStartOfDay();
+		LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+
+		return libraryHistoryRepository.findByDateBetweenOrderByIdDesc(startOfDay, endOfDay, pageable);
 	}
 
 	public RsData<AptAccount> canAdminCancel(AptAccount user) {
