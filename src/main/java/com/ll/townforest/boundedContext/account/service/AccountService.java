@@ -118,7 +118,7 @@ public class AccountService {
 	public RsData<Account> withdraw(Account account, HttpServletRequest request, HttpServletResponse response) {
 		Optional<AptAccount> aptAccount = aptAccountRepository.findByAccount(account);
 		if (aptAccount.isPresent()) {
-			// 회원에게 헬스장 이용권의 상태가 이용 대기중일 시 탈퇴 불가
+			// 회원의 헬스장 이용권 상태가 이용 대기중일 시 탈퇴 불가
 			List<GymMembership> gymMembershipList = gymMembershipRepository.findByUserAndStatus(aptAccount.get(), 0);
 			if (gymMembershipList.size() != 0)
 				return RsData.of("F-1", "죄송합니다.<br>아직 유효한 헬스장 이용권이 남아있어 계정 탈퇴를 진행할 수 없습니다.");
@@ -134,6 +134,7 @@ public class AccountService {
 
 		accountRepository.delete(account);
 
+		// 데이터 삭제 후 로그아웃
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
 			new SecurityContextLogoutHandler().logout(request, response, auth);
