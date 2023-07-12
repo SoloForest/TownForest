@@ -75,7 +75,7 @@ public class VehicleService {
 		return vehicleRepository.findById(id);
 	}
 
-	public String getUserid(Long userId) {
+	public String getUserId(Long userId) {
 		AptAccountHouse aptAccountHouse = findByUserId(userId);
 		if (aptAccountHouse == null) {
 			return null;

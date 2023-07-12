@@ -30,9 +30,9 @@ public class VehicleController {
 	@PreAuthorize("isAuthenticated()")
 	public String showPage() {
 		Long userId = rq.getAptAccount().getId();
-		String aptCheck = vehicleService.getUserid(userId);
+		String aptCheck = vehicleService.getUserId(userId);
 		if (aptCheck == null) {
-			return rq.redirectWithMsg("/", "동호수 등록후 이용해주십시오");
+			return rq.historyBack("동호수 등록후 이용해주십시오");
 		}
 		return aptCheck;
 	}
