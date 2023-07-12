@@ -39,7 +39,7 @@ public class House {
 	 * 0: 일반 가정집 (default)
 	 * 1: 게스트 하우스
 	 * */
-	@Builder.Default
+	@Column(nullable = false, columnDefinition = "INT default '0'")
 	private int type = 0;
 	@ManyToOne
 	private Apt apt;
