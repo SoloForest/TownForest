@@ -34,4 +34,13 @@ public class AptAccountHouse {
 	private AptAccount user;
 	@ManyToOne
 	private House house;
+
+	/*
+	 * 탈퇴한 회원을 나타내는 변수
+	 * true: 탈퇴한 회원
+	 * false: 유효한 회원
+	 * default : false (유효한 회원)
+	 */
+	@Builder.Default
+	private boolean status = false;
 }

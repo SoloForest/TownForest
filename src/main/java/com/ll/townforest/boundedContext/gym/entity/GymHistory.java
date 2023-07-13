@@ -70,4 +70,5 @@ public class GymHistory {
 	private LocalDate restartDate;
 	private String address;
 	private String contact;
+	private String userName;
 }

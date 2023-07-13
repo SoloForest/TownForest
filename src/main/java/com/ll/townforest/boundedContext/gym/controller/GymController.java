@@ -176,8 +176,7 @@ public class GymController {
 		GymMembership membership = gymService.getMembershipByUser(user);
 		model.addAttribute("membership", membership);
 
-		// TODO : 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기 -> Apt에 Gym 참조 추가
-		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
+		List<GymTicket> gymTicketList = gymService.getGymTicketList(1L);
 
 		model.addAttribute("gymTicketList", gymTicketList);
 

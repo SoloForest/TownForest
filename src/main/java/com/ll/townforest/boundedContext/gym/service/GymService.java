@@ -68,27 +68,30 @@ public class GymService {
 		if (startDate.isAfter(LocalDate.now())) {
 			status = 0;
 		}
-
-		String userHasAddress = aptAccountService.makeAddressToString(user).getData();
+		String userName = user.getAccount().getFullName();
+		String contact = user.getAccount().getPhoneNumString();
+		String userAddress = aptAccountService.makeAddressToString(user).getData();
+		Gym gym = gymRepository.findById(1L).orElse(null);
+		Apt apt = user.getApt();
 
 		GymMembership tmp = GymMembership.builder()
-			.apt(user.getApt())
-			.gym(gymRepository.findById(1L).orElse(null))
+			.apt(apt)
+			.gym(gym)
 			.startDate(startDate)
 			.endDate(endDate)
 			.user(user)
 			.status(status)
+			.userName(userName != null ? userName : "알수없음")
 			.paymentDate(LocalDateTime.now())
-			.contact(user.getAccount().getPhoneNumString())
-			.address(userHasAddress != null ?
-				aptAccountService.makeAddressToString(user).getData() : "알수없음")
+			.contact(contact != null ? contact : "알수없음")
+			.address(userAddress != null ? userAddress : "알수없음")
 			.build();
 
 		gymMembershipRepository.save(tmp);
 
 		GymHistory tmp2 = GymHistory.builder()
-			.apt(user.getApt())
-			.gym(gymRepository.findById(1L).orElse(null))
+			.apt(apt)
+			.gym(gym)
 			.price(gymTicket.getPrice())
 			.name(gymTicket.getName())
 			.startDate(startDate)
@@ -97,16 +100,16 @@ public class GymService {
 			.paymentMethod(method)
 			.paymentDate(LocalDateTime.now())
 			.user(user)
-			.contact(user.getAccount().getPhoneNumString() != null ? user.getAccount().getPhoneNumString() : "알수없음")
-			.address(userHasAddress != null ?
-				aptAccountService.makeAddressToString(user).getData() : "알수없음")
+			.userName(userName != null ? userName : "알수없음")
+			.contact(contact != null ? contact : "알수없음")
+			.address(userAddress != null ? userAddress : "알수없음")
 			.build();
 
 		gymHistoryRepository.save(tmp2);
 
 	}
 
-	public List<GymTicket> getGymTickets(Long gymId) {
+	public List<GymTicket> getGymTicketList(Long gymId) {
 
 		return gymTicketRepository.findAllByGymIdOrderByPrice(gymId);
 
@@ -143,9 +146,13 @@ public class GymService {
 			.build();
 		gymMembershipRepository.save(updateMembership);
 
+		String userName = user.getAccount().getFullName();
+		String contact = user.getAccount().getPhoneNumString();
+		String userAddress = aptAccountService.makeAddressToString(user).getData();
+
 		GymHistory tmp2 = GymHistory.builder()
 			.apt(user.getApt())
-			.gym(gymRepository.findById(1L).orElse(null))
+			.gym(updateMembership.getGym())
 			.price(gymTicket.getPrice())
 			.name(gymTicket.getName())
 			.startDate(startDate)
@@ -153,6 +160,9 @@ public class GymService {
 			.status(1) // 1은 연장을 나타냄
 			.paymentMethod(method)
 			.user(user)
+			.userName(userName != null ? userName : "알수없음")
+			.contact(contact != null ? contact : "알수없음")
+			.address(userAddress != null ? userAddress : "알수없음")
 			.build();
 
 		gymHistoryRepository.save(tmp2);
@@ -177,7 +187,7 @@ public class GymService {
 			return RsData.of("F-1", "당일 종료권 또는 기한 지난 이용권은 일시정지가 불가능합니다.");
 
 		GymMembership tmp = pauseMembership.toBuilder()
-			.status(2)
+			.status(2) // 2는 일시정지상태
 			.pauseDate(localDate)
 			.remainingDay((int)remainingDay)
 			.build();
@@ -185,6 +195,10 @@ public class GymService {
 		AptAccount user = pauseMembership.getUser();
 
 		gymMembershipRepository.save(tmp);
+
+		String userName = user.getAccount().getFullName();
+		String contact = user.getAccount().getPhoneNumString();
+		String userAddress = aptAccountService.makeAddressToString(user).getData();
 
 		GymHistory tmp2 = GymHistory.builder()
 			.status(2)
@@ -195,6 +209,9 @@ public class GymService {
 			.user(tmp.getUser())
 			.startDate(tmp.getStartDate())
 			.endDate(tmp.getEndDate())
+			.userName(userName != null ? userName : "알수없음")
+			.contact(contact != null ? contact : "알수없음")
+			.address(userAddress != null ? userAddress : "알수없음")
 			.build();
 
 		gymHistoryRepository.save(tmp2);
@@ -214,7 +231,7 @@ public class GymService {
 		LocalDate updatedEndDate = pauseDate.plusDays(remainingDay);
 
 		GymMembership tmp = pauseMembership.toBuilder()
-			.status(4)
+			.status(4)  // 4는 재시작을 나타냄
 			.pauseDate(null)
 			.remainingDay(null)
 			.endDate(updatedEndDate)
@@ -222,6 +239,12 @@ public class GymService {
 			.build();
 
 		gymMembershipRepository.save(tmp);
+
+		AptAccount user = pauseMembership.getUser();
+
+		String userName = user.getAccount().getFullName();
+		String contact = user.getAccount().getPhoneNumString();
+		String userAddress = aptAccountService.makeAddressToString(user).getData();
 
 		GymHistory tmp2 = GymHistory.builder()
 			.status(3)
@@ -231,6 +254,9 @@ public class GymService {
 			.startDate(tmp.getStartDate())
 			.endDate(tmp.getEndDate())
 			.restartDate(localDate)
+			.userName(userName != null ? userName : "알수없음")
+			.contact(contact != null ? contact : "알수없음")
+			.address(userAddress != null ? userAddress : "알수없음")
 			.build();
 
 		gymHistoryRepository.save(tmp2);
@@ -253,6 +279,13 @@ public class GymService {
 
 		// 누가 언제부터 언제까지 이용했던 헬스장 이용권 만료되었다 히스토리 남기기
 		for (GymMembership gymMembership : list) {
+
+			AptAccount user = gymMembership.getUser();
+
+			String userName = user.getAccount().getFullName();
+			String contact = user.getAccount().getPhoneNumString();
+			String userAddress = aptAccountService.makeAddressToString(user).getData();
+
 			GymHistory tmp = GymHistory.builder()
 				.status(4) // 4는 만료
 				.gym(gymMembership.getGym())
@@ -260,6 +293,9 @@ public class GymService {
 				.endDate(gymMembership.getEndDate())
 				.apt(gymMembership.getApt())
 				.user(gymMembership.getUser())
+				.userName(userName != null ? userName : "알수없음")
+				.contact(contact != null ? contact : "알수없음")
+				.address(userAddress != null ? userAddress : "알수없음")
 				.build();
 
 			histories.add(tmp);
@@ -426,5 +462,12 @@ public class GymService {
 		gymTicketRepository.delete(gymTicket);
 
 		return RsData.of("S-1", "이용권 삭제 성공");
+	}
+
+	@Transactional
+	public void whenAccountWithdraw(AptAccount user) {
+		List<GymMembership> gymMembershipList = gymMembershipRepository.findAllByUserId(user.getId());
+
+		gymMembershipRepository.deleteAll(gymMembershipList);
 	}
 }

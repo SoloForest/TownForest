@@ -114,3 +114,10 @@ $("#confirm").on("click", function () {
         }
     });
 });
+
+function withdraw() {
+    if (confirm('정말 탈퇴하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+        document.querySelector('#withdrawForm').submit();
+        alert('정상적으로 회원 탈퇴가 처리되었습니다.\n그동안 저희 서비스를 이용해주셔서 감사합니다.');
+    }
+}

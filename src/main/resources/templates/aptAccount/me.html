@@ -25,7 +25,7 @@
                         </a>
                     </label>
                 </div>
-                <div th:if="${household} != null">
+                <div th:if="${household} != null and ${household.size() != 0}">
                     <h3 class="px-4 m-2 font-semibold text-left">세대원 정보</h3>
                     <div class="rounded-box flex justify-center">
                         <div class="bg-white border border-gray-500 shadow-md w-80 min-h-24 rounded-3xl p-2 flex flex-col justify-center items-center">
