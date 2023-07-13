@@ -15,7 +15,7 @@
                     <div class="px-1 py-7">
                         <label class="font-semibold text-sm text-[#2563EB] pb-1 block">아이디</label>
                         <input type="text"
-                               th:value="${account.username}"
+                               th:value="${@rq.account.username}"
                                class="border rounded-lg px-3 py-2 mt-1 mb-7 text-sm w-full" disabled/>
                         <div x-show="editing">
                             <label class="font-semibold text-sm text-[#2563EB] pb-1 block">비밀번호</label>
@@ -52,14 +52,14 @@
                         </div>
                         <label class="font-semibold text-sm text-[#2563EB] pb-1 block">이름</label>
                         <input type="text"
-                               th:value="${account.fullName}"
+                               th:value="${@rq.account.fullName}"
                                class="border rounded-lg px-3 py-2 mt-1 mb-7 text-sm w-full" disabled/>
                         <label class="font-semibold text-sm text-[#2563EB] pb-1 block">이메일</label>
                         <div class="relative mb-7">
                             <input type="text"
                                    id="email"
                                    name="email"
-                                   th:value="${account.email}" :disabled="!editing"
+                                   th:value="${@rq.account.email}" :disabled="!editing"
                                    class="border rounded-lg px-3 py-2 mt-1 text-sm w-full"/>
                             <p id="email_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
                         </div>
@@ -69,7 +69,7 @@
                                    id="phoneNumber"
                                    name="phoneNumber"
                                    maxlength="11"
-                                   th:value="${account.phoneNumber}" :disabled="!editing"
+                                   th:value="${@rq.account.phoneNumber}" :disabled="!editing"
                                    class="border rounded-lg px-3 py-2 mt-1 text-sm w-full"/>
                             <p id="phoneNumber_check" class="absolute mt-1 ml-2 text-primary text-sm"></p>
                         </div>

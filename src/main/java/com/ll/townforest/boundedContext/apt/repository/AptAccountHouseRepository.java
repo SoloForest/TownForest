@@ -3,6 +3,8 @@ package com.ll.townforest.boundedContext.apt.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
@@ -14,13 +16,15 @@ public interface AptAccountHouseRepository extends JpaRepository<AptAccountHouse
 
 	List<AptAccountHouse> findAllByHouseId(Long houseId);
 
-	List<AptAccountHouse> findByUser_StatusTrueAndStatusFalseOrderByUserIdDesc();
+	Page<AptAccountHouse> findByUser_StatusTrueAndStatusFalseOrderByUserIdDesc(Pageable pageable);
 
-	List<AptAccountHouse> findByUser_StatusFalseAndStatusFalseOrderByUserIdDesc();
+	Page<AptAccountHouse> findByUser_StatusFalseAndStatusFalseOrderByUserIdDesc(Pageable pageable);
 
-	List<AptAccountHouse> findAllByStatusFalseOrderByIdDesc();
+	Page<AptAccountHouse> findAllByStatusFalseOrderByIdDesc(Pageable pageable);
 
 	Optional<AptAccountHouse> findByUser(AptAccount aptAccount);
 
 	List<AptAccountHouse> findAllByHouseAndStatusFalse(House house);
+
+	Optional<AptAccountHouse> findByHouseAndRelationshipAndStatusFalse(House house, String relationship);
 }

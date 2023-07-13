@@ -48,7 +48,7 @@
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 border-t border-gray-100">
-                    <tr class="hover:bg-gray-50" th:each="list, loop:${aptAccountHouseList}">
+                    <tr class="hover:bg-gray-50" th:each="list, loop:${paging}">
                         <td class="px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                             <div class="inline-flex items-center gap-x-3">
                                 <span th:text="${list.user.account.fullName}"></span>
@@ -132,6 +132,23 @@
                 </table>
             </div>
         </div>
+        <!-- 페이징처리 시작 -->
+        <div th:if="${!paging.isEmpty()}">
+            <div class="btn-group flex justify-center mt-4 mb-4">
+                <a href="javascript:void(0)" th:data-page="${paging.number-1}"
+                   role="button" class="page-link btn btn-sm" th:classappend="${!paging.hasPrevious} ? 'btn-disabled'">«
+                </a>
+                <a th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                   th:if="${page >= paging.number - 5 and page <= paging.number + 5}"
+                   th:classappend="${page == paging.number} ? 'btn-active'"
+                   class="page-link btn btn-sm" th:text="${page + 1}" href="javascript:void(0)" th:data-page="${page}">
+                </a>
+                <a href="javascript:void(0)" th:data-page="${paging.number+1}"
+                   class="page-link btn btn-sm" th:classappend="${!paging.hasNext} ? 'btn-disabled'">
+                </a>
+            </div>
+        </div>
+        <!-- 페이징처리 끝 -->
     </div>
     <script>
         function ApprovalForm_submit(element) {
