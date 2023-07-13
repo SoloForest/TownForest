@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <P id="noHistory" class="text-center my-5 hidden">
                 독서실 이용 히스토리가 없습니다.
             </P>
@@ -154,7 +154,7 @@
                     $.each(data.content, function (index, history) {
                         let newRow = `<tr>
                             <td>${dateFormat(history.date)}</td>
-                            <td style="min-width: 86px;">${history.user.account.fullName}</td>
+                            <td style="min-width: 86px;">${history.fullName}</td>
                             <td>${history.addressToString}</td>
                             <td>${history.seat.seatNumber}</td>
                             <td style="min-width:80px; padding: 12px 0;">${history.statusTypeToString}</td>`;
