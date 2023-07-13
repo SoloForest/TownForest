@@ -144,9 +144,9 @@ public class AccountService {
 		Optional<AptAccountHouse> optionalAptAccountHouse = aptAccountHouseRepository.findByUser(aptAccount.get());
 		if (optionalAptAccountHouse.isPresent()) {
 			String userName = optionalAptAccountHouse.get().getUser().getAccount().getFullName();
-			vehicleRepository.deleteAllByName(userName); // 동일한 이름 차량정보 삭제
+			Long houseId = optionalAptAccountHouse.get().getHouse().getId();
+			vehicleRepository.deleteAllByNameAndAptHouse_Id(userName, houseId); // 동일한 이름 차량정보 삭제
 		}
-
 		accountRepository.delete(account);
 
 		// 데이터 삭제 후 로그아웃

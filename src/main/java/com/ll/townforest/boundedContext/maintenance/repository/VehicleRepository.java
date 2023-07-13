@@ -22,5 +22,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
 	Slice<Vehicle> findByUserIdAndTypeOrderByIdDesc(Long aptAccountId, int type, Pageable pageable);
 
-	long deleteAllByName(String userName);
+	void deleteAllByNameAndAptHouse_Id(String userName, Long houseId);
 }
