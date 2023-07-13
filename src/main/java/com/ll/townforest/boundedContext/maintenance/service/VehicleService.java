@@ -99,14 +99,15 @@ public class VehicleService {
 	public VehicleResult getAllId(Long userId, VehicleForm form) {
 		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
 		if (ownedAptAccountHouse.isPresent()) {
-			List<AptAccountHouse> allMembersOfHouse = aptAccountHouseRepository.findAllByHouseId(
-				ownedAptAccountHouse.get().getHouse().getId());
+			Long houseId = ownedAptAccountHouse.get().getHouse().getId();
+
+			List<AptAccountHouse> allMembersOfHouse = aptAccountHouseRepository.findAllByHouseIdAndStatusFalse(houseId);
 
 			if (!getHouseMembers(form.getName(), allMembersOfHouse)) {
 				return VehicleResult.NAME_INVALID;
 			}
 
-			if (getVehicleNumber(form.getVehicleNumber(), ownedAptAccountHouse.get().getHouse().getId())) {
+			if (getVehicleNumber(form.getVehicleNumber(), houseId)) {
 				return VehicleResult.VEHICLE_DUPLICATION;
 			}
 
@@ -118,8 +119,10 @@ public class VehicleService {
 
 	private boolean getHouseMembers(String inputFullName, List<AptAccountHouse> allMembersOfHouse) {
 		for (AptAccountHouse member : allMembersOfHouse) {
-			if (inputFullName != null && inputFullName.equals(member.getUser().getAccount().getFullName())) {
-				return true;
+			if (member.getUser() != null && member.getUser().getAccount() != null) {
+				if (inputFullName != null && inputFullName.equals(member.getUser().getAccount().getFullName())) {
+					return true;
+				}
 			}
 		}
 		return false;
