@@ -77,6 +77,8 @@ public class Prod {
 					accountList.add(account3);
 
 					accountRepository.saveAll(accountList);
+				} else {
+					accountList = accountRepository.findAll();
 				}
 
 				List<Apt> aptList = new ArrayList<>();
@@ -93,6 +95,8 @@ public class Prod {
 
 					aptList.add(apt1);
 					aptRepository.save(apt1);
+				} else {
+					aptList = aptRepository.findAll();
 				}
 
 				List<House> houseList1 = new ArrayList<>();
@@ -190,7 +194,8 @@ public class Prod {
 					aptAccountList.add(aptAccount3);
 
 					aptAccountRepository.saveAll(aptAccountList);
-				}
+				} else
+					aptAccountList = aptAccountRepository.findAll();
 
 				List<Library> libraries = new ArrayList<>();
 
@@ -232,7 +237,8 @@ public class Prod {
 						.build();
 					gymList.add(gym1);
 					gymRepository.saveAll(gymList);
-				}
+				} else
+					gymList = gymRepository.findAll();
 
 				List<GymTicket> gymTicketList = new ArrayList<>();
 				if (gymTicketRepository.count() == 0) {

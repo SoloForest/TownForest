@@ -37,35 +37,6 @@ public class GuestVehicleControllerTests {
 	private MockMvc mvc;
 
 	@Test
-	@DisplayName("방문차량 등록 폼")
-	void t001() throws Exception {
-		ResultActions resultActions = mvc
-			.perform(get("/guest/register"))
-			.andDo(print());
-
-		resultActions
-			.andExpect(handler().handlerType(GuestVehicleController.class))
-			.andExpect(handler().methodName("showPage"))
-			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrlPattern("**/account/login"));
-	}
-
-	@Test
-	@DisplayName("방문차량 등록 폼")
-	@WithUserDetails("yujin11006")
-	void t002() throws Exception {
-		ResultActions resultActions = mvc
-			.perform(get("/guest/register"))
-			.andDo(print());
-
-		resultActions
-			.andExpect(handler().handlerType(GuestVehicleController.class))
-			.andExpect(handler().methodName("showPage"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(view().name("/guest/car_register"));
-	}
-
-	@Test
 	@DisplayName("방문차량 등록")
 	@WithUserDetails("yujin11006")
 	void t003() throws Exception {

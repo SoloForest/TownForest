@@ -46,7 +46,7 @@
                     <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
                     <td th:text="${(paging.number * paging.size) + loop.index +1}"
                         style="min-width:40px; padding: 12px 0;"></td>
-                    <td th:text="${gymMember.address}" style="min-width:60px; padding: 12px 0;"></td>
+                    <td th:text="${gymMember.address}" style="min-width:100px; padding: 12px 0;"></td>
                     <td th:text="${gymMember.userName}"
                         style="min-width:40px; padding: 12px 0;"></td>
                     <td th:text="${#temporals.format(gymMember.startDate, 'yy-MM-dd')}"
@@ -56,10 +56,10 @@
                     <td th:text="${gymMember.remainingDays}" style="min-width:40px; padding: 12px 0;"></td>
                     <td th:text="${gymMember.contact}"
                         style="min-width:120px; padding: 12px 0;"></td>
-                    <td th:if="${gymMember.status==0}" style="min-width:40px; padding: 12px 0;">시작전</td>
-                    <td th:if="${gymMember.status==1}" style="min-width:40px; padding: 12px 0;">이용중</td>
-                    <td th:if="${gymMember.status==2}" style="min-width:40px; padding: 12px 0;">일시정지</td>
-                    <td th:if="${gymMember.status==3}" style="min-width:40px; padding: 12px 0;">연장</td>
+                    <td th:if="${gymMember.status==0}" style="min-width:60px; padding: 12px 0;">시작전</td>
+                    <td th:if="${gymMember.status==1}" style="min-width:60px; padding: 12px 0;">이용중</td>
+                    <td th:if="${gymMember.status==2}" style="min-width:60px; padding: 12px 0;">일시정지</td>
+                    <td th:if="${gymMember.status==3}" style="min-width:60px; padding: 12px 0;">연장</td>
                 </tr>
                 </tbody>
             </table>

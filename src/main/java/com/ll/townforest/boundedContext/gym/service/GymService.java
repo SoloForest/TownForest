@@ -173,12 +173,12 @@ public class GymService {
 		return gymHistoryRepository.findAllByUserIdOrderByIdDesc(userId, pageable);
 	}
 
-	public GymMembership getMembershopByMembershipId(Long membershipId) {
+	public GymMembership getMembershipById(Long membershipId) {
 		return gymMembershipRepository.findById(membershipId).get();
 	}
 
 	@Transactional
-	public RsData<GymMembership> pauseMembership(GymMembership pauseMembership) {
+	public RsData pauseMembership(GymMembership pauseMembership) {
 		LocalDate localDate = LocalDate.now();
 
 		long remainingDay = ChronoUnit.DAYS.between(localDate, pauseMembership.getEndDate());
@@ -221,7 +221,7 @@ public class GymService {
 	}
 
 	@Transactional
-	public RsData<GymMembership> unPauseMembership(GymMembership pauseMembership) {
+	public RsData unPauseMembership(GymMembership pauseMembership) {
 
 		LocalDate localDate = LocalDate.now();
 		LocalDate pauseDate = pauseMembership.getPauseDate();

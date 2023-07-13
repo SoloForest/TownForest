@@ -35,16 +35,20 @@ public class AptAccountService {
 
 	public RsData<AptAccount> canRegister(Account account, AptAccountDTO aptAccountDTO) {
 		Apt apt = aptRepository.findByName(aptAccountDTO.getAptName()).orElse(null);
-
 		if (apt == null) {
 			return RsData.of("F-1", "등록되지 않은 아파트입니다.");
 		}
 
 		House house = houseRepository.findByAptAndDongAndHo(apt, aptAccountDTO.getDong(), aptAccountDTO.getHo())
 			.orElse(null);
-
 		if (house == null) {
 			return RsData.of("F-2", "거주하시는 동과 호수를 바르게 입력해 주세요.");
+		}
+
+		Optional<AptAccountHouse> householder = aptAccountHouseRepository.findByHouseAndRelationshipAndStatusFalse(
+			house, "본인");
+		if (householder.isPresent()) {
+			return RsData.of("F-3", "세대주가 이미 존재합니다.");
 		}
 
 		return register(account, apt, house, aptAccountDTO.getRelationship());

@@ -53,7 +53,7 @@ public class GymController {
 		AptAccount user = rq.getAptAccount();
 
 		// rq.redirectWithMsg 메서드가 특정 페이지를 들렸다가 다시 돌아가야 메시지 발생
-		// 따라서 권한 없어도 접속은 가능하게 수정
+		// 따라서 사용자가 임의로 URL 조작해서 들어왔어도(권한 없어도) 접속은 가능하게 수정
 		if (user != null) {
 			model.addAttribute("user", user);
 
@@ -114,7 +114,7 @@ public class GymController {
 			return rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		GymMembership membership = gymService.getMembershipByUser(user);
-		GymMembership pauseMembership = gymService.getMembershopByMembershipId(membershipId);
+		GymMembership pauseMembership = gymService.getMembershipById(membershipId);
 
 		if (pauseMembership == null)
 			return rq.historyBack("정지하고자 하는 이용권이 없습니다.");
@@ -125,7 +125,7 @@ public class GymController {
 		if (membership.getStatus() == 2)
 			return rq.historyBack("이미 일시정지된 이용권입니다.");
 
-		RsData<GymMembership> result = gymService.pauseMembership(pauseMembership);
+		RsData result = gymService.pauseMembership(pauseMembership);
 
 		return rq.redirectWithMsg("/gym", result);
 	}
@@ -139,7 +139,7 @@ public class GymController {
 			return rq.historyBack("승인된 아파트 주민만 이용할 수 있습니다.");
 
 		GymMembership membership = gymService.getMembershipByUser(user);
-		GymMembership pauseMembership = gymService.getMembershopByMembershipId(membershipId);
+		GymMembership pauseMembership = gymService.getMembershipById(membershipId);
 
 		if (pauseMembership == null)
 			return rq.historyBack("정지를 풀고자 하는 이용권이 없습니다.");
@@ -150,7 +150,7 @@ public class GymController {
 		if (membership.getStatus() != 2)
 			return rq.historyBack("이미 일시정지가 풀린 이용권입니다.");
 
-		RsData<GymMembership> result = gymService.unPauseMembership(pauseMembership);
+		RsData result = gymService.unPauseMembership(pauseMembership);
 
 		return rq.redirectWithMsg("/gym", result);
 	}
@@ -172,11 +172,10 @@ public class GymController {
 		model.addAttribute("user", user);
 
 		// 연장용 일 경우 startDate를 현제 가지고 있는 이용권의 종료일+1로 지정하기 위해 필요
+		// null이 아닐경우를 View에서 처리하고 있으므로 별도 if문 사용 안함
 		GymMembership membership = gymService.getMembershipByUser(user);
 		model.addAttribute("membership", membership);
 
-		// 아파트 여러개라면 현재 로그인한 사용자가 속한 Gym ID를 넘긴다.
-		// 현재 하나이기에 1로 하드코딩
 		List<GymTicket> gymTicketList = gymService.getGymTicketList(1L);
 
 		model.addAttribute("gymTicketList", gymTicketList);
@@ -218,39 +217,46 @@ public class GymController {
 		}
 
 		// yml 파일에 : 문자열 추가 불가로 여기서 추가
+		// "secretKey"는 거래 소스 인증을 위한 API 키
 		StringBuilder sb = new StringBuilder(secretKey);
 		sb.append(":");
 		secretKey = sb.toString();
 
+		// 해당 키로 인증 모듈 'Base64 인코더'를 이용해 인코딩
 		Base64.Encoder encoder = Base64.getEncoder();
 		byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8"));
 		String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
 
-		// URL에 물어봄
+		// 토스페이먼츠 API에 요청하여 결제 정보를 확인하는 POST 요청을 보냅니다.
 		URL url = new URL("https://api.tosspayments.com/v1/payments/" + paymentKey);
-
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestProperty("Authorization", authorizations);
 		connection.setRequestProperty("Content-Type", "application/json");
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
+
+		// 요청 변수 (결제 정보)를 JSON 객체로 생성
 		JSONObject obj = new JSONObject();
 		obj.put("orderId", orderId);
 		obj.put("amount", amount);
 
+		// 요청을 전송할 OutputStream 열기
 		OutputStream outputStream = connection.getOutputStream();
 		outputStream.write(obj.toString().getBytes("UTF-8"));
 
+		// 응답 코드를 확인하여 성공/실패 여부 결정
 		int code = connection.getResponseCode();
 		boolean isSuccess = code == 200 ? true : false;
 		model.addAttribute("isSuccess", isSuccess);
 
+		// HTTP 응답에서 JSON 데이터 파싱
 		InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
-
 		Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = (JSONObject)parser.parse(reader);
 		responseStream.close();
+
+		// 응답 결과를 뷰에 전달
 		model.addAttribute("responseStr", jsonObject.toJSONString());
 		System.out.println(jsonObject.toJSONString());
 

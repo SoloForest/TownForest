@@ -23,8 +23,9 @@ import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
+import com.ll.townforest.boundedContext.apt.entity.HouseHistory;
 import com.ll.townforest.boundedContext.apt.service.AptAccountHouseService;
-import com.ll.townforest.boundedContext.apt.service.AptAccountService;
+import com.ll.townforest.boundedContext.apt.service.HouseHistoryService;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
@@ -48,7 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
-	private final AptAccountService aptAccountService;
+	private final HouseHistoryService houseHistoryService;
 	private final VehicleService vehicleService;
 	private final AptAccountHouseService aptAccountHouseService;
 	private final GymService gymService;
@@ -89,7 +90,7 @@ public class AdminController {
 	@PostMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
 	@ResponseBody
-	public Page<LibraryHistory> histories(@RequestParam int page,
+	public Page<LibraryHistory> libraryHistories(@RequestParam int page,
 		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate searchDate) {
 		return libraryService.findAllHistoriesByDate(searchDate, PageRequest.of(page, 25));
 	}
@@ -97,7 +98,7 @@ public class AdminController {
 	@PostMapping("/library/histories/all")
 	@PreAuthorize("isAuthenticated()")
 	@ResponseBody
-	public Page<LibraryHistory> histories(@RequestParam int page) {
+	public Page<LibraryHistory> libraryHistories(@RequestParam int page) {
 
 		return libraryService.findAllHistories(PageRequest.of(page, 25));
 	}
@@ -126,8 +127,13 @@ public class AdminController {
 	@GetMapping("/gym")
 	public String adminMain(Model model) {
 		AptAccount user = rq.getAptAccount();
-		if (!rq.isGymAdmin())
-			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
+
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 
 		List<GymMembership> currentUsers = gymService.getMemberList(user);
 		model.addAttribute("currentUsers", currentUsers);
@@ -149,31 +155,37 @@ public class AdminController {
 		SearchDTO searchDTO) {
 
 		AptAccount user = rq.getAptAccount();
-		if (!rq.isGymAdmin())
-			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
 
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 		Page<GymMembership> paging = gymService.getMemberPage(page, user, searchDTO);
 		model.addAttribute("paging", paging);
 
 		return "admin/gym/members";
 	}
 
+	// 아파트 관리자 - 회원 관리 페이지
 	@GetMapping("/management")
 	@PreAuthorize("isAuthenticated()")
-	public String showAptAccountManagement(Model model, @RequestParam(defaultValue = "1") int sortCode) {
-		int authority = rq.getAptAccount().getAuthority();
+	public String showAptAccountManagement(Model model,
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(defaultValue = "1") int sortCode) {
 
-		if (authority == 0) {
-			return "redirect:/";
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
 
-		if (authority == 2 || authority == 3) {
-			return "redirect:/admin";
+		if (rq.isLibraryAdmin() || rq.isGymAdmin()) {
+			return rq.historyBack("아파트 회원 관리 권한이 없습니다.");
 		}
 
-		List<AptAccountHouse> aptAccountHouseList = aptAccountHouseService.findAptAccountHouseBySortCode(sortCode);
+		Page<AptAccountHouse> paging = aptAccountHouseService.findAptAccountHouseBySortCode(page, sortCode);
 
-		model.addAttribute("aptAccountHouseList", aptAccountHouseList);
+		model.addAttribute("paging", paging);
 		model.addAttribute("sortCode", sortCode);
 		return "admin/aptAccount/management";
 	}
@@ -182,9 +194,13 @@ public class AdminController {
 	@GetMapping("/gym/history")
 	public String showAllGymHistory(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
 		SearchDTO searchDTO) {
-		if (!rq.isGymAdmin())
-			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
 
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 		Page<GymHistory> gymHistories = gymService.getAllHistories(page, searchDTO);
 
 		model.addAttribute("paging", gymHistories);
@@ -195,9 +211,13 @@ public class AdminController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/gym/ticket")
 	public String showAllGymTicket(Model model) {
-		if (!rq.isGymAdmin())
-			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
 
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 		// TODO : 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기
 		List<GymTicket> gymTicketList = gymService.getGymTicketList(1L);
 		model.addAttribute("gymTicketList", gymTicketList);
@@ -335,4 +355,53 @@ public class AdminController {
 
 		return rq.redirectWithMsg("/admin/management?sortCode=%d".formatted(sortCode), aptAccountHouseRsData);
 	}
+
+	// 게스트하우스 관리자 페이지 시작
+	@GetMapping("/guesthouse")
+	@PreAuthorize("isAuthenticated()")
+	public String allHouseHistories() {
+		if (rq.getAptAccount().getAuthority() != 1) {
+			return rq.historyBack("게스트하우스 관리 권한이 없습니다.");
+		}
+
+		return "admin/guest/house_booking";
+	}
+
+	@PostMapping("/guesthouse/histories")
+	@PreAuthorize("isAuthenticated()")
+	@ResponseBody
+	public Page<HouseHistory> guesthouseHistories(@RequestParam int page,
+		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate searchDate) {
+		return houseHistoryService.findAllHistoriesByDate(searchDate, PageRequest.of(page, 25));
+	}
+
+	@PostMapping("/guesthouse/histories/all")
+	@PreAuthorize("isAuthenticated()")
+	@ResponseBody
+	public Page<HouseHistory> guesthouseHistories(@RequestParam int page) {
+		return houseHistoryService.findAllHistories(PageRequest.of(page, 25));
+	}
+
+	@PostMapping("/guesthouse/accept")
+	@PreAuthorize("isAuthenticated()")
+	public String guestBookingAccept(@RequestParam Long houseHistoryId) {
+		RsData<AptAccount> canAcceptUser = houseHistoryService.canAcceptBooking(rq.getAptAccount());
+		if (canAcceptUser.isFail()) {
+			return rq.historyBack(canAcceptUser.getMsg());
+		}
+		RsData<String> target = houseHistoryService.bookingAccept(houseHistoryId);
+		return rq.redirectWithMsg("/admin/guesthouse", "%s님의 신청을 수락했습니다.".formatted(target.getData()));
+	}
+
+	@PostMapping("/guesthouse/reject")
+	@PreAuthorize("isAuthenticated()")
+	public String guestBookingReject(@RequestParam Long houseHistoryId) {
+		if (rq.getAptAccount().getAuthority() != 1) {
+			return rq.historyBack("게스트하우스 관리 권한이 없습니다.");
+		}
+
+		RsData<String> target = houseHistoryService.bookingReject(houseHistoryId);
+		return rq.redirectWithMsg("/admin/guesthouse", "%s님의 신청을 반려했습니다.".formatted(target.getData()));
+	}
+	// 게스트하우스 관리자 페이지 끝
 }
