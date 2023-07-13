@@ -14,23 +14,23 @@
     <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
         <div class="card-body p-3">
             <h2 class="card-title">이용 현황</h2>
-
+            <div class="flex justify-center items-center gap-3">
+                <span>날짜 검색</span>
+                <div class="join">
+                    <input id="searchDate" type="date" class="join-item px-1 rounded"
+                           style="border: 1px solid #dfdfdf;"/>
+                    <div class="indicator">
+                        <button onclick="javascript:loadHistories(0);" class="btn join-item p-3 rounded">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <P id="noHistory" class="text-center my-5 hidden">
                 독서실 이용 히스토리가 없습니다.
             </P>
             <div id="hasHistory" class="hidden">
-                <div class="flex justify-center items-center gap-3">
-                    <span>날짜 검색</span>
-                    <div class="join">
-                        <input id="searchDate" type="date" class="join-item px-1 rounded"
-                               style="border: 1px solid #dfdfdf;"/>
-                        <div class="indicator">
-                            <button onclick="javascript:loadHistories(0);" class="btn join-item p-3 rounded">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 <div class="overflow-x-auto">
                     <table class="table text-center">
                         <!-- head -->
