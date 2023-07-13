@@ -85,12 +85,17 @@ public class VehicleService {
 	}
 
 	public VehicleResult delete(Long vehicleId, Long userId) {
-		Optional<Vehicle> vehicleOptional = findByVehicleId(vehicleId);
-		if (vehicleOptional.isPresent()) {
-			Vehicle vehicle = vehicleOptional.get();
-			if (vehicle.getUser().getId().equals(userId)) {
-				vehicleRepository.deleteById(vehicleId);
-				return VehicleResult.SUCCESS;
+		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
+		if (ownedAptAccountHouse.isPresent()) {
+			Long houseId = ownedAptAccountHouse.get().getHouse().getId();
+			Optional<Vehicle> vehicleOptional = findByVehicleId(vehicleId);
+
+			if (vehicleOptional.isPresent()) {
+				Vehicle vehicle = vehicleOptional.get();
+				if (vehicle.getAptHouse().getId().equals(houseId)) {
+					vehicleRepository.deleteById(vehicleId);
+					return VehicleResult.SUCCESS;
+				}
 			}
 		}
 		return VehicleResult.FAILED;

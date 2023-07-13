@@ -25,6 +25,7 @@ import com.ll.townforest.boundedContext.apt.repository.AptAccountHouseRepository
 import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
+import com.ll.townforest.boundedContext.maintenance.repository.VehicleRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class AccountService {
 	private final AptAccountRepository aptAccountRepository;
 	private final AptAccountHouseRepository aptAccountHouseRepository;
 	private final GymMembershipRepository gymMembershipRepository;
-
+	private final VehicleRepository vehicleRepository;
 	private final ApplicationEventPublisher publisher;
 
 	public Optional<Account> findByUsername(String username) {
@@ -138,6 +139,12 @@ public class AccountService {
 			// 계정 탈퇴 시 이벤트 발생 -> 이용권 삭제 처리를 위함
 			// AptAccount가 있어야 Gym 이용이 가능하니, 없을땐 이벤트 발생x
 			publisher.publishEvent(new EventAccountWithdraw(this, aptAccount.get()));
+		}
+
+		Optional<AptAccountHouse> optionalAptAccountHouse = aptAccountHouseRepository.findByUser(aptAccount.get());
+		if (optionalAptAccountHouse.isPresent()) {
+			String userName = optionalAptAccountHouse.get().getUser().getAccount().getFullName();
+			vehicleRepository.deleteAllByName(userName); // 동일한 이름 차량정보 삭제
 		}
 
 		accountRepository.delete(account);
