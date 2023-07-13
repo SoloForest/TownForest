@@ -32,12 +32,12 @@
                             <tr class="text-center" th:each="gymHistory, loop : ${paging}">
                                 <!-- 1번 ~ 증가하는 식으로 순번 표시 -->
                                 <td th:text="${(paging.number * paging.size) + loop.index +1}">
-                                <td th:if="${gymHistory.paymentDate ==null}" style="min-width:40px; padding: 12px 0;">
+                                <td th:if="${gymHistory.paymentDate ==null}" style="min-width:80px; padding: 12px 0;">
                                     -
                                 </td>
                                 <td th:if="${gymHistory.paymentDate !=null}"
                                     th:text="${#temporals.format(gymHistory.paymentDate, 'yy-MM-dd')}"
-                                    style="min-width:40px; padding: 12px 0;"></td>
+                                    style="min-width:80px; padding: 12px 0;"></td>
                                 <td th:text="${#temporals.format(gymHistory.startDate, 'yy-MM-dd')}"
                                     style="min-width:40px; padding: 12px 0;"></td>
                                 <td th:if="${gymHistory.status ==2}"
