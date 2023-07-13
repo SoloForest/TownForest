@@ -164,14 +164,13 @@ public class AdminController {
 	public String showAptAccountManagement(Model model,
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(defaultValue = "1") int sortCode) {
-		int authority = rq.getAptAccount().getAuthority();
 
-		if (authority == 0) {
-			return "redirect:/";
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
 		}
 
-		if (authority == 2 || authority == 3) {
-			return "redirect:/admin";
+		if (rq.isLibraryAdmin() || rq.isGymAdmin()) {
+			return rq.historyBack("아파트 회원 관리 권한이 없습니다.");
 		}
 
 		Page<AptAccountHouse> paging = aptAccountHouseService.findAptAccountHouseBySortCode(page, sortCode);
