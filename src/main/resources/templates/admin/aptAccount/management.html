@@ -59,7 +59,7 @@
                                 <div class="font-medium text-gray-700">
                                     <span th:text="${list.house.dong} +'동 '+ ${list.house.ho} +'호'"></span>
                                 </div>
-                                <span th:text="${list.relationship}"
+                                <span th:text="${(list.relationship == '본인') ? '세대주' : list.relationship}"
                                       class="font-medium text-gray-400"></span>
                             </div>
                         </th>
@@ -107,7 +107,7 @@
                                       method="POST" id="approvalForm">
                                     <input type="hidden" name="sortCode" th:value="${sortCode}"/>
                                 </form>
-                                <a href="javascript:"
+                                <a th:if="${!list.user.status}" href="javascript:"
                                    th:attr="data-id=${list.id}"
                                    onclick="DeleteForm_submit(this);">
                                     <svg xmlns="http://www.w3.org/2000/svg"

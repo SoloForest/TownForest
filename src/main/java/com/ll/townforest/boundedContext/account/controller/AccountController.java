@@ -16,6 +16,8 @@ import com.ll.townforest.boundedContext.account.entity.Account;
 import com.ll.townforest.boundedContext.account.service.AccountService;
 import com.ll.townforest.boundedContext.apt.DTO.EditForm;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -70,8 +72,20 @@ public class AccountController {
 		return rq.redirectWithMsg("/account/edit", accountRsData);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/confirmPwd")
 	public @ResponseBody boolean confirmPassword(@RequestParam String password) {
 		return accountService.confirmPassword(rq.getAccount(), password);
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/withdraw")
+	public String withdraw(HttpServletRequest request, HttpServletResponse response) {
+		RsData<Account> accountRsData = accountService.withdraw(rq.getAccount(), request, response);
+
+		if (accountRsData.isFail()) {
+			return rq.historyBack(accountRsData);
+		}
+		return rq.redirectWithMsg("/", accountRsData);
 	}
 }

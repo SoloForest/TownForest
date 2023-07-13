@@ -90,10 +90,10 @@
                     </div>
                 </form>
 
-                <div class="flex justify-end">
+                <div x-show="editing" class="flex justify-end">
                     <a class="link mr-2 text-xs text-gray-400" href="javascript:"
-                       onclick="$(this).next().submit();">회원탈퇴</a>
-                    <form class="!hidden" method="POST"></form>
+                       onclick="withdraw();">회원탈퇴</a>
+                    <form class="!hidden" id="withdrawForm" th:action="|/account/withdraw|" method="POST"></form>
                 </div>
 
                 <!-- Main modal -->

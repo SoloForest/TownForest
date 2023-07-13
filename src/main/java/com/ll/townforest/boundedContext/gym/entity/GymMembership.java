@@ -40,6 +40,7 @@ public class GymMembership {
 	private Apt apt;
 	private String address;
 	private String contact;
+	private String userName;
 	private LocalDate startDate;
 	private LocalDate endDate;
 

@@ -29,12 +29,12 @@ public class AptAccountHouseService {
 		return aptAccountHouseRepository.findByUser(aptAccount);
 	}
 
-	public List<AptAccountHouse> findAptAccountHouse(int sortCode) {
+	public List<AptAccountHouse> findAptAccountHouseBySortCode(int sortCode) {
 
 		return switch (sortCode) {
-			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueOrderByUserIdDesc();
-			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseOrderByUserIdDesc();
-			default -> aptAccountHouseRepository.findAllByOrderByIdDesc();
+			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueAndStatusFalseOrderByUserIdDesc();
+			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseAndStatusFalseOrderByUserIdDesc();
+			default -> aptAccountHouseRepository.findAllByStatusFalseOrderByIdDesc();
 		};
 	}
 

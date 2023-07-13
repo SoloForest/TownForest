@@ -1,5 +1,7 @@
 package com.ll.townforest.boundedContext.apt.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ll.townforest.boundedContext.account.entity.Account;
@@ -28,7 +30,8 @@ public class AptAccount {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne
+	@OneToOne(orphanRemoval = true)
+	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private Account account;
 	@ManyToOne
 	private Apt apt;
