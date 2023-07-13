@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class VehicleForm {
 	private String vehicleNumber;
-	@Size(min = 2, max = 17)
+	@Size(min = 2, max = 17, message = "2자이상 17자이하로 입력해주세요.")
 	private String name;
 	private AptAccount user;
 	private AptAccountHouse aptHouse;
