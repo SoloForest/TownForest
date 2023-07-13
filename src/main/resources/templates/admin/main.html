@@ -1,4 +1,4 @@
-<html layout:decorate="~{home/layout.html}">
+<html data-hide-back-button="true" layout:decorate="~{home/layout.html}">
 <head>
     <title>관리자</title>
     <style>
@@ -24,29 +24,27 @@
 <main layout:fragment="main">
     <!-- 공지사항 -->
     <div class="m-3" style="border: 1px solid #707070; border-radius: 15px;">
-        <div class="flex items-center w-full justify-between">
+        <div class="px-4 flex items-center w-full justify-between">
             <div class="flex items-center ml-3">
                 <i class="fa-solid fa-bullhorn text-[1rem]" style="color: #91c0fd;"></i>
                 <h2>공지사항</h2>
             </div>
-            <a class="link link-hover" href="/notice">더보기 ></a>
+            <a class="link link-hover font-bold text-xs" href="/notice">더 보기 ></a>
         </div>
-        <div class="overflow-x-auto mt-4">
+        <div class="overflow-x-auto">
             <div class="table-container">
                 <table class="table table-sm">
-                    <!-- head -->
-                    <thead>
-                    <tr class="text-center">
-                        <th>제목</th>
-                        <th>작성일</th>
-                    </tr>
-                    </thead>
                     <tbody>
-                    <tr class="text-center" th:each="notice : ${noticeList}"
+                    <tr th:each="notice : ${noticeList}"
                         th:onclick="'location.href=\'/notice/' + ${notice.id} + '\''">
-                        <td th:text="${notice.title}" style="min-width:50px; padding: 5px 0;"></td>
-                        <td th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"
-                            style="min-width:40px; padding: 12px 0;"></td>
+                        <td class="text-center px-5 min-w-[50px]">
+                            <span th:if="${#strings.length(notice.title) <= 16}"
+                                  th:text="${notice.title}"></span>
+                            <span th:unless="${#strings.length(notice.title) <= 16}"
+                                  th:text="${notice.title.substring(0, 16)} + '...'"></span>
+                        </td>
+                        <td class="text-end px-5 min-w-[40px]"
+                            th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"></td>
                     </tr>
                     </tbody>
                 </table>
