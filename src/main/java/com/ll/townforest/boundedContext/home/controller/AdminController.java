@@ -174,7 +174,7 @@ public class AdminController {
 			return "redirect:/admin";
 		}
 
-		Page<AptAccountHouse> page = aptAccountHouseService.findAptAccountHouseBySortCode(page, sortCode);
+		Page<AptAccountHouse> paging = aptAccountHouseService.findAptAccountHouseBySortCode(page, sortCode);
 
 		model.addAttribute("paging", paging);
 		model.addAttribute("sortCode", sortCode);

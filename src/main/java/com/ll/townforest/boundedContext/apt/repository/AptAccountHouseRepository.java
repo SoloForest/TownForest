@@ -25,6 +25,6 @@ public interface AptAccountHouseRepository extends JpaRepository<AptAccountHouse
 	Optional<AptAccountHouse> findByUser(AptAccount aptAccount);
 
 	List<AptAccountHouse> findAllByHouseAndStatusFalse(House house);
-  
-  Optional<AptAccountHouse> findByHouseAndRelationship(House house, String relationship);
+
+	Optional<AptAccountHouse> findByHouseAndRelationshipAndStatusFalse(House house, String relationship);
 }

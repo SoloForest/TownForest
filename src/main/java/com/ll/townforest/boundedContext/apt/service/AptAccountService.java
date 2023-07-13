@@ -45,11 +45,12 @@ public class AptAccountService {
 			return RsData.of("F-2", "거주하시는 동과 호수를 바르게 입력해 주세요.");
 		}
 
-		Optional<AptAccountHouse> householder = aptAccountHouseRepository.findByHouseAndRelationship(house, "본인");
+		Optional<AptAccountHouse> householder = aptAccountHouseRepository.findByHouseAndRelationshipAndStatusFalse(
+			house, "본인");
 		if (householder.isPresent()) {
 			return RsData.of("F-3", "세대주가 이미 존재합니다.");
 		}
-		
+
 		return register(account, apt, house, aptAccountDTO.getRelationship());
 	}
 
