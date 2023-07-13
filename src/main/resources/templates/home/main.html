@@ -34,13 +34,17 @@
         <div class="overflow-x-auto">
             <div class="table-container">
                 <table class="table table-sm">
-                    <!-- head -->
                     <tbody>
-                    <tr class="text-center" th:each="notice : ${noticeList}"
+                    <tr th:each="notice : ${noticeList}"
                         th:onclick="'location.href=\'/notice/' + ${notice.id} + '\''">
-                        <td th:text="${notice.title}" style="min-width:50px; padding: 5px 0;"></td>
-                        <td th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"
-                            style="min-width:40px; padding: 12px 0;"></td>
+                        <td class="text-center px-5 min-w-[50px]">
+                            <span th:if="${#strings.length(notice.title) <= 16}"
+                                  th:text="${notice.title}"></span>
+                            <span th:unless="${#strings.length(notice.title) <= 16}"
+                                  th:text="${notice.title.substring(0, 16)} + '...'"></span>
+                        </td>
+                        <td class="text-end px-5 min-w-[40px]"
+                            th:text="${#temporals.format(notice.createDate, 'yy-MM-dd')}"></td>
                     </tr>
                     </tbody>
                 </table>
