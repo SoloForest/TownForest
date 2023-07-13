@@ -62,6 +62,8 @@ public class LibraryHistory {
 	@Column(nullable = false)
 	private Integer statusType;
 
+	private String fullName;
+
 	public String getStatusTypeToString() {
 		return switch (statusType) {
 			case 0 -> "예약";

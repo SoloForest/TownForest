@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
-import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
 import com.ll.townforest.boundedContext.apt.repository.AptAccountHouseRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptAccountRepository;
 import com.ll.townforest.boundedContext.apt.repository.AptRepository;
+import com.ll.townforest.boundedContext.apt.service.AptAccountService;
 import com.ll.townforest.boundedContext.library.entity.Library;
 import com.ll.townforest.boundedContext.library.entity.LibraryHistory;
 import com.ll.townforest.boundedContext.library.entity.Seat;
@@ -38,6 +38,7 @@ public class LibraryService {
 	private final AptAccountRepository aptAccountRepository;
 	private final AptRepository aptRepository;
 	private final AptAccountHouseRepository aptAccountHouseRepository;
+	private final AptAccountService aptAccountService;
 
 	public List<Seat> findUseableList(Long libraryId) {
 		Optional<Library> optLibrary = libraryRepository.findById(libraryId);
@@ -94,7 +95,7 @@ public class LibraryService {
 
 	@Transactional
 	public RsData<String> booking(AptAccount user, Seat seat, int selectedSeat) {
-		RsData<String> addressString = makeAddressToString(user);
+		RsData<String> addressString = aptAccountService.makeAddressToString(user);
 		if (addressString.isFail()) {
 			return addressString;
 		}
@@ -107,6 +108,7 @@ public class LibraryService {
 			.seat(seat)
 			.date(LocalDateTime.now())
 			.statusType(0)
+			.fullName(user.getAccount().getFullName())
 			.build());
 
 		seatRepository.save(seat.toBuilder()
@@ -114,17 +116,6 @@ public class LibraryService {
 			.build());
 
 		return RsData.of("S-1", "%03d번 자리를 예약했습니다.".formatted(selectedSeat));
-	}
-
-	private RsData<String> makeAddressToString(AptAccount user) {
-
-		AptAccountHouse aptAccountHouse = aptAccountHouseRepository.findByUserId(user.getId()).orElse(null);
-		if (aptAccountHouse == null) {
-			return RsData.of("F-3", "주소를 알 수 없는 계정입니다.");
-		}
-
-		return RsData.of("S-1", "주소를 문자열로 변환합니다.",
-			aptAccountHouse.getHouse().getDong() + "동 " + aptAccountHouse.getHouse().getHo() + "호");
 	}
 
 	public RsData<AptAccount> canCancel(Long aptAccountId) {
@@ -158,7 +149,7 @@ public class LibraryService {
 
 	@Transactional
 	public RsData<String> cancel(AptAccount user, Seat seat, int selectedSeat) {
-		RsData<String> addressString = makeAddressToString(user);
+		RsData<String> addressString = aptAccountService.makeAddressToString(user);
 		if (addressString.isFail()) {
 			return addressString;
 		}
@@ -171,6 +162,7 @@ public class LibraryService {
 			.seat(seat)
 			.date(LocalDateTime.now())
 			.statusType(1)
+			.fullName(user.getAccount().getFullName())
 			.build());
 
 		seatRepository.save(seat.toBuilder()
@@ -236,7 +228,7 @@ public class LibraryService {
 
 	@Transactional
 	public RsData<String> adminCancel(AptAccount targetUser, Seat seat, Long libraryHistoryId) {
-		RsData<String> addressString = makeAddressToString(targetUser);
+		RsData<String> addressString = aptAccountService.makeAddressToString(targetUser);
 		if (addressString.isFail()) {
 			return addressString;
 		}
@@ -249,6 +241,7 @@ public class LibraryService {
 			.seat(seat)
 			.date(LocalDateTime.now())
 			.statusType(3)
+			.fullName(targetUser.getAccount().getFullName())
 			.build());
 
 		seatRepository.save(seat.toBuilder()
@@ -283,6 +276,7 @@ public class LibraryService {
 				.seat(history.getSeat())
 				.date(LocalDateTime.now())
 				.statusType(2)
+				.fullName(history.getUser().getAccount().getFullName())
 				.build());
 
 			seatRepository.save(seat.toBuilder()
