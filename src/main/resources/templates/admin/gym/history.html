@@ -53,7 +53,7 @@
                         style="min-width:80px; padding: 12px 0;"></td>
                     <td th:text="${#temporals.format(gymHistory.endDate, 'yy-MM-dd')}"
                         style="min-width:80px; padding: 12px 0;"></td>
-                    <td th:if="${gymHistory.remainingDay !=null}" th:text="${gymHistory.remainingDays +'일'}"></td>
+                    <td th:if="${gymHistory.remainingDay !=null}" th:text="${gymHistory.remainingDay +'일'}"></td>
                     <td th:if="${gymHistory.remainingDay ==null}">-</td>
                     <td th:if="${gymHistory.paymentDate !=null}" th:text="${#temporals.format(gymHistory.paymentDate, 'yy-MM-dd')}" style="min-width:80px; padding: 12px 0;"></td>
                     <td th:if="${gymHistory.paymentDate ==null}">-</td>
