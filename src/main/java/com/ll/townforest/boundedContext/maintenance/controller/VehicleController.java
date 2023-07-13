@@ -43,7 +43,7 @@ public class VehicleController {
 		List<Vehicle> vehicleList = vehicleService.getVehicleList(rq.getAptAccount().getId(), id);
 		if (vehicleList != null) {
 			model.addAttribute("form", vehicleList);
-			return "/maintenance/vehicle";
+			return "maintenance/vehicle";
 		} else {
 			return rq.historyBack(RsData.of("F-1", "잘못된 접근"));
 		}
@@ -54,7 +54,7 @@ public class VehicleController {
 	public String getInsert(Model model) {
 		//등록페이지에서 작성한 값이 들어갈 빈 객체
 		model.addAttribute("form", new VehicleForm());
-		return "/maintenance/add";
+		return "maintenance/add";
 	}
 
 	@PostMapping("/add")
