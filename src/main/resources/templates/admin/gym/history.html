@@ -61,11 +61,11 @@
                         th:text="${#numbers.formatInteger(gymHistory.price, 3, 'COMMA') + '원'}" style="min-width:60px; padding: 12px 0;"></td>
                     <td th:if="${gymHistory.price==null}">-</td>
                     <td th:text="${gymHistory.contact}" style="min-width:120px; padding: 12px 0;"></td>
-                    <td th:if="${gymHistory.status==0}" style="min-width:40px; padding: 12px 0;">결제</td>
-                    <td th:if="${gymHistory.status==1}" style="min-width:40px; padding: 12px 0;">연장</td>
-                    <td th:if="${gymHistory.status==2}" style="min-width:40px; padding: 12px 0;">일시정지</td>
-                    <td th:if="${gymHistory.status==3}" style="min-width:40px; padding: 12px 0;">재시작</td>
-                    <td th:if="${gymHistory.status==4}" style="min-width:40px; padding: 12px 0;">만료</td>
+                    <td th:if="${gymHistory.status==0}" style="min-width:60px; padding: 12px 0;">결제</td>
+                    <td th:if="${gymHistory.status==1}" style="min-width:60px; padding: 12px 0;">연장</td>
+                    <td th:if="${gymHistory.status==2}" style="min-width:60px; padding: 12px 0;">일시정지</td>
+                    <td th:if="${gymHistory.status==3}" style="min-width:60px; padding: 12px 0;">재시작</td>
+                    <td th:if="${gymHistory.status==4}" style="min-width:60px; padding: 12px 0;">만료</td>
                 </tr>
                 </tbody>
             </table>

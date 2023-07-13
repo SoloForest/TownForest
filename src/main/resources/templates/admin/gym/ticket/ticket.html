@@ -1,7 +1,8 @@
 <html layout:decorate="~{home/layout.html}">
 
 <head>
-    <title>이용권 관리</title>
+    <title th:if="${!@rq.gymAdmin}">이용권 확인</title>
+    <title th:if="${@rq.gymAdmin}">이용권 관리</title>
 </head>
 
 <body>
@@ -10,7 +11,8 @@
     <div class="px-4 flex flex-col">
         <div class="flex gap-2 items-center justify-center">
             <i class="fa-solid fa-ticket" style="color: #91c0fd;"></i>
-            <h2 class="card-title">이용권 관리</h2>
+            <h2 class="card-title" th:if="${@rq.gymAdmin}">이용권 관리</h2>
+            <h2 class="card-title" th:if="${!@rq.gymAdmin}">이용권 확인</h2>
         </div>
         <th:block th:if="${#lists.size(gymTicketList) != 0}">
             <div class="card-body bg-base-100 shadow-xl m-2 mt-4">
@@ -27,9 +29,11 @@
                         </span>
                         <div class="font-bold" th:if="${!#strings.isEmpty(ticket.content)}"
                              th:text="${'(' + ticket.content + ')'}" style="min-width:100px;"></div>
-                        <a th:href="@{|/admin/gym/ticket/modify/${ticket.id}|}" class="btn btn-sm btn-primary"
+                        <a th:if="${@rq.isGymAdmin()}" th:href="@{|/admin/gym/ticket/modify/${ticket.id}|}"
+                           class="btn btn-sm btn-primary"
                            th:text="수정"></a>
-                        <a onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();"
+                        <a th:if="${@rq.isGymAdmin()}"
+                           onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();"
                            class="btn btn-sm btn-primary" th:text="삭제"></a>
                         <form hidden th:action="@{|/admin/gym/ticket/${ticket.id}|}" method="POST">
                             <input type="hidden" name="_method" value="delete">
@@ -48,7 +52,7 @@
             </div>
         </th:block>
         <div class="flex justify-end">
-            <a th:href="@{/admin/gym/ticket/create}"
+            <a th:if="${@rq.isGymAdmin()}" th:href="@{/admin/gym/ticket/create}"
                class="btn btn-sm btn-primary">이용권생성</a>
         </div>
     </div>

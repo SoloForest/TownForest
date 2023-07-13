@@ -38,7 +38,12 @@
                 onclick="javascript: window.location.href='/admin/gym/history';">헬스장 이용 현황
         </button>
         <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                th:if="${@rq.gymAdmin}"
                 onclick="javascript: window.location.href='/admin/gym/ticket';">이용권 관리
+        </button>
+        <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                th:if="${!@rq.gymAdmin}"
+                onclick="javascript: window.location.href='/admin/gym/ticket';">이용권 확인
         </button>
     </div>
 </main>

@@ -126,8 +126,13 @@ public class AdminController {
 	@GetMapping("/gym")
 	public String adminMain(Model model) {
 		AptAccount user = rq.getAptAccount();
-		if (!rq.isGymAdmin())
-			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
+
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 
 		List<GymMembership> currentUsers = gymService.getMemberList(user);
 		model.addAttribute("currentUsers", currentUsers);
@@ -149,9 +154,13 @@ public class AdminController {
 		SearchDTO searchDTO) {
 
 		AptAccount user = rq.getAptAccount();
-		if (!rq.isGymAdmin())
-			rq.historyBack("헬스장 관리자만 접속 가능합니다.");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
 
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 		Page<GymMembership> paging = gymService.getMemberPage(page, user, searchDTO);
 		model.addAttribute("paging", paging);
 
@@ -182,9 +191,13 @@ public class AdminController {
 	@GetMapping("/gym/history")
 	public String showAllGymHistory(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
 		SearchDTO searchDTO) {
-		if (!rq.isGymAdmin())
-			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
 
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 		Page<GymHistory> gymHistories = gymService.getAllHistories(page, searchDTO);
 
 		model.addAttribute("paging", gymHistories);
@@ -195,9 +208,13 @@ public class AdminController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/gym/ticket")
 	public String showAllGymTicket(Model model) {
-		if (!rq.isGymAdmin())
-			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
+		if (!rq.isAdmin()) {
+			return rq.historyBack("관리자 전용 페이지입니다.");
+		}
 
+		if (rq.isLibraryAdmin()) {
+			return rq.historyBack("헬스장 관리 권한이 없습니다.");
+		}
 		// TODO : 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기
 		List<GymTicket> gymTicketList = gymService.getGymTicketList(1L);
 		model.addAttribute("gymTicketList", gymTicketList);
