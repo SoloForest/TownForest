@@ -16,15 +16,15 @@ public interface AptAccountHouseRepository extends JpaRepository<AptAccountHouse
 
 	List<AptAccountHouse> findAllByHouseId(Long houseId);
 
-	Page<AptAccountHouse> findByUser_StatusTrueOrderByUserIdDesc(Pageable pageable);
+	Page<AptAccountHouse> findByUser_StatusTrueAndStatusFalseOrderByUserIdDesc(Pageable pageable);
 
-	Page<AptAccountHouse> findByUser_StatusFalseOrderByUserIdDesc(Pageable pageable);
+	Page<AptAccountHouse> findByUser_StatusFalseAndStatusFalseOrderByUserIdDesc(Pageable pageable);
 
-	Page<AptAccountHouse> findAllByOrderByIdDesc(Pageable pageable);
+	Page<AptAccountHouse> findAllByStatusFalseOrderByIdDesc(Pageable pageable);
 
 	Optional<AptAccountHouse> findByUser(AptAccount aptAccount);
 
-	List<AptAccountHouse> findAllByHouse(House house);
-
-	Optional<AptAccountHouse> findByHouseAndRelationship(House house, String relationship);
+	List<AptAccountHouse> findAllByHouseAndStatusFalse(House house);
+  
+  Optional<AptAccountHouse> findByHouseAndRelationship(House house, String relationship);
 }

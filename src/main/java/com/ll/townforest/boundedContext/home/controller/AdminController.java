@@ -174,7 +174,8 @@ public class AdminController {
 			return "redirect:/admin";
 		}
 
-		Page<AptAccountHouse> paging = aptAccountHouseService.findAptAccountHouse(page, sortCode);
+		Page<AptAccountHouse> page = aptAccountHouseService.findAptAccountHouseBySortCode(page, sortCode);
+
 		model.addAttribute("paging", paging);
 		model.addAttribute("sortCode", sortCode);
 		return "admin/aptAccount/management";
@@ -201,7 +202,7 @@ public class AdminController {
 			return rq.historyBack("헬스장 관리자만 접속 가능합니다");
 
 		// TODO : 아파트가 우선 1개이기에 하드코딩, 여러개 될 시 관리자가 관리하는 gym 넣어주기
-		List<GymTicket> gymTicketList = gymService.getGymTickets(1L);
+		List<GymTicket> gymTicketList = gymService.getGymTicketList(1L);
 		model.addAttribute("gymTicketList", gymTicketList);
 
 		return "admin/gym/ticket/ticket";

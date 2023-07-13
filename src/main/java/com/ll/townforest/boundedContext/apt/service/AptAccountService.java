@@ -88,7 +88,7 @@ public class AptAccountService {
 		if (aptAccountHouse == null)
 			return null;
 		House house = aptAccountHouse.getHouse();
-		List<AptAccountHouse> household = aptAccountHouseRepository.findAllByHouse(house);
+		List<AptAccountHouse> household = aptAccountHouseRepository.findAllByHouseAndStatusFalse(house);
 		household.remove(aptAccountHouse);
 
 		return household;

@@ -31,13 +31,13 @@ public class AptAccountHouseService {
 		return aptAccountHouseRepository.findByUser(aptAccount);
 	}
 
-	public Page<AptAccountHouse> findAptAccountHouse(int page, int sortCode) {
-		Pageable pageable = PageRequest.of(page, 10);
-
+	public Page<AptAccountHouse> findAptAccountHouseBySortCode(int page, int sortCode) {
+    Pageable pageable = PageRequest.of(page, 10);
+  
 		return switch (sortCode) {
-			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueOrderByUserIdDesc(pageable);
-			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseOrderByUserIdDesc(pageable);
-			default -> aptAccountHouseRepository.findAllByOrderByIdDesc(pageable);
+			case 2 -> aptAccountHouseRepository.findByUser_StatusTrueAndStatusFalseOrderByUserIdDesc(pageable);
+			case 3 -> aptAccountHouseRepository.findByUser_StatusFalseAndStatusFalseOrderByUserIdDesc(pageable);
+			default -> aptAccountHouseRepository.findAllByStatusFalseOrderByIdDesc(pageable);
 		};
 	}
 
