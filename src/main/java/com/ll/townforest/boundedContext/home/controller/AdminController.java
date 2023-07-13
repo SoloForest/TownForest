@@ -23,8 +23,9 @@ import com.ll.townforest.base.rq.Rq;
 import com.ll.townforest.base.rsData.RsData;
 import com.ll.townforest.boundedContext.apt.entity.AptAccount;
 import com.ll.townforest.boundedContext.apt.entity.AptAccountHouse;
+import com.ll.townforest.boundedContext.apt.entity.HouseHistory;
 import com.ll.townforest.boundedContext.apt.service.AptAccountHouseService;
-import com.ll.townforest.boundedContext.apt.service.AptAccountService;
+import com.ll.townforest.boundedContext.apt.service.HouseHistoryService;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
@@ -48,7 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 	private final Rq rq;
 	private final LibraryService libraryService;
-	private final AptAccountService aptAccountService;
+	private final HouseHistoryService houseHistoryService;
 	private final VehicleService vehicleService;
 	private final AptAccountHouseService aptAccountHouseService;
 	private final GymService gymService;
@@ -89,7 +90,7 @@ public class AdminController {
 	@PostMapping("/library/histories")
 	@PreAuthorize("isAuthenticated()")
 	@ResponseBody
-	public Page<LibraryHistory> histories(@RequestParam int page,
+	public Page<LibraryHistory> libraryHistories(@RequestParam int page,
 		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate searchDate) {
 		return libraryService.findAllHistoriesByDate(searchDate, PageRequest.of(page, 25));
 	}
@@ -97,7 +98,7 @@ public class AdminController {
 	@PostMapping("/library/histories/all")
 	@PreAuthorize("isAuthenticated()")
 	@ResponseBody
-	public Page<LibraryHistory> histories(@RequestParam int page) {
+	public Page<LibraryHistory> libraryHistories(@RequestParam int page) {
 
 		return libraryService.findAllHistories(PageRequest.of(page, 25));
 	}
@@ -335,4 +336,53 @@ public class AdminController {
 
 		return rq.redirectWithMsg("/admin/management?sortCode=%d".formatted(sortCode), aptAccountHouseRsData);
 	}
+
+	// 게스트하우스 관리자 페이지 시작
+	@GetMapping("/guesthouse")
+	@PreAuthorize("isAuthenticated()")
+	public String allHouseHistories() {
+		if (rq.getAptAccount().getAuthority() != 1) {
+			return rq.historyBack("게스트하우스 관리 권한이 없습니다.");
+		}
+
+		return "admin/guest/house_booking";
+	}
+
+	@PostMapping("/guesthouse/histories")
+	@PreAuthorize("isAuthenticated()")
+	@ResponseBody
+	public Page<HouseHistory> guesthouseHistories(@RequestParam int page,
+		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate searchDate) {
+		return houseHistoryService.findAllHistoriesByDate(searchDate, PageRequest.of(page, 25));
+	}
+
+	@PostMapping("/guesthouse/histories/all")
+	@PreAuthorize("isAuthenticated()")
+	@ResponseBody
+	public Page<HouseHistory> guesthouseHistories(@RequestParam int page) {
+		return houseHistoryService.findAllHistories(PageRequest.of(page, 25));
+	}
+
+	@PostMapping("/guesthouse/accept")
+	@PreAuthorize("isAuthenticated()")
+	public String guestBookingAccept(@RequestParam Long houseHistoryId) {
+		RsData<AptAccount> canAcceptUser = houseHistoryService.canAcceptBooking(rq.getAptAccount());
+		if (canAcceptUser.isFail()) {
+			return rq.historyBack(canAcceptUser.getMsg());
+		}
+		RsData<String> target = houseHistoryService.bookingAccept(houseHistoryId);
+		return rq.redirectWithMsg("/admin/guesthouse", "%s님의 신청을 수락했습니다.".formatted(target.getData()));
+	}
+
+	@PostMapping("/guesthouse/reject")
+	@PreAuthorize("isAuthenticated()")
+	public String guestBookingReject(@RequestParam Long houseHistoryId) {
+		if (rq.getAptAccount().getAuthority() != 1) {
+			return rq.historyBack("게스트하우스 관리 권한이 없습니다.");
+		}
+
+		RsData<String> target = houseHistoryService.bookingReject(houseHistoryId);
+		return rq.redirectWithMsg("/admin/guesthouse", "%s님의 신청을 반려했습니다.".formatted(target.getData()));
+	}
+	// 게스트하우스 관리자 페이지 끝
 }

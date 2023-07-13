@@ -3,7 +3,9 @@ package com.ll.townforest.boundedContext.apt.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +32,14 @@ public interface HouseHistoryRepository extends JpaRepository<HouseHistory, Long
 		LocalDateTime startOfDay,
 		LocalDateTime endOfDay
 	);
+
+	Page<HouseHistory> findBySelectedDateBetweenOrderByIdDesc(
+		LocalDateTime startOfDay,
+		LocalDateTime endOfDay,
+		Pageable pageable
+	);
+
+	Page<HouseHistory> findAllByOrderByIdDesc(Pageable pageable);
+
+	List<HouseHistory> findByHouseAndSelectedDateBetween(House house, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }
