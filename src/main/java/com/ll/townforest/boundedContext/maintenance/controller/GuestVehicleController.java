@@ -35,7 +35,7 @@ public class GuestVehicleController {
 		Slice<Vehicle> histories = vehicleService.findGuestHistories(rq.getAptAccount().getId(), PageRequest.of(0, 5));
 
 		model.addAttribute("histories", histories);
-		return "/guest/car_register";
+		return "guest/car_register";
 	}
 
 	@PostMapping("/histories")
