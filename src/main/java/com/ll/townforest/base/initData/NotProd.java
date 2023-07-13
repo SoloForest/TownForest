@@ -243,6 +243,7 @@ public class NotProd {
 				AptAccount aptAccount7 = AptAccount.builder()
 					.account(account7)
 					.apt(apt1)
+					.status(true)
 					.build();
 				aptAccountRepository.save(aptAccount7);
 

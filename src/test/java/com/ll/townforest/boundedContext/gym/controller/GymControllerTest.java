@@ -47,7 +47,7 @@ public class GymControllerTest {
 	}
 
 	@Test
-	@WithUserDetails("puar12")
+	@WithUserDetails("test2")
 	@DisplayName("승인되지 않은 회원의 일시정지 페이지 접속시 실패")
 	void t002() throws Exception {
 		ResultActions resultActions = mvc

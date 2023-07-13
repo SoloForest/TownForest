@@ -11,6 +11,8 @@ management:
     readinessstate:
       enabled: true
 spring:
+  thymeleaf:
+    cache: true  #운영 모드에서는 킵니다.
   data:
     redis:
       host: 172.17.0.1

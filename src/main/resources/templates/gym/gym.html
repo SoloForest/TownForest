@@ -90,9 +90,6 @@
         </div>
         <th:block th:if="${gymMembership != null}">
             <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
-                    onclick="javascript: window.location.href='/gym/locker';">락커신청
-            </button>
-            <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
                     onclick="javascript: window.location.href='/gym/register';">연장신청
             </button>
             <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
@@ -109,16 +106,18 @@
                 </div>
             </form>
             <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
-                    onclick="javascript: window.location.href='/gym/refund';">환불신청
+                    onclick="javascript: window.location.href='/gym/refund';">환불신청(준비중)
+            </button>
+            <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
+                    onclick="javascript: window.location.href='/gym/locker';">락커신청(준비중)
             </button>
         </th:block>
         <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
                 th:if="${gymMembership == null}"
                 onclick="javascript: window.location.href='/gym/register';">이용권구입
         </button>
-        <!-- 이용내역 기능 구현 필요 -->
         <button class="btn shadow-xl m-2" style="background-color: #91c0fd;"
-                onclick="javascript: window.location.href='/gym/history';">이용권 결제 내역
+                onclick="javascript: window.location.href='/gym/history';">이용 내역
         </button>
     </div>
 </main>

@@ -70,8 +70,8 @@
                     </table>
                 </div>
                 <input type="datetime-local" id="selectedDate" name="selectedDate" class="hidden"/>
-                <input id="selectedDate2" th:value="${membership != null ? membership.endDate.plusDays(1) : null}" />
-                <div th:if="${membership !=null}"> ※ 기존 이용권 종료일 다음날로 자동 선택됩니다. </div>
+                <input id="selectedDate2" class="font-bold mt-2" th:value="${membership != null ? membership.endDate.plusDays(1) : null}" />
+                <div th:if="${membership !=null}" class="mt-2"> ※ 기존 이용권 종료일 다음날로 자동 선택됩니다. </div>
             </div>
         </div>
 
@@ -180,10 +180,7 @@
                     "orderName": parsedText + "-" + "시작일-" + formattedDate,
                     "successUrl": successUrl,
                     "method": "card",
-                    "failUrl": failUrl,
-                    "customerName": [[${user.account.fullName}]],
-                    "useInternationalCardOnly": false,
-                    "flowMode": "DEFAULT"
+                    "failUrl": failUrl
                 }
             }
                 pay("카드", jsons.card);
