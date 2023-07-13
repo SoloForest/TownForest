@@ -1,6 +1,6 @@
 <html layout:decorate="~{home/layout.html}">
 <head>
-    <title>독서실 이용 현황</title>
+    <title>게스트하우스 이용 현황</title>
     <script src="/js/dateUtil.js"></script>
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta name="_csrf" th:content="${_csrf.token}">
@@ -8,12 +8,10 @@
 <body>
 <!-- main -->
 <main layout:fragment="main" class="flex flex-col">
-    <!-- 자리 배치 표 -->
-    <img src="/librarySeat.png" alt="자리 배치 표" class="mx-[5%]">
-    <!-- card ui, 모든 독서실 히스토리 출력 -->
+    <!-- card ui, 모든 게스트하우스 히스토리 출력 -->
     <div class="card bg-base-900 shadow-xl m-[5%] rounded-xl">
         <div class="card-body p-3">
-            <h2 class="card-title">이용 현황</h2>
+            <h2 class="card-title">신청 현황</h2>
             <div class="flex justify-center items-center gap-3">
                 <span>날짜 검색</span>
                 <div class="join">
@@ -26,9 +24,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <P id="noHistory" class="text-center my-5 hidden">
-                독서실 이용 히스토리가 없습니다.
+                게스트하우스 신청 히스토리가 없습니다.
             </P>
             <div id="hasHistory" class="hidden">
                 <div class="overflow-x-auto">
@@ -37,9 +35,9 @@
                         <thead>
                         <tr>
                             <th>Date.</th>
+                            <th>Room No.</th>
                             <th>User.</th>
                             <th>Address.</th>
-                            <th>Seat No.</th>
                             <th>Status.</th>
                             <th></th>
                         </tr>
@@ -124,10 +122,10 @@
             let header = $("meta[name='_csrf_header']").attr('content');
             let token = $("meta[name='_csrf']").attr('content');
             let searchDate = $("#searchDate").val();
-            let url = '/admin/library/histories';
+            let url = '/admin/guesthouse/histories';
 
             if (searchDate.trim().length === 0) {
-                url = '/admin/library/histories/all';
+                url = '/admin/guesthouse/histories/all';
             }
 
             $.ajax({
@@ -153,16 +151,20 @@
                     let contentList = '';
                     $.each(data.content, function (index, history) {
                         let newRow = `<tr>
-                            <td>${dateFormat(history.date)}</td>
-                            <td style="min-width: 86px;">${history.user.account.fullName}</td>
-                            <td>${history.addressToString}</td>
-                            <td>${history.seat.seatNumber}</td>
-                            <td style="min-width:80px; padding: 12px 0;">${history.statusTypeToString}</td>`;
-                        if (history.statusType === 0) {
+                            <td>${dateFormatWithoutTime(history.selectedDate)}</td>
+                            <td style="min-width: 80px;">${history.houseAddress}</td>
+                            <td style="min-width: 86px;">${history.fullName}</td>
+                            <td style="min-width: 80px;">${history.userAddress}</td>
+                            <td>${history.statusStr}</td>`;
+                        if (history.status === 0) {
                             newRow += `<td style="min-width:100px; padding: 12px 0;">
-                                <button onclick="submitAdminCancel(${history.id})"
-                                        class="btn btn-info btn-sm text-white cancel-button">
-                                    취소하기
+                                <button onclick="submitAdminAccept(${history.id})"
+                                        class="btn btn-info btn-sm text-white">
+                                    승인
+                                </button>
+                                <button onclick="submitAdminReject(${history.id})"
+                                        class="btn btn-secondary text-white btn-sm">
+                                    반려
                                 </button>
                             </td>`;
                         }
@@ -179,22 +181,43 @@
             });
         }
 
-        function submitAdminCancel(historyId) {
+        function submitAdminAccept(historyId) {
             let header = $("meta[name='_csrf_header']").attr('content');
             let token = $("meta[name='_csrf']").attr('content');
 
             $.ajax({
-                url: '/admin/library/cancel',
+                url: '/admin/guesthouse/accept',
                 type: 'POST',
                 data: {
-                    libraryHistoryId: historyId * 1
+                    houseHistoryId: historyId
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(header, token);
                 },
-                success: function (result) {
-                    alert(result);
-                    window.location.reload();
+                success: function (data) {
+                    loadHistories(0);
+                },
+                error: function (err) {
+                    console.log("Error fetching data:", err);
+                }
+            });
+        }
+
+        function submitAdminReject(historyId) {
+            let header = $("meta[name='_csrf_header']").attr('content');
+            let token = $("meta[name='_csrf']").attr('content');
+
+            $.ajax({
+                url: '/admin/guesthouse/reject',
+                type: 'POST',
+                data: {
+                    houseHistoryId: historyId
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (data) {
+                    loadHistories(0);
                 },
                 error: function (err) {
                     console.log("Error fetching data:", err);
