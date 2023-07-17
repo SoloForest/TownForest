@@ -22,6 +22,8 @@ import com.ll.townforest.boundedContext.gym.entity.Gym;
 import com.ll.townforest.boundedContext.gym.entity.GymHistory;
 import com.ll.townforest.boundedContext.gym.entity.GymMembership;
 import com.ll.townforest.boundedContext.gym.entity.GymTicket;
+import com.ll.townforest.boundedContext.gym.gymEnum.HistoryType;
+import com.ll.townforest.boundedContext.gym.gymEnum.MembershipType;
 import com.ll.townforest.boundedContext.gym.repository.GymHistoryRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymMembershipRepository;
 import com.ll.townforest.boundedContext.gym.repository.GymRepository;
@@ -36,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)  // 리드온리 꺼있는 나머지 리플리케이션시 적용 명시 or 특정 트랜젝션 작업 안에서 쓰기 작업 방지
 public class GymService {
 	private final GymTicketRepository gymTicketRepository;
 	private final GymMembershipRepository gymMembershipRepository;
@@ -63,10 +66,10 @@ public class GymService {
 		LocalDate endDate = getEndDate(gymTicket, startDate);
 
 		// 기본값은 오늘, 이용중인 상태
-		int status = 1;
+		MembershipType status = MembershipType.STARTING;
 		// 만일 시작날이 미래라면, 이용 대기중인 상태
 		if (startDate.isAfter(LocalDate.now())) {
-			status = 0;
+			status = MembershipType.READY;
 		}
 		String userName = user.getAccount().getFullName();
 		String contact = user.getAccount().getPhoneNumString();
@@ -80,7 +83,7 @@ public class GymService {
 			.startDate(startDate)
 			.endDate(endDate)
 			.user(user)
-			.status(status)
+			.status(status.getStatus())  // 시작 또는 대기중인 상태의 값
 			.userName(userName != null ? userName : "알수없음")
 			.paymentDate(LocalDateTime.now())
 			.contact(contact != null ? contact : "알수없음")
@@ -96,7 +99,7 @@ public class GymService {
 			.name(gymTicket.getName())
 			.startDate(startDate)
 			.endDate(endDate)
-			.status(0)
+			.status(HistoryType.PAYMENT.getStatus()) // 결제 완료 상태의 history 필요
 			.paymentMethod(method)
 			.paymentDate(LocalDateTime.now())
 			.user(user)
@@ -141,7 +144,7 @@ public class GymService {
 		GymMembership updateMembership = gymMembership
 			.toBuilder()
 			.endDate(endDate)
-			.status(3)  // 3은 연장 상태를 나타냄
+			.status(MembershipType.EXTENSION.getStatus())  // 연장 상태를 나타냄
 			.paymentDate(LocalDateTime.now())
 			.build();
 		gymMembershipRepository.save(updateMembership);
@@ -157,7 +160,7 @@ public class GymService {
 			.name(gymTicket.getName())
 			.startDate(startDate)
 			.endDate(endDate)
-			.status(1) // 1은 연장을 나타냄
+			.status(HistoryType.EXTENSION.getStatus()) // 연장 history
 			.paymentMethod(method)
 			.user(user)
 			.userName(userName != null ? userName : "알수없음")
@@ -187,7 +190,7 @@ public class GymService {
 			return RsData.of("F-1", "당일 종료권 또는 기한 지난 이용권은 일시정지가 불가능합니다.");
 
 		GymMembership tmp = pauseMembership.toBuilder()
-			.status(2) // 2는 일시정지상태
+			.status(MembershipType.PAUSE.getStatus()) // 일시정지상태
 			.pauseDate(localDate)
 			.remainingDay((int)remainingDay)
 			.build();
@@ -201,7 +204,7 @@ public class GymService {
 		String userAddress = aptAccountService.makeAddressToString(user).getData();
 
 		GymHistory tmp2 = GymHistory.builder()
-			.status(2)
+			.status(HistoryType.PAUSE.getStatus())
 			.pauseDate(localDate)
 			.remainingDay((int)remainingDay)
 			.apt(tmp.getApt())
@@ -231,7 +234,7 @@ public class GymService {
 		LocalDate updatedEndDate = pauseDate.plusDays(remainingDay);
 
 		GymMembership tmp = pauseMembership.toBuilder()
-			.status(4)  // 4는 재시작을 나타냄
+			.status(MembershipType.RESTART.getStatus())  // 재시작
 			.pauseDate(null)
 			.remainingDay(null)
 			.endDate(updatedEndDate)
@@ -247,7 +250,7 @@ public class GymService {
 		String userAddress = aptAccountService.makeAddressToString(user).getData();
 
 		GymHistory tmp2 = GymHistory.builder()
-			.status(3)
+			.status(HistoryType.RESTART.getStatus())
 			.apt(tmp.getApt())
 			.gym(tmp.getGym())
 			.user(tmp.getUser())
@@ -271,8 +274,9 @@ public class GymService {
 
 		// 일시정지 상태가 아니며, 어제 날짜가 끝인 이용권들을 찾는다.
 		// 오늘 날짜가 끝이라면, 끝나는날도 이용은 가능하니 어제 날짜로 찾기
-		// status가 2이면 일시정지 상태니까, 삭제하지 않는다.
-		List<GymMembership> list = gymMembershipRepository.findAllByEndDateAndStatusNot(endDate, 2);
+		// status가 일시정지면 삭제하지 않는다.
+		List<GymMembership> list = gymMembershipRepository.findAllByEndDateAndStatusNot(endDate,
+			MembershipType.PAUSE.getStatus());
 		gymMembershipRepository.deleteAll(list);
 
 		List<GymHistory> histories = new ArrayList<>();
@@ -287,7 +291,7 @@ public class GymService {
 			String userAddress = aptAccountService.makeAddressToString(user).getData();
 
 			GymHistory tmp = GymHistory.builder()
-				.status(4) // 4는 만료
+				.status(HistoryType.EXPIRATION.getStatus()) // 만료
 				.gym(gymMembership.getGym())
 				.startDate(gymMembership.getStartDate())
 				.endDate(gymMembership.getEndDate())
@@ -312,12 +316,13 @@ public class GymService {
 		// 아직 이용권 대기 상태이며, 오늘 날짜가 시작인 이용권들을 찾는다.
 		// status를 0에서 1로 변경해준다(시작 대기 -> 시작)
 		// history는 변동 없음(이용 대기, 이용중 -> 0번 으로 결제로 표기)
-		List<GymMembership> searchlist = gymMembershipRepository.findAllByStartDateAndStatus(today, 0);
+		List<GymMembership> searchlist = gymMembershipRepository.findAllByStartDateAndStatus(today,
+			MembershipType.READY.getStatus());
 
 		List<GymMembership> updatedList = new ArrayList<>();
 		for (GymMembership membership : searchlist) {
 			GymMembership tmp1 = membership.toBuilder()
-				.status(1)
+				.status(MembershipType.STARTING.getStatus()) // 시작
 				.build();
 			updatedList.add(tmp1);
 		}
