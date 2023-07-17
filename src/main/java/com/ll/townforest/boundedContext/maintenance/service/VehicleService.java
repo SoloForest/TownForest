@@ -85,12 +85,17 @@ public class VehicleService {
 	}
 
 	public VehicleResult delete(Long vehicleId, Long userId) {
-		Optional<Vehicle> vehicleOptional = findByVehicleId(vehicleId);
-		if (vehicleOptional.isPresent()) {
-			Vehicle vehicle = vehicleOptional.get();
-			if (vehicle.getUser().getId().equals(userId)) {
-				vehicleRepository.deleteById(vehicleId);
-				return VehicleResult.SUCCESS;
+		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
+		if (ownedAptAccountHouse.isPresent()) {
+			Long houseId = ownedAptAccountHouse.get().getHouse().getId();
+			Optional<Vehicle> vehicleOptional = findByVehicleId(vehicleId);
+
+			if (vehicleOptional.isPresent()) {
+				Vehicle vehicle = vehicleOptional.get();
+				if (vehicle.getAptHouse().getId().equals(houseId)) {
+					vehicleRepository.deleteById(vehicleId);
+					return VehicleResult.SUCCESS;
+				}
 			}
 		}
 		return VehicleResult.FAILED;
@@ -99,14 +104,15 @@ public class VehicleService {
 	public VehicleResult getAllId(Long userId, VehicleForm form) {
 		Optional<AptAccountHouse> ownedAptAccountHouse = aptAccountHouseRepository.findByUserId(userId);
 		if (ownedAptAccountHouse.isPresent()) {
-			List<AptAccountHouse> allMembersOfHouse = aptAccountHouseRepository.findAllByHouseId(
-				ownedAptAccountHouse.get().getHouse().getId());
+			Long houseId = ownedAptAccountHouse.get().getHouse().getId();
+
+			List<AptAccountHouse> allMembersOfHouse = aptAccountHouseRepository.findAllByHouseIdAndStatusFalse(houseId);
 
 			if (!getHouseMembers(form.getName(), allMembersOfHouse)) {
 				return VehicleResult.NAME_INVALID;
 			}
 
-			if (getVehicleNumber(form.getVehicleNumber(), ownedAptAccountHouse.get().getHouse().getId())) {
+			if (getVehicleNumber(form.getVehicleNumber(), houseId)) {
 				return VehicleResult.VEHICLE_DUPLICATION;
 			}
 
@@ -118,8 +124,10 @@ public class VehicleService {
 
 	private boolean getHouseMembers(String inputFullName, List<AptAccountHouse> allMembersOfHouse) {
 		for (AptAccountHouse member : allMembersOfHouse) {
-			if (inputFullName != null && inputFullName.equals(member.getUser().getAccount().getFullName())) {
-				return true;
+			if (member.getUser() != null && member.getUser().getAccount() != null) {
+				if (inputFullName != null && inputFullName.equals(member.getUser().getAccount().getFullName())) {
+					return true;
+				}
 			}
 		}
 		return false;

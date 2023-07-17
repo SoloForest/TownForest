@@ -13,8 +13,6 @@ import com.ll.townforest.boundedContext.maintenance.entity.Vehicle;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 	List<Vehicle> findByAptHouse_House_Id(Long houseId);
 
-	List<Vehicle> findByUserId(Long id);
-
 	Page<Vehicle> findByTypeAndDateBefore(int type, LocalDateTime endDate, Pageable pageable);
 
 	Page<Vehicle> findByTypeAndDateBetween(int type, LocalDateTime startOfDay, LocalDateTime endOfDay,
@@ -23,4 +21,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 	Page<Vehicle> findByTypeAndDateGreaterThanEqual(int type, LocalDateTime startDate, Pageable pageable);
 
 	Slice<Vehicle> findByUserIdAndTypeOrderByIdDesc(Long aptAccountId, int type, Pageable pageable);
+
+	void deleteAllByNameAndAptHouse_Id(String userName, Long houseId);
 }

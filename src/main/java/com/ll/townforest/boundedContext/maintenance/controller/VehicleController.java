@@ -87,7 +87,7 @@ public class VehicleController {
 		if (result == VehicleService.VehicleResult.SUCCESS) {
 			return rq.redirectWithMsg("/maintenance/vehicle", "삭제되었습니다.");
 		} else if (result == VehicleService.VehicleResult.FAILED) {
-			return rq.historyBack(RsData.of("F-1", "등록자만 삭제할 수 있습니다."));
+			return rq.historyBack(RsData.of("F-1", "세대원만 삭제할 수 있습니다."));
 		}
 		return rq.historyBack(RsData.of("F-2", "알 수 없는 오류가 발생했습니다."));
 	}
