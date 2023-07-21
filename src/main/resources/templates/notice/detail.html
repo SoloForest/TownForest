@@ -15,8 +15,8 @@
                     <span class="font-bold text-primary" th:if="${notice.writer.authority==3}">헬스장관리자</span>
                 </div>
                 <div class="flex items-center gap-2 justify-end">
-                    <span <span th:class="${notice.modifyDate != null} ? 'text-gray-500' : 'text-black'"
-                            th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}"></span>
+                    <span th:class="${notice.modifyDate != null} ? 'text-gray-500' : 'text-black'"
+                          th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}"></span>
                 </div>
                 <div class="flex items-center gap-2 justify-end" th:if="${notice.modifyDate !=null}">
                     <span th:text="${#temporals.format(notice.modifyDate, 'yyyy-MM-dd')}"></span>
@@ -24,7 +24,7 @@
             </div>
             <hr class="mb-8" style="border: none; border-top: 1px solid;">
             <div class="mb-5 ml-5 min-h-[100px] overflow-auto">
-                <span class="text-xl" th:text="${notice.content}"></span>
+                <span class="text-xl" th:text="${notice.content}" style="white-space: pre-line;"></span>
             </div>
             <hr style="border: none; border-top: 1px solid;">
             <div class="flex items-center justify-center mt-4 mb-3 relative">
