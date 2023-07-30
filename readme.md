@@ -100,7 +100,7 @@
 
 ## 프로젝트 결과물
 
-- [프로젝트 시연 영상]()
+- [프로젝트 시연 영상](https://youtu.be/AZDUGKGD82U)
 - [노션 페이지](https://www.notion.so/Town-Forest-f0e0e0581cc14bfabeda5dcc35f4117d)
 
 ## 기능별 담당
