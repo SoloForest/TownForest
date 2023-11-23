@@ -66,8 +66,9 @@
 <!-- GETTING STARTED -->
 
 ## 시작하기
+- 현재 배포 중단된 상태입니다. 아래는 배포 당시 이미지 입니다.
 
-[https://www.townforest.life](https://www.townforest.life)
+![04 mp4_000000500](https://github.com/SoloForest/TownForest/assets/126079049/26bd6541-10ed-492f-8c70-2195c7441685)
 
 ## 각 기능별 간략 소개
 
